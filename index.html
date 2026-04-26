@@ -1379,8 +1379,11 @@
   <main id="main">
     <!-- ===== HERO ===== -->
     <section class="hero" aria-label="מבוא">
-      <!-- WebGL scene (Unicorn Studio) — decorative, handles its own mouse tracking -->
-      <div class="hero-scene" data-us-project="ZuSNX1OqU0vaLaqRHNZE" aria-hidden="true"></div>
+      <!-- WebGL scene (Unicorn Studio) — decorative, handles its own mouse tracking.
+           data-us-dpi="1" caps pixelRatio at 1× regardless of device — on Retina/4K
+           displays this is ~4× fewer pixels per frame, big GPU savings with
+           imperceptible visual difference for this soft, blurred scene. -->
+      <div class="hero-scene" data-us-project="ZuSNX1OqU0vaLaqRHNZE" data-us-dpi="1" aria-hidden="true"></div>
       <!-- Legibility overlay — keeps text readable over any scene colors -->
       <div class="hero-overlay" aria-hidden="true"></div>
 
@@ -1739,8 +1742,14 @@
 
     <!-- ===== CONTACT — hero-style WebGL section ===== -->
     <section class="contact-hero" id="contact" aria-labelledby="contact-title">
-      <!-- WebGL scene (same Unicorn Studio project as hero) -->
-      <div class="contact-scene" data-us-project="ZuSNX1OqU0vaLaqRHNZE" aria-hidden="true"></div>
+      <!-- WebGL scene (same Unicorn Studio project as hero).
+           NO data-us-project initially — lazy-init via IntersectionObserver
+           below. We stash the real project ID in data-us-project-pending and
+           promote it to data-us-project only when the section approaches the
+           viewport. Result: hero loads alone, contact scene costs zero GPU
+           until the user scrolls near it.
+           data-us-dpi="1" same pixelRatio cap as hero. -->
+      <div class="contact-scene" data-us-project-pending="ZuSNX1OqU0vaLaqRHNZE" data-us-dpi="1" aria-hidden="true"></div>
       <!-- Legibility overlay — darkens corners for text -->
       <div class="contact-overlay" aria-hidden="true"></div>
 
@@ -1905,7 +1914,10 @@
        scene would sit on top of every section below the hero.
        Scroll listener (not IntersectionObserver) because IO callbacks can
        lag ~100ms on fast scroll; a pure boolean visibility toggle has at
-       most 1-frame lag and no stripe artifact since position isn't moving. -->
+       most 1-frame lag and no stripe artifact since position isn't moving.
+       Uses display: none (not visibility: hidden) so the browser stops
+       compositing the canvas — visibility:hidden keeps the GPU work going
+       in the background. display:none lets the WebGL render loop idle. */
   <script>
     (function toggleSceneOutsideHero() {
       const hero = document.querySelector('.hero');
@@ -1915,7 +1927,7 @@
       function update() {
         const rect = hero.getBoundingClientRect();
         const inView = rect.bottom > 0 && rect.top < window.innerHeight;
-        scene.style.visibility = inView ? 'visible' : 'hidden';
+        scene.style.display = inView ? '' : 'none';
       }
 
       window.addEventListener('scroll', update, { passive: true });
@@ -1981,20 +1993,17 @@
        Only mousemove is intercepted — the .hero-cursor dot uses pointermove,
        so it's unaffected. -->
   <script>
-    (function smoothSceneMouseOnReentry() {
-      const scene = document.querySelector('.hero-scene');
-      if (!scene) return;
-
+    /* Unified mouse-reentry smoother for ALL scenes (hero + contact, plus any
+       lazy-loaded later). One IIFE, one window listener, one RAF loop —
+       previously the hero and contact had separate IIFEs each attaching their
+       own capture-phase listener, doubling per-mousemove work for nothing. */
+    (function smoothScenesMouseOnReentry() {
       const DURATION_MS = 500;
       let lastMouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
       let departureMouse = null;
       let isInterpolating = false;
       let rafId = null;
 
-      // Capture-phase on window — fires before any SDK listener down the tree.
-      // Tracks the real mouse position, and blocks real mousemoves from the
-      // SDK only while we're interpolating. Synthetic events are isTrusted=false
-      // so they pass this gate untouched and reach the SDK normally.
       window.addEventListener('mousemove', (e) => {
         if (!e.isTrusted) return;
         lastMouse.x = e.clientX;
@@ -2002,6 +2011,8 @@
         if (isInterpolating) e.stopImmediatePropagation();
       }, true);
 
+      // Dispatch a single synthetic mousemove on document. Both Unicorn Studio
+      // scenes listen on document, so one dispatch reaches all of them.
       function dispatchSynthetic(x, y) {
         const ev = new MouseEvent('mousemove', {
           clientX: x,
@@ -2010,16 +2021,12 @@
           cancelable: true,
           view: window
         });
-        scene.dispatchEvent(ev);
         document.dispatchEvent(ev);
       }
 
-      // easeInOutQuad — symmetric, no overshoot
       function ease(t) { return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; }
 
       document.addEventListener('mouseleave', () => {
-        // If an interpolation is still running (fast in/out), kill it and
-        // treat the current position as the new departure point
         if (rafId !== null) cancelAnimationFrame(rafId);
         isInterpolating = false;
         rafId = null;
@@ -2038,13 +2045,9 @@
         function tick(now) {
           const t = Math.min((now - startTime) / DURATION_MS, 1);
           const eased = ease(t);
-          // Chase the real mouse's current position — it may still be moving
-          // while we interpolate. lastMouse updates via the capture listener above.
-          const toX = lastMouse.x;
-          const toY = lastMouse.y;
           dispatchSynthetic(
-            fromX + (toX - fromX) * eased,
-            fromY + (toY - fromY) * eased
+            fromX + (lastMouse.x - fromX) * eased,
+            fromY + (lastMouse.y - fromY) * eased
           );
           if (t < 1) {
             rafId = requestAnimationFrame(tick);
@@ -2192,76 +2195,49 @@
       const safety = setTimeout(markLoaded, 3000);
     })();
 
-    /* Mouse re-entry smoothing for the contact scene — same pattern as the
-       hero's smoothSceneMouseOnReentry. When cursor leaves the document
-       (taskbar, other window) we save where it left; on return, a RAF loop
-       streams synthetic mousemoves along an eased path from departure →
-       current position over 500ms, blocking real mousemoves during that
-       window so the SDK sees continuous motion instead of a teleport. */
-    (function smoothContactSceneMouseOnReentry() {
-      const scene = document.querySelector('.contact-scene');
+    /* Lazy-init contact WebGL scene. The .contact-scene element starts WITHOUT
+       data-us-project (which is what the SDK scans for). When the contact
+       section approaches the viewport (rootMargin: 50% top), we copy the
+       project ID from data-us-project-pending → data-us-project and call
+       UnicornStudio.init() which scans for newly-tagged scenes and initializes
+       them. Result: hero scene loads alone — no GPU cost from the contact
+       scene until the user scrolls near it. One-shot. */
+    (function lazyInitContactScene() {
+      const scene = document.querySelector('.contact-scene[data-us-project-pending]');
       if (!scene) return;
-
-      const DURATION_MS = 500;
-      let lastMouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-      let departureMouse = null;
-      let isInterpolating = false;
-      let rafId = null;
-
-      window.addEventListener('mousemove', (e) => {
-        if (!e.isTrusted) return;
-        lastMouse.x = e.clientX;
-        lastMouse.y = e.clientY;
-        if (isInterpolating) e.stopImmediatePropagation();
-      }, true);
-
-      function dispatchSynthetic(x, y) {
-        const ev = new MouseEvent('mousemove', {
-          clientX: x,
-          clientY: y,
-          bubbles: true,
-          cancelable: true,
-          view: window
-        });
-        scene.dispatchEvent(ev);
-        document.dispatchEvent(ev);
-      }
-      function ease(t) { return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; }
-
-      document.addEventListener('mouseleave', () => {
-        if (rafId !== null) cancelAnimationFrame(rafId);
-        isInterpolating = false;
-        rafId = null;
-        departureMouse = { x: lastMouse.x, y: lastMouse.y };
-      });
-
-      document.addEventListener('mouseenter', () => {
-        if (!departureMouse) return;
-        if (rafId !== null) cancelAnimationFrame(rafId);
-
-        const fromX = departureMouse.x;
-        const fromY = departureMouse.y;
-        const startTime = performance.now();
-        isInterpolating = true;
-
-        function tick(now) {
-          const t = Math.min((now - startTime) / DURATION_MS, 1);
-          const eased = ease(t);
-          const toX = lastMouse.x;
-          const toY = lastMouse.y;
-          dispatchSynthetic(
-            fromX + (toX - fromX) * eased,
-            fromY + (toY - fromY) * eased
-          );
-          if (t < 1) {
-            rafId = requestAnimationFrame(tick);
-          } else {
-            isInterpolating = false;
-            rafId = null;
-          }
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (!('IntersectionObserver' in window)) {
+        // Fallback: just init immediately on old browsers
+        scene.setAttribute('data-us-project', scene.dataset.usProjectPending);
+        scene.removeAttribute('data-us-project-pending');
+        if (window.UnicornStudio && window.UnicornStudio.init) {
+          window.UnicornStudio.init();
         }
-        rafId = requestAnimationFrame(tick);
+        return;
+      }
+
+      const io = new IntersectionObserver((entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            scene.setAttribute('data-us-project', scene.dataset.usProjectPending);
+            scene.removeAttribute('data-us-project-pending');
+            if (window.UnicornStudio && window.UnicornStudio.init) {
+              window.UnicornStudio.init();
+            }
+            obs.disconnect();
+          }
+        });
+      }, {
+        // Trigger when the section is within 50vh of the viewport — gives the
+        // SDK ~1 viewport of scroll time to download/parse/init before the user
+        // sees it, so the fade-in feels instant rather than chasing the user.
+        rootMargin: '50% 0px 50% 0px',
       });
+
+      // Observe the section, not the scene element — scene is position:absolute
+      // inside it and may have zero intersection until the section is in view.
+      const section = document.querySelector('.contact-hero');
+      io.observe(section || scene);
     })();
 
     /* Contact form submit — placeholder. Wire to a real backend (Formspree,
