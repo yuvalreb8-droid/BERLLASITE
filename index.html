@@ -1,0 +1,2299 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BERLLA — תצוגה מקדימה למבנה הדף הראשי</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Preconnect to jsdelivr so the Unicorn Studio SDK starts downloading
+       as soon as possible — shaves ~100–300ms off the first-paint delay. -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@500;700&family=Bowlby+One&family=Frank+Ruhl+Libre:wght@400;500;700&family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400&family=Heebo:wght@300;400;500;600;700;800;900&family=Miriam+Libre:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== Reset + base ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Heebo', system-ui, -apple-system, sans-serif;
+      color: #0E1629;
+      background: #fff;
+      line-height: 1.6;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+    ul, ol { list-style: none; }
+    img { max-width: 100%; display: block; }
+    h1, h2, h3, h4 { font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; }
+
+    /* ===== Utility ===== */
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
+    .eyebrow {
+      font-size: 0.875rem;
+      letter-spacing: 0.05em;
+      font-weight: 500;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 1rem;
+    }
+    .section-heading {
+      font-family: 'Fraunces', 'Heebo', serif;
+      font-size: clamp(2.25rem, 4vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 0.75rem;
+    }
+    .section-sub {
+      font-size: 1.0625rem;
+      opacity: 0.72;
+      max-width: 55ch;
+    }
+
+    /* Focus ring */
+    :focus-visible {
+      outline: 2px solid #8B2E4A;
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    /* Skip link */
+    .skip-link {
+      position: absolute;
+      right: 0;
+      top: -100px;
+      background: #0E1629;
+      color: #F4F0EB;
+      padding: 0.75rem 1.25rem;
+      z-index: 1000;
+      transition: top 0.2s;
+    }
+    .skip-link:focus { top: 0; }
+
+    /* ===== Navbar ===== */
+    .nav {
+      display: none; /* TEMP: hidden per Yuval's request — delete this line to restore */
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      z-index: 100;
+      background: rgba(244, 240, 235, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(14, 22, 41, 0.08);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      max-width: 1440px;
+      margin: 0 auto;
+      gap: 2rem;
+    }
+    .nav-logo {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 1.375rem;
+      letter-spacing: 0.02em;
+      color: #0E1629;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      font-size: 0.9375rem;
+      font-weight: 500;
+    }
+    .nav-links a {
+      position: relative;
+      padding: 0.25rem 0;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #8B2E4A; }
+    .nav-cta { display: flex; gap: 0.75rem; align-items: center; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1.25rem;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      border-radius: 2px;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .btn--ghost { color: #0E1629; }
+    .btn--ghost:hover { color: #8B2E4A; }
+    .btn--primary { background: #0E1629; color: #F4F0EB; }
+    .btn--primary:hover { background: #8B2E4A; }
+    .btn--outline { border: 1px solid #0E1629; color: #0E1629; }
+    .btn--outline:hover { background: #0E1629; color: #F4F0EB; }
+    .btn--on-dark { border: 1px solid #F4F0EB; color: #F4F0EB; }
+    .btn--on-dark:hover { background: #F4F0EB; color: #0E1629; }
+
+    /* ===== Hero ===== */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      /* Fallback painted under .hero-scene — visible while the WebGL scene
+         loads (~800ms SDK + init), and for users with prefers-reduced-motion
+         (where .hero-scene is display:none). Radial burgundy approximates
+         the loaded scene's palette so the handoff to WebGL isn't a jarring
+         color change. Tweak the three stops if the scene's actual colors shift. */
+      background:
+        radial-gradient(ellipse 90% 75% at 40% 40%,
+          #7a2440 0%,
+          #3a0f1d 55%,
+          #120408 100%);
+      color: #F4F0EB;
+      overflow: hidden;
+      padding: 6rem 2rem 2rem;
+      isolation: isolate;
+      cursor: none; /* system cursor hidden; .hero-cursor takes over */
+    }
+
+    /* Custom cursor — only visible while hovering the hero.
+       GSAP tweens x/y and scale; xPercent/yPercent center it on the pointer. */
+    .hero-cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #F4F0EB;
+      box-shadow: 0 2px 12px rgba(14, 22, 41, 0.35);
+      pointer-events: none;
+      z-index: 50;
+      will-change: transform;
+    }
+
+    /* WebGL scene — viewport-FIXED (Plan B). The SDK computes mouse position
+       relative to the scene's bounding box; making the scene fixed to the
+       viewport means its bbox never shifts on scroll, so the shader reacts
+       cleanly to mouse movement without the scroll-induced stutter.
+       JS (toggleSceneOutsideHero) hides the scene when .hero leaves the
+       viewport so it doesn't bleed over later sections.
+
+       FUTURE-EDIT CONSTRAINTS — read before touching hero styles:
+       1. Do NOT add `transform`, `filter`, `perspective`, `backdrop-filter`,
+          `will-change: transform/filter/perspective`, or `contain: paint/
+          strict/content` to .hero or ANY ancestor of .hero-scene. Any of
+          those establishes a new containing block for fixed descendants —
+          the scene would anchor to that ancestor instead of the viewport,
+          re-introducing the bbox-shift stutter Plan B was built to fix.
+       2. Hero's internal z-index hierarchy: scene = 0, overlay = 1,
+          hero-cursor = 50. Any fixed navbar / modal / cookie banner added
+          later needs z-index > 50 to stack above the hero layer.
+       3. Every section added AFTER .hero (about/portfolio/etc.) must have
+          `position: relative; z-index: 1` so it paints above the fixed
+          scene. The shared rule is defined just below this block — if you
+          add a new section (e.g. .pricing), add its class to that selector
+          list or the scene will bleed over it. */
+    .hero-scene {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 115vh;
+      z-index: 0;
+      /* Start invisible and fade in once the SDK has actually painted —
+         prevents the hard pop-in when the first WebGL frame renders.
+         The .is-loaded class is added by the fadeSceneInWhenReady IIFE
+         at the bottom of the file, triggered by a MutationObserver
+         watching for the canvas the SDK injects into this element. */
+      opacity: 0;
+      transition: opacity 500ms ease-out;
+    }
+    .hero-scene.is-loaded { opacity: 1; }
+    /* Hide the Unicorn Studio branding badge (free-plan watermark link) */
+    .hero-scene a[href*="unicorn"] { display: none !important; }
+
+    /* Legibility overlay — darkens the two text corners so text stays readable
+       no matter what the scene is showing. pointer-events: none = mouse passes through */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 55% 45% at bottom left, rgba(14, 22, 41, 0.7), transparent 65%),
+        radial-gradient(ellipse 45% 40% at top right, rgba(14, 22, 41, 0.6), transparent 65%);
+    }
+
+    .hero-desc {
+      position: absolute;
+      top: 8rem;
+      right: 4rem;
+      max-width: 44rem;
+      font-family: 'Assistant', 'Heebo', system-ui, sans-serif;
+      font-size: 1.25rem;
+      line-height: 1.6;
+      font-weight: 500;
+      color: #F4F0EB;
+      z-index: 2;
+      pointer-events: none; /* decorative — let mouse reach scene below */
+    }
+    .hero-desc strong {
+      font-family: 'Heebo', system-ui, sans-serif;
+      display: block;
+      font-size: 1.875rem;
+      font-weight: 800;
+      margin: 0;
+      color: #F4F0EB;
+    }
+
+    .hero-brand {
+      position: absolute;
+      bottom: 1rem;
+      left: 2rem;
+      font-family: 'Bowlby One', 'Fraunces', serif;
+      font-weight: 400; /* Bowlby One ships as a single weight */
+      font-size: clamp(3.6rem, 13.2vw, 12rem);
+      line-height: 0.85;
+      letter-spacing: -0.04em;
+      color: #F4F0EB;
+      margin: 0;
+      direction: ltr;
+      z-index: 2;
+      pointer-events: none; /* decorative — let mouse reach scene below */
+    }
+
+    /* ===== About ===== */
+    /* Every section below .hero must stack ABOVE the viewport-fixed
+       .hero-scene (z:0). Fixed elements are composited on a layer that
+       floats above normal-flow content regardless of DOM order, so without
+       an explicit z-index these sections would get covered by the scene
+       as they scroll into view. position:relative + z-index:1 puts each
+       section in its own stacking context, one level above the scene. */
+    .about,
+    .portfolio,
+    .testimonials,
+    .process,
+    .faq,
+    .contact-hero,
+    .footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    .about {
+      background: #F4F0EB;
+      padding: 7rem 2rem;
+      width: 100%;
+    }
+    .about-grid {
+      position: relative;
+      max-width: 1280px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); /* explicit 0 min prevents grid bleed */
+      gap: 5rem;
+      direction: ltr;
+    }
+    /* Vertical divider in the center of the gap between the two columns */
+    .about-grid::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 1px;
+      background: rgba(14, 22, 41, 0.12);
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+    .about-grid > * {
+      direction: rtl;
+      min-width: 0;
+    }
+    .about-left {
+      color: #8B2E4A;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .about-people {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    .about-right { color: #0E1629; }
+
+    /* Shared column heading — "מי אנחנו" / "מה אנחנו עושים" */
+    .about-heading {
+      font-family: 'Heebo', sans-serif;
+      font-weight: 600;
+      font-size: 2.0625rem;
+      line-height: 1.2;
+      letter-spacing: 0;
+      margin-bottom: 0;
+      color: inherit;
+      text-align: center;
+    }
+
+    .about-person {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 0;
+    }
+    .about-blob {
+      width: 160px;
+      height: 160px;
+      border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      align-self: center;
+      animation: blobMorph 16s ease-in-out infinite alternate;
+      box-shadow: 0 2px 14px rgba(139, 46, 74, 0.12);
+    }
+    .about-blob img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: inherit;
+    }
+    .about-person:nth-child(2) .about-blob {
+      border-radius: 45% 55% 35% 65% / 55% 40% 60% 45%;
+      animation-duration: 19s;
+      animation-direction: alternate-reverse;
+    }
+    @keyframes blobMorph {
+      0%   { border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%; }
+      100% { border-radius: 40% 60% 45% 55% / 60% 45% 55% 40%; }
+    }
+
+    .about-person h3 {
+      font-family: 'Assistant', 'Heebo', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: #8B2E4A;
+      text-align: center;
+    }
+    .about-person p {
+      font-family: 'Assistant', 'Heebo', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      line-height: 1.65;
+      color: #8B2E4A;
+      opacity: 0.9;
+      text-align: right;
+    }
+    .about-person p + p { margin-top: 0; }
+
+    .about-what .about-eyebrow {
+      font-family: 'Heebo', sans-serif;
+      font-size: 2.0625rem;
+      font-weight: 600;
+      color: #0E1629;
+      margin-bottom: 1.25rem;
+      text-align: center;
+    }
+
+    /* Opening intro block — 3 paragraphs */
+    .about-intro {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 2.5rem;
+    }
+    .about-intro p {
+      font-family: 'Assistant', 'Heebo', sans-serif;
+      font-size: 1.0625rem;
+      font-weight: 500;
+      line-height: 1.7;
+      color: #0E1629;
+      text-align: right;
+      margin: 0;
+    }
+    .about-intro .about-intro-lead {
+      font-size: 1.25rem;
+      line-height: 1.4;
+    }
+
+    /* Pillars 2x2 grid */
+    .about-pillars {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 1.75rem 2rem;
+    }
+    .about-pillar h3 {
+      font-family: 'Assistant', 'Heebo', sans-serif;
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #0E1629;
+      margin-bottom: 0.375rem;
+      text-align: right;
+      letter-spacing: 0;
+    }
+    .about-pillar p {
+      font-family: 'Assistant', 'Heebo', sans-serif;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      line-height: 1.65;
+      color: #0E1629;
+      opacity: 0.82;
+      margin: 0;
+      text-align: right;
+    }
+
+    /* ===== Portfolio ===== */
+    .portfolio {
+      padding: 7rem 2rem;
+      background: #fff;
+    }
+    .portfolio-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .portfolio-card {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(14, 22, 41, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      background: #fff;
+    }
+    .portfolio-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px -20px rgba(14, 22, 41, 0.15);
+    }
+    .portfolio-img {
+      aspect-ratio: 4/3;
+      background: linear-gradient(135deg, #e8e4df, #d4d0ca);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(14, 22, 41, 0.25);
+    }
+    .portfolio-img svg { width: 56px; height: 56px; }
+    .portfolio-body { padding: 1.5rem; }
+    .portfolio-body h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .portfolio-body p {
+      font-size: 0.9375rem;
+      opacity: 0.72;
+      margin-bottom: 1rem;
+    }
+    .portfolio-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .tag {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.625rem;
+      background: #F4F0EB;
+      border-radius: 4px;
+      color: #0E1629;
+    }
+    .portfolio-view {
+      padding: 0 1.5rem 1.5rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: #0E1629;
+      margin-top: auto;
+    }
+    .portfolio-view:hover { color: #8B2E4A; }
+    .portfolio-all {
+      display: block;
+      text-align: center;
+      margin: 3rem auto 0;
+      width: fit-content;
+    }
+
+    /* ===== Testimonials ===== */
+    .testimonials {
+      padding: 7rem 2rem;
+      background: #F4F0EB;
+    }
+    .testimonials-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .review-card {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .review-stars {
+      display: flex;
+      gap: 0.25rem;
+      font-size: 1.125rem;
+      color: #0E1629;
+    }
+    .review-quote {
+      font-size: 1rem;
+      line-height: 1.65;
+      flex: 1;
+    }
+    .review-person {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .review-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #d4d0ca;
+      flex-shrink: 0;
+    }
+    .review-meta {
+      font-size: 0.875rem;
+    }
+    .review-name { font-weight: 600; }
+    .review-title { opacity: 0.7; }
+
+    /* ===== Process — rauno-style horizontal panel scroller =====
+       The .process-scroller is pinned for the duration of the track's
+       horizontal overflow. While pinned, .process-track translates in step
+       with vertical scroll. ScrollTrigger's scrub adds spring-follow lag.
+       Result: scroll vertically, panels pan horizontally. */
+    .process { background: #fff; }
+
+    .process-intro {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 6rem 2rem 4rem;
+    }
+    .process-section-heading {
+      font-family: 'Miriam Libre', 'Heebo', system-ui, sans-serif;
+      font-weight: 700;
+      font-size: clamp(2.25rem, 4vw, 3.25rem);
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.25rem;
+    }
+    .process-section-intro {
+      font-family: 'Miriam Libre', 'Heebo', system-ui, sans-serif;
+      font-weight: 500;
+      font-size: 1.125rem;
+      line-height: 1.65;
+      opacity: 0.82;
+      max-width: 60ch;
+    }
+
+    /* Pinned wrapper. direction: ltr is critical: body is dir="rtl", and an
+       RTL parent with a wide overflow:hidden child inverts the scroll/translate
+       origin in most browsers, making panel 04 appear first. Inner panels keep
+       RTL via .process-panel { direction: rtl }. */
+    .process-scroller {
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      background: #fff;
+      direction: ltr;
+    }
+    /* Section-level fade-in: JS adds .fade-init synchronously to hide the
+       scroller, then .is-visible to fade it in when intersected. Decoupled
+       from default CSS so if JS fails the section stays visible. */
+    .process-scroller.fade-init {
+      opacity: 0;
+      transition: opacity 600ms ease-out;
+    }
+    .process-scroller.fade-init.is-visible {
+      opacity: 1;
+    }
+
+    /* Track holds all panels in one horizontal row. Leading/trailing padding
+       = (viewport - card)/2 so the first card starts centered at progress 0
+       and the last ends centered at progress 1. */
+    .process-track {
+      --card-w: min(1100px, 72vw);
+      --card-h: min(680px, 78vh);
+      display: flex;
+      height: 100%;
+      width: max-content;
+      align-items: center;
+      gap: 2rem;
+      padding-left: calc((100vw - var(--card-w)) / 2);
+      padding-right: calc((100vw - var(--card-w)) / 2);
+      will-change: transform;
+      direction: ltr;
+    }
+
+    /* Rauno-style fixed-size cards. min-height (not height) so cards can grow
+       when text is zoomed to 200% — IS 5568 / WCAG 1.4.4 compliance. */
+    .process-panel {
+      width: var(--card-w);
+      min-height: var(--card-h);
+      flex-shrink: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 2.5rem;
+      padding: 3rem 3.5rem;
+      position: relative;
+      direction: rtl;
+      background: #F4F0EB;
+      border-radius: 16px;
+    }
+    .process-panel:nth-child(2) { background: #EFEAE3; }
+    .process-panel:nth-child(3) { background: #F4F0EB; }
+    .process-panel:nth-child(4) { background: #EFEAE3; }
+
+    .process-panel-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      max-width: 36rem;
+      justify-self: end;
+    }
+    /* Step number = custom hand-designed PNG in ./berlla-numbers/. Sized by
+       height so width auto-scales per digit. align-self: flex-start prevents
+       the parent flex column from stretching the image. */
+    .process-panel-num {
+      display: block;
+      height: clamp(60px, 7vw, 110px);
+      width: auto;
+      align-self: flex-start;
+      margin-bottom: 0.75rem;
+    }
+    .process-panel h3 {
+      font-family: 'Miriam Libre', 'Heebo', system-ui, sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.75rem, 3vw, 2.5rem);
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+    }
+    .process-panel p {
+      font-family: 'Miriam Libre', 'Heebo', system-ui, sans-serif;
+      font-weight: 500;
+      font-size: 1.125rem;
+      line-height: 1.7;
+      opacity: 0.82;
+      max-width: 32rem;
+    }
+
+    .process-panel-img {
+      width: 100%;
+      max-width: 380px;
+      aspect-ratio: 4 / 5;
+      background: linear-gradient(135deg, #e8e4df, #d4d0ca);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(14, 22, 41, 0.25);
+      justify-self: start;
+    }
+    .process-panel-img svg { width: 64px; height: 64px; }
+
+    /* Step dots — fixed at bottom of pinned area, JS toggles .is-active.
+       0.42 alpha gets ~3:1 contrast vs cream — meets WCAG 1.4.11. */
+    .process-dots {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 0.625rem;
+      direction: ltr;
+      z-index: 5;
+    }
+    .process-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(14, 22, 41, 0.42);
+      transition: background 200ms ease, transform 200ms ease;
+    }
+    .process-dot.is-active {
+      background: #8B2E4A;
+      transform: scale(1.4);
+    }
+
+    .process-hint {
+      position: absolute;
+      bottom: 2.25rem;
+      right: 2.5rem;
+      font-family: 'Miriam Libre', 'Heebo', sans-serif;
+      font-size: 0.875rem;
+      opacity: 0.55;
+      letter-spacing: 0.05em;
+      transition: opacity 300ms ease;
+      pointer-events: none;
+      z-index: 5;
+    }
+    .process-scroller.has-scrolled .process-hint { opacity: 0; }
+
+    /* Mobile fallback — horizontal pin/pan is desktop-class. Below 960px,
+       stack vertically: no pin, no horizontal track, panels just scroll. */
+    @media (max-width: 960px) {
+      .process-intro { padding: 4rem 1.5rem 2rem; }
+      .process-scroller {
+        height: auto;
+        overflow: visible;
+        padding: 1.5rem;
+      }
+      .process-track {
+        flex-direction: column;
+        width: 100%;
+        padding: 0;
+        gap: 1.5rem;
+        transform: none !important;
+        direction: rtl;
+      }
+      .process-panel {
+        width: 100%;
+        height: auto;
+        min-height: 80vh;
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        padding: 3rem 1.5rem;
+      }
+      .process-panel-content {
+        max-width: 100%;
+        justify-self: stretch;
+      }
+      .process-panel-img {
+        max-width: 100%;
+        aspect-ratio: 16 / 10;
+        justify-self: stretch;
+      }
+      .process-dots, .process-hint { display: none; }
+    }
+
+    /* ===== FAQ ===== */
+    .faq {
+      padding: 5rem 2rem;
+      background: #F4F0EB;
+    }
+    /* Scoped heading override — only inside .faq, doesn't affect other sections */
+    .faq .section-heading {
+      font-family: 'Fraunces', 'Frank Ruhl Libre', serif;
+      font-size: clamp(2.5rem, 5.5vw, 4rem);
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: -0.015em;
+      margin-bottom: 0;
+    }
+    .faq-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .faq-list {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+    .faq-item {
+      border-bottom: 1px solid #0E1629;
+    }
+    .faq-item:first-child {
+      border-top: 1px solid #0E1629;
+    }
+    /* Question button — serif, lighter weight, larger; resets default <button> styles */
+    .faq-q {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      padding: 1rem 0;
+      font-family: 'Fraunces', 'Frank Ruhl Libre', serif;
+      font-size: clamp(1.0625rem, 1.6vw, 1.25rem);
+      font-weight: 500;
+      line-height: 1.35;
+      letter-spacing: -0.005em;
+      text-align: start;
+      color: #0E1629;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+    .faq-q:hover { color: #8B2E4A; }
+    .faq-q > span:first-child { flex: 1; }
+    /* Plus / minus toggle — vertical stroke scales to 0 when open */
+    .faq-toggle {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #0E1629;
+      opacity: 0.85;
+    }
+    .faq-toggle svg { display: block; overflow: visible; }
+    .faq-toggle .t-v {
+      transform-origin: 9px 9px;
+      transition: transform 0.3s ease;
+    }
+    .faq-item.is-open .faq-toggle .t-v { transform: scaleY(0); }
+    /* Smooth open/close via grid-template-rows 0fr → 1fr */
+    .faq-a {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.28s ease;
+    }
+    .faq-a-inner {
+      overflow: hidden;
+      min-height: 0;
+    }
+    .faq-a-text {
+      font-size: 1rem;
+      line-height: 1.75;
+      opacity: 0.78;
+      max-width: 65ch;
+      padding-bottom: 1rem;
+    }
+    .faq-item.is-open .faq-a { grid-template-rows: 1fr; }
+    .faq-cta {
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+    .faq-cta h3 {
+      font-family: 'Fraunces', 'Frank Ruhl Libre', serif;
+      font-size: 1.5rem;
+      font-weight: 500;
+      letter-spacing: -0.005em;
+      margin-bottom: 0.375rem;
+    }
+    .faq-cta p {
+      opacity: 0.7;
+      margin-bottom: 1.25rem;
+    }
+
+    /* ===== Contact — hero-style WebGL section =====
+       Full viewport. Radial burgundy fallback under a Unicorn Studio scene
+       (same project as .hero-scene). BERLLA bottom-left, intro+form stacked
+       on the right. */
+    .contact-hero {
+      position: relative;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse 90% 75% at 40% 40%,
+          #7a2440 0%,
+          #3a0f1d 55%,
+          #120408 100%);
+      color: #F4F0EB;
+      overflow: hidden;
+      padding: 4rem 4rem 2rem;
+      isolation: isolate;
+    }
+
+    /* WebGL scene — height: 120% extends the canvas below the section's
+       visible area so the SDK's free-tier "Made with unicorn.studio"
+       watermark (rendered at the bottom) falls in the overflow:hidden
+       clipped zone. Same trick as .hero-scene's `height: 115vh`. NO
+       pointer-events: none — the SDK needs mouse events on the canvas. */
+    .contact-scene {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 120%;
+      z-index: 0;
+      opacity: 0;
+      transition: opacity 500ms ease-out;
+    }
+    .contact-scene.is-loaded { opacity: 1; }
+    /* Defense-in-depth watermark hide (the height trick is primary). */
+    .contact-scene a,
+    a[href*="unicorn.studio"],
+    a[href*="unicornstudio"],
+    [class*="us-badge"],
+    [class*="unicornStudio-badge"] {
+      display: none !important;
+    }
+
+    .contact-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 55% 45% at bottom left, rgba(14, 22, 41, 0.7), transparent 65%),
+        radial-gradient(ellipse 45% 40% at top right, rgba(14, 22, 41, 0.6), transparent 65%);
+    }
+
+    /* BERLLA wordmark bottom-left — duplicates the hero brand mark; aria-hidden
+       since it's decorative in the contact context. */
+    .contact-brand {
+      position: absolute;
+      bottom: 0.75rem;
+      left: 1.5rem;
+      font-family: 'Bowlby One', 'Fraunces', serif;
+      font-weight: 400;
+      font-size: clamp(2.5rem, 8vw, 6rem);
+      line-height: 0.85;
+      letter-spacing: -0.04em;
+      color: #F4F0EB;
+      direction: ltr;
+      z-index: 2;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* Right-anchored stack: intro (headline + sub + WhatsApp) above form. */
+    .contact-content {
+      position: relative;
+      z-index: 3;
+      max-width: 460px;
+      margin-left: auto;
+      margin-right: 0;
+    }
+    .contact-intro {
+      margin-bottom: 0.5rem;
+    }
+
+    .contact-headline {
+      font-family: 'Miriam Libre', 'Heebo', sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      color: #F4F0EB;
+      margin-bottom: 0.375rem;
+    }
+    .contact-sub {
+      font-family: 'Miriam Libre', 'Heebo', sans-serif;
+      font-weight: 500;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      color: #F4F0EB;
+      opacity: 0.85;
+      margin-bottom: 0.875rem;
+      max-width: 32rem;
+    }
+
+    /* WhatsApp pill */
+    .contact-whatsapp {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.875rem;
+      background: rgba(244, 240, 235, 0.12);
+      border: 1px solid rgba(244, 240, 235, 0.3);
+      border-radius: 999px;
+      color: #F4F0EB;
+      text-decoration: none;
+      font-family: 'Miriam Libre', 'Heebo', sans-serif;
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: background 200ms ease, border-color 200ms ease, transform 200ms ease;
+      margin-bottom: 0.875rem;
+    }
+    .contact-whatsapp:hover {
+      background: rgba(244, 240, 235, 0.2);
+      border-color: rgba(244, 240, 235, 0.5);
+      transform: translateY(-2px);
+    }
+    .contact-whatsapp:focus-visible {
+      outline: 2px solid #ECC2C9;
+      outline-offset: 3px;
+    }
+    .contact-whatsapp svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    /* Form */
+    .contact-form {
+      display: grid;
+      gap: 0.5rem;
+    }
+    .fld {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .fld label {
+      font-family: 'Miriam Libre', 'Heebo', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #F4F0EB;
+      opacity: 0.92;
+    }
+    .req {
+      color: #ECC2C9;
+      margin-right: 0.25rem;
+    }
+    .fld input,
+    .fld textarea {
+      width: 100%;
+      padding: 0.5rem 0.875rem;
+      background: rgba(244, 240, 235, 0.08);
+      border: 1px solid rgba(244, 240, 235, 0.2);
+      border-radius: 8px;
+      color: #F4F0EB;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      direction: rtl;
+      transition: border-color 200ms ease, background 200ms ease;
+    }
+    .fld input::placeholder,
+    .fld textarea::placeholder {
+      color: rgba(244, 240, 235, 0.4);
+    }
+    .fld input:focus,
+    .fld textarea:focus {
+      outline: none;
+      border-color: #ECC2C9;
+      background: rgba(244, 240, 235, 0.14);
+    }
+    .fld input:focus-visible,
+    .fld textarea:focus-visible {
+      outline: 2px solid #ECC2C9;
+      outline-offset: 1px;
+    }
+    .fld textarea {
+      min-height: 56px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+    .fld input[type="email"] {
+      direction: ltr;
+      text-align: right;
+    }
+
+    /* Privacy consent — required by PPL Amendment 13 when collecting personal data */
+    .contact-consent {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      font-family: 'Miriam Libre', 'Heebo', sans-serif;
+      font-size: 0.75rem;
+      line-height: 1.45;
+      color: #F4F0EB;
+      opacity: 0.85;
+      cursor: pointer;
+      user-select: none;
+      margin-top: 0.125rem;
+    }
+    .contact-consent input[type="checkbox"] {
+      margin-top: 0.2rem;
+      accent-color: #ECC2C9;
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .contact-consent input[type="checkbox"]:focus-visible {
+      outline: 2px solid #ECC2C9;
+      outline-offset: 2px;
+    }
+    .contact-consent a {
+      color: #ECC2C9;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .contact-consent a:hover { opacity: 1; }
+
+    .contact-submit {
+      margin-top: 0.125rem;
+      padding: 0.5rem 1.5rem;
+      background: #F4F0EB;
+      color: #0E1629;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Miriam Libre', 'Heebo', sans-serif;
+      font-weight: 700;
+      font-size: 0.9375rem;
+      cursor: pointer;
+      transition: background 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+      align-self: start;
+    }
+    .contact-submit:hover {
+      background: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(244, 240, 235, 0.15);
+    }
+    .contact-submit:focus-visible {
+      outline: 2px solid #ECC2C9;
+      outline-offset: 3px;
+    }
+    .contact-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Mobile contact */
+    @media (max-width: 768px) {
+      .contact-hero {
+        min-height: auto;
+        padding: 4rem 1.5rem 7rem;
+      }
+      .contact-hero .contact-content {
+        max-width: 100%;
+        margin: 0 auto;
+      }
+      .contact-brand {
+        font-size: clamp(2.5rem, 12vw, 4.5rem);
+        bottom: 0.75rem;
+        left: 1rem;
+      }
+      .contact-headline {
+        font-size: clamp(1.75rem, 7vw, 2.5rem);
+      }
+    }
+
+    /* ===== Footer ===== */
+    .footer {
+      background: #0E1629;
+      color: #F4F0EB;
+      padding: 6rem 2rem 2rem;
+    }
+    .footer-inner { max-width: 1280px; margin: 0 auto; }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      padding-bottom: 4rem;
+      border-bottom: 1px solid rgba(244, 240, 235, 0.15);
+    }
+    .footer-cta h2 {
+      font-family: 'Fraunces', 'Heebo', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+    .footer-cta p {
+      font-size: 1rem;
+      opacity: 0.75;
+      margin-bottom: 2rem;
+      max-width: 40ch;
+    }
+    .footer-cta-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .footer-primary {
+      background: #F4F0EB;
+      color: #0E1629;
+      border: 1px solid #F4F0EB;
+    }
+    .footer-primary:hover { background: transparent; color: #F4F0EB; }
+    .footer-links {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      justify-content: end;
+      align-items: start;
+      direction: ltr;
+    }
+    .footer-links > * { direction: rtl; }
+    .footer-col h5 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      opacity: 0.6;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .footer-col ul { display: flex; flex-direction: column; gap: 0.625rem; }
+    .footer-col a {
+      font-size: 0.9375rem;
+      opacity: 0.85;
+      transition: opacity 0.2s;
+    }
+    .footer-col a:hover { opacity: 1; }
+
+    .footer-mid {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 3rem 0;
+      border-bottom: 1px solid rgba(244, 240, 235, 0.15);
+    }
+    .footer-logo {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: 0.02em;
+    }
+    .footer-socials-mid {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .footer-social-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(244, 240, 235, 0.1);
+      border: 1px solid rgba(244, 240, 235, 0.15);
+    }
+    .footer-bottom {
+      padding-top: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.875rem;
+      opacity: 0.6;
+    }
+    .footer-socials {
+      display: flex;
+      gap: 1rem;
+    }
+    .footer-socials a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .footer-socials a:hover { opacity: 1; }
+
+    /* ===== Scroll reveal ===== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 960px) {
+      .hero-desc { top: 6rem; right: 1.5rem; left: 1.5rem; max-width: none; }
+      .hero-brand { font-size: clamp(3rem, 14.4vw, 6rem); }
+      .about-grid { grid-template-columns: 1fr; gap: 4rem; }
+      .about-grid::before { display: none; } /* hide divider when columns stack */
+      .portfolio-grid, .testimonials-grid { grid-template-columns: 1fr; }
+      .process-intro { padding: 4.5rem 1.5rem 2.5rem; }
+      .footer-top { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 600px) {
+      .about { padding: 4rem 1.5rem; }
+      .portfolio, .testimonials, .faq { padding: 4rem 1.5rem; }
+      /* .contact-hero handles its own mobile padding via the dedicated rule above */
+      .about-left { gap: 1.5rem; }
+      .about-person { gap: 1rem; }
+      .about-blob { width: 120px; height: 120px; }
+      .about-pillars { grid-template-columns: 1fr; gap: 1.5rem; }
+      .about-intro .about-intro-lead { font-size: 1.125rem; }
+      .nav-inner { padding: 0.875rem 1.25rem; }
+      .nav-cta .btn--ghost { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .about-blob { animation: none; }
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .faq-a, .faq-toggle .t-v, .faq-q { transition: none; }
+      html { scroll-behavior: auto; }
+      /* Hide WebGL motion for users who opt out — navy fallback shows */
+      .hero-scene { display: none; }
+      .hero-overlay { display: none; }
+      /* Restore system cursor when motion is off */
+      .hero { cursor: auto; }
+      .hero-cursor { display: none; }
+      /* Process section: skip pin + horizontal pan, stack vertically. JS bails
+         on reduced motion so .fade-init never gets added — no opacity rule
+         needed, section is visible by default. */
+      .process-scroller {
+        height: auto;
+        overflow: visible;
+        padding: 1.5rem;
+      }
+      .process-track {
+        flex-direction: column;
+        width: 100%;
+        padding: 0;
+        gap: 1.5rem;
+        transform: none !important;
+        direction: rtl;
+      }
+      .process-panel {
+        width: 100%;
+        height: auto;
+        min-height: 80vh;
+      }
+      .process-dots, .process-hint { display: none; }
+      /* Contact section: hide WebGL scene, kill hover lifts. Burgundy gradient
+         fallback under .contact-hero stays visible. */
+      .contact-scene { display: none; }
+      .contact-whatsapp:hover,
+      .contact-submit:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">דלג לתוכן הראשי</a>
+
+  <!-- ===== NAV ===== -->
+  <header class="nav" role="banner">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo" aria-label="BERLLA — דף הבית">BERLLA</a>
+      <nav class="nav-links" aria-label="ניווט ראשי">
+        <a href="#portfolio">העבודות שלנו</a>
+        <a href="#about">אודות</a>
+        <a href="#contact">צור קשר</a>
+        <a href="#faq">משאבים</a>
+      </nav>
+      <div class="nav-cta">
+        <a href="#" class="btn btn--ghost">התחברות</a>
+        <a href="#contact" class="btn btn--primary">בואו נתחיל</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ===== HERO ===== -->
+    <section class="hero" aria-label="מבוא">
+      <!-- WebGL scene (Unicorn Studio) — decorative, handles its own mouse tracking -->
+      <div class="hero-scene" data-us-project="ZuSNX1OqU0vaLaqRHNZE" aria-hidden="true"></div>
+      <!-- Legibility overlay — keeps text readable over any scene colors -->
+      <div class="hero-overlay" aria-hidden="true"></div>
+
+      <div class="hero-desc">
+        <strong>מפסלים דפי נחיתה.</strong>
+        <p>אל תפקירו את הרושם הראשוני שלכם בידיים של סוכנויות גנריות.<br>אנחנו משלבים אסתטיקה עם פסיכולוגיה צרכנית כדי לגרום לאנשים להפוך ללקוחות.</p>
+      </div>
+      <h1 class="hero-brand">BERLLA</h1>
+    </section>
+
+    <!-- ===== ABOUT ===== -->
+    <section class="about" id="about" aria-labelledby="about-title">
+      <div class="about-grid">
+        <!-- LEFT: the people -->
+        <div class="about-left reveal">
+          <h2 id="about-title" class="about-heading">מי אנחנו</h2>
+
+          <div class="about-people">
+            <div class="about-person">
+              <div class="about-blob">
+                <img src="ella.jpeg" alt="תמונה של אלה" loading="lazy" decoding="async">
+              </div>
+              <div>
+                <h3>אלה</h3>
+                <p>אני מתרגמת רעיונות לחוויה ויזואלית מדויקת.</p>
+                <p>אני יודעת לקחת מחשבה מופשטת, לדייק אותה, ולהפוך אותה למשהו ממשי.</p>
+                <p>אני אחראית על עיצוב חוויית המשתמש, הקופירייטינג והאנימציות — כל מה שגורם לאתר להרגיש חד, ברור ובעל נוכחות.</p>
+                <p>אני לא מתחברת לפתרונות גנריים. חשוב לי ליצור שפה עם אופי וטביעת אצבע אמיתית, כזו שמרגישה נכונה לעסק שמאחוריה.</p>
+              </div>
+            </div>
+
+            <div class="about-person">
+              <div class="about-blob">
+                <img src="yuval.jpeg" alt="תמונה של יובל" loading="lazy" decoding="async">
+              </div>
+              <div>
+                <h3>יובל</h3>
+                <p>אני אחראי על הקידוד, המהירות, הצד הטכני וה־SEO.</p>
+                <p>אני מתמקד במה שקורה מאחורי הקלעים — כל מה שגורם לאתר להרגיש מהיר, חלק, מדויק ויציב.</p>
+                <p>אני לא מאמין בקיצורי דרך. חשוב לי לבנות דברים נכון, עם חשיבה מסודרת ותשומת לב לפרטים הקטנים שבסוף עושים את כל ההבדל.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: what we do -->
+        <div class="about-right about-what reveal">
+          <div class="about-eyebrow">מה אנחנו עושים</div>
+
+          <div class="about-intro">
+            <p class="about-intro-lead">100% דפי נחיתה</p>
+            <p>אנחנו לא עושים סושיאל ולא מנהלים קמפיינים. בחרנו להתמחות בדבר אחד, ולעשות אותו נכון.</p>
+            <p>התפקיד של דף נחיתה הוא להיות איש המכירות החזק ביותר שלכם.</p>
+          </div>
+
+          <div class="about-pillars">
+            <div class="about-pillar">
+              <h3>מבנה</h3>
+              <p>אנחנו מאפיינים את המבנה של העמוד כדי להוביל את העין נכון ולשמור על זרימה ברורה.</p>
+            </div>
+            <div class="about-pillar">
+              <h3>מסר</h3>
+              <p>אנחנו מחדדים את המסר, כדי שהאנשים הנכונים יבינו מהר למה דווקא אתם.</p>
+            </div>
+            <div class="about-pillar">
+              <h3>חוויה</h3>
+              <p>אנחנו מעצבים את החוויה כך שהעמוד ירגיש ברור, מדויק, ונעים מהרגע הראשון.</p>
+            </div>
+            <div class="about-pillar">
+              <h3>ביצוע</h3>
+              <p>אנחנו מטפלים בכל מה שקורה מאחורי הקלעים, כדי שהעמוד יהיה מהיר, יציב, חלק ואמין.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PORTFOLIO ===== -->
+    <section class="portfolio" id="portfolio" aria-labelledby="portfolio-title">
+      <div class="portfolio-header reveal">
+        <div class="eyebrow">עבודות</div>
+        <h2 id="portfolio-title" class="section-heading">פרויקטים אחרונים</h2>
+        <p class="section-sub" style="margin: 0 auto;">מבחר אתרים שבנינו לאחרונה.</p>
+      </div>
+
+      <div class="portfolio-grid">
+        <article class="portfolio-card reveal">
+          <div class="portfolio-img" role="img" aria-label="תמונת פרויקט: אתר לצימרים">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+          </div>
+          <div class="portfolio-body">
+            <h3>אתר לצימרים בחוף</h3>
+            <p>פלטפורמת הזמנות לנופש חופי, מותאמת למובייל וממירה בקלות.</p>
+            <div class="portfolio-tags">
+              <span class="tag">תיירות</span>
+              <span class="tag">הזמנות</span>
+              <span class="tag">עיצוב</span>
+            </div>
+          </div>
+          <a href="#" class="portfolio-view">צפייה <span aria-hidden="true">←</span></a>
+        </article>
+
+        <article class="portfolio-card reveal">
+          <div class="portfolio-img" role="img" aria-label="תמונת פרויקט: פלטפורמה לסטארט-אפים">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+          </div>
+          <div class="portfolio-body">
+            <h3>מרכז סטארט-אפים</h3>
+            <p>פלטפורמה שמחברת בין יזמים ומשקיעים סביב קהילה ותוכן.</p>
+            <div class="portfolio-tags">
+              <span class="tag">סטארט-אפ</span>
+              <span class="tag">קהילה</span>
+              <span class="tag">פלטפורמה</span>
+            </div>
+          </div>
+          <a href="#" class="portfolio-view">צפייה <span aria-hidden="true">←</span></a>
+        </article>
+
+        <article class="portfolio-card reveal">
+          <div class="portfolio-img" role="img" aria-label="תמונת פרויקט: חנות מוצרי יוקרה בעבודת יד">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+          </div>
+          <div class="portfolio-body">
+            <h3>חנות מוצרים בעבודת יד</h3>
+            <p>אתר מסחר אלקטרוני שמציג מוצרים ייחודיים בעבודת יד.</p>
+            <div class="portfolio-tags">
+              <span class="tag">מסחר</span>
+              <span class="tag">קראפט</span>
+              <span class="tag">חנות</span>
+            </div>
+          </div>
+          <a href="#" class="portfolio-view">צפייה <span aria-hidden="true">←</span></a>
+        </article>
+      </div>
+
+      <a href="#" class="btn btn--outline portfolio-all">כל העבודות</a>
+    </section>
+
+    <!-- ===== TESTIMONIALS ===== -->
+    <section class="testimonials" aria-labelledby="testimonials-title">
+      <div class="testimonials-header reveal">
+        <h2 id="testimonials-title" class="section-heading">מה הלקוחות אומרים</h2>
+        <p class="section-sub" style="margin: 0 auto;">הם סמכו עלינו לבנות את החזון שלהם</p>
+      </div>
+
+      <div class="testimonials-grid">
+        <article class="review-card reveal">
+          <div class="review-stars" aria-label="דירוג: 5 מתוך 5 כוכבים">★★★★★</div>
+          <blockquote class="review-quote">
+            "יובל ואלה הבינו את הצורך שלנו עוד לפני שהצלחנו להסביר אותו במילים. האתר שהם בנו עלה על כל הציפיות שלנו."
+          </blockquote>
+          <div class="review-person">
+            <div class="review-avatar" role="img" aria-label="תמונה של הממליץ"></div>
+            <div class="review-meta">
+              <div class="review-name">יואב כהן</div>
+              <div class="review-title">מייסד, אתר לצימרים</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="review-card reveal">
+          <div class="review-stars" aria-label="דירוג: 5 מתוך 5 כוכבים">★★★★★</div>
+          <blockquote class="review-quote">
+            "קוד נקי, עיצוב מדויק ותהליך שפשוט עבד. העבודה עם BERLLA הייתה ישירה ומקצועית."
+          </blockquote>
+          <div class="review-person">
+            <div class="review-avatar" role="img" aria-label="תמונה של הממליצה"></div>
+            <div class="review-meta">
+              <div class="review-name">שרה לוי</div>
+              <div class="review-title">מנכ"לית, מרכז סטארט-אפים</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="review-card reveal">
+          <div class="review-stars" aria-label="דירוג: 5 מתוך 5 כוכבים">★★★★★</div>
+          <blockquote class="review-quote">
+            "הם סיפקו פלטפורמה שעובדת טוב בדיוק כמו שהיא נראית. זה נדיר ושווה את ההשקעה."
+          </blockquote>
+          <div class="review-person">
+            <div class="review-avatar" role="img" aria-label="תמונה של הממליץ"></div>
+            <div class="review-meta">
+              <div class="review-name">אורי ישראלי</div>
+              <div class="review-title">בעלים, חנות מוצרים בעבודת יד</div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===== PROCESS — Rauno-style horizontal panel scroller ===== -->
+    <section class="process" id="process" aria-labelledby="process-title">
+      <div class="process-intro">
+        <h2 id="process-title" class="process-section-heading">מה קורה מהרגע שפונים אלינו</h2>
+        <p class="process-section-intro">כדי לבנות דף נחיתה שעובד באמת, אי אפשר לאלתר. בנינו תהליך מדויק שלוקח אתכם מאפס להשקה.</p>
+      </div>
+
+      <!-- Pinned scroller — vertical scroll inside translates the track horizontally. -->
+      <div class="process-scroller" data-scroller>
+        <div class="process-track" data-track>
+          <article class="process-panel" data-step="1">
+            <div class="process-panel-content">
+              <img class="process-panel-num" src="berlla-numbers/1.png" alt="" aria-hidden="true">
+              <h3>האפיון</h3>
+              <p>אנחנו מתחילים בהבנה עמוקה של העסק שלכם. אין תבניות מראש — רק דף חלק ושאלות מדויקות שמטרתן להבין בדיוק מי אתם ומה העמוד הזה אמור לשדר.</p>
+            </div>
+            <div class="process-panel-img" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+            </div>
+          </article>
+
+          <article class="process-panel" data-step="2">
+            <div class="process-panel-content">
+              <img class="process-panel-num" src="berlla-numbers/2.png" alt="" aria-hidden="true">
+              <h3>הצורה</h3>
+              <p>אנחנו אוספים את כל התובנות ומתרגמים אותן למסך. בונים את השלד, כותבים קופירייטינג ראשוני, ומעצבים סקיצה שנותנת כיוון ויזואלי ברור.</p>
+            </div>
+            <div class="process-panel-img" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+            </div>
+          </article>
+
+          <article class="process-panel" data-step="3">
+            <div class="process-panel-content">
+              <img class="process-panel-num" src="berlla-numbers/3.png" alt="" aria-hidden="true">
+              <h3>הדיוק</h3>
+              <p>אנחנו מציגים לכם את הסקיצה, עוברים עליה יחד, ומבצעים את כל ההתאמות הנדרשות לפי הפידבק שלכם — עד שהכול מדויק ומאושר.</p>
+            </div>
+            <div class="process-panel-img" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+            </div>
+          </article>
+
+          <article class="process-panel" data-step="4">
+            <div class="process-panel-content">
+              <img class="process-panel-num" src="berlla-numbers/4.png" alt="" aria-hidden="true">
+              <h3>ההשקה</h3>
+              <p>אחרי האישור, הסקיצה הופכת לעמוד חי. אנחנו כותבים קוד נקי, דואגים לזמני טעינה מהירים, ומעלים לאוויר דף שמוכן לעבוד בשבילכם.</p>
+            </div>
+            <div class="process-panel-img" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+            </div>
+          </article>
+        </div>
+
+        <div class="process-dots" aria-hidden="true">
+          <span class="process-dot is-active" data-dot="1"></span>
+          <span class="process-dot" data-dot="2"></span>
+          <span class="process-dot" data-dot="3"></span>
+          <span class="process-dot" data-dot="4"></span>
+        </div>
+
+        <div class="process-hint" aria-hidden="true">גלגל למטה ↓</div>
+      </div>
+    </section>
+
+    <!-- ===== FAQ ===== -->
+    <section class="faq" id="faq" aria-labelledby="faq-title">
+      <div class="faq-header reveal">
+        <h2 id="faq-title" class="section-heading">שאלות ותשובות</h2>
+      </div>
+
+      <div class="faq-list reveal">
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-a-1" id="faq-q-1">
+            <span>כמה זמן לוקח פרויקט?</span>
+            <span class="faq-toggle" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <line class="t-h" x1="2" y1="9" x2="16" y2="9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                <line class="t-v" x1="9" y1="2" x2="9" y2="16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </button>
+          <div class="faq-a" id="faq-a-1" role="region" aria-labelledby="faq-q-1">
+            <div class="faq-a-inner">
+              <p class="faq-a-text">רוב הפרויקטים לוקחים בין שישה לשנים-עשר שבועות מהתחלה ועד השקה. לוח הזמנים תלוי בהיקף ובמורכבות. אנחנו נותנים לכם לוח זמנים ברור בהתחלה כדי שלא יהיו הפתעות.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-a-2" id="faq-q-2">
+            <span>האם אתם מציעים תמיכה מתמשכת?</span>
+            <span class="faq-toggle" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <line class="t-h" x1="2" y1="9" x2="16" y2="9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                <line class="t-v" x1="9" y1="2" x2="9" y2="16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </button>
+          <div class="faq-a" id="faq-a-2" role="region" aria-labelledby="faq-q-2">
+            <div class="faq-a-inner">
+              <p class="faq-a-text">כן. לאחר ההשקה אנחנו יכולים לטפל בעדכונים, תחזוקה ושיפורים. לקוחות רבים נשארים איתנו כדי להמשיך ולפתח את האתר ככל שהעסק שלהם גדל.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-a-3" id="faq-q-3">
+            <span>מהי פילוסופיית העיצוב שלכם?</span>
+            <span class="faq-toggle" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <line class="t-h" x1="2" y1="9" x2="16" y2="9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                <line class="t-v" x1="9" y1="2" x2="9" y2="16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </button>
+          <div class="faq-a" id="faq-a-3" role="region" aria-labelledby="faq-q-3">
+            <div class="faq-a-inner">
+              <p class="faq-a-text">אנחנו מאמינים בפשטות. בלי אלמנטים מיותרים, בלי טרנדים שחולפים — רק עיצוב כן ששירת את המשתמשים ואת העסק שלכם. פונקציה קודמת לכל.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-a-4" id="faq-q-4">
+            <span>האם אתם יכולים לעבוד עם התקציב שלי?</span>
+            <span class="faq-toggle" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <line class="t-h" x1="2" y1="9" x2="16" y2="9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                <line class="t-v" x1="9" y1="2" x2="9" y2="16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </button>
+          <div class="faq-a" id="faq-a-4" role="region" aria-labelledby="faq-q-4">
+            <div class="faq-a-inner">
+              <p class="faq-a-text">אנחנו עובדים עם תקציבים שונים ומוצאים פתרונות שמתאימים. אנחנו כנים לגבי מה שאפשר בכל רמת תקציב. בואו נדבר על מה שאתם צריכים ומה שאתם יכולים להשקיע.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false" aria-controls="faq-a-5" id="faq-q-5">
+            <span>איך אתם מטפלים בשינויים ותיקונים?</span>
+            <span class="faq-toggle" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <line class="t-h" x1="2" y1="9" x2="16" y2="9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                <line class="t-v" x1="9" y1="2" x2="9" y2="16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </button>
+          <div class="faq-a" id="faq-a-5" role="region" aria-labelledby="faq-q-5">
+            <div class="faq-a-inner">
+              <p class="faq-a-text">שינויים הם חלק מהתהליך. בונים פנימה זמן לפידבק ולתיקונים בכל שלב של עיצוב ופיתוח. אנחנו רוצים שתהיו מרוצים מהתוצאה הסופית.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-cta reveal">
+        <h3>עדיין יש שאלות?</h3>
+        <p>צרו קשר ובואו נדבר על הפרויקט שלכם.</p>
+        <a href="#contact" class="btn btn--outline">צור קשר</a>
+      </div>
+    </section>
+
+    <!-- ===== CONTACT — hero-style WebGL section ===== -->
+    <section class="contact-hero" id="contact" aria-labelledby="contact-title">
+      <!-- WebGL scene (same Unicorn Studio project as hero) -->
+      <div class="contact-scene" data-us-project="ZuSNX1OqU0vaLaqRHNZE" aria-hidden="true"></div>
+      <!-- Legibility overlay — darkens corners for text -->
+      <div class="contact-overlay" aria-hidden="true"></div>
+
+      <!-- BERLLA wordmark bottom-left — decorative duplicate of hero brand mark -->
+      <div class="contact-brand" aria-hidden="true">BERLLA</div>
+
+      <!-- Right-anchored content stack -->
+      <div class="contact-content">
+        <div class="contact-intro">
+          <h2 id="contact-title" class="contact-headline">בואו נדבר</h2>
+          <p class="contact-sub">פרויקט בראש? שאלה לפני שמתחילים? נשמח לשמוע. מענה תוך 24 שעות.</p>
+
+          <a href="https://wa.me/972500000000" target="_blank" rel="noopener" class="contact-whatsapp" aria-label="פתחו צ'אט WhatsApp עם BERLLA">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            <span>שלחו ב-WhatsApp</span>
+          </a>
+        </div>
+
+        <form class="contact-form" id="contactForm" novalidate>
+          <div class="fld">
+            <label for="cf-name">שם מלא <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="cf-name" name="name" autocomplete="name" required aria-required="true" placeholder="ישראל ישראלי">
+          </div>
+          <div class="fld">
+            <label for="cf-email">אימייל <span class="req" aria-hidden="true">*</span></label>
+            <input type="email" id="cf-email" name="email" autocomplete="email" required aria-required="true" placeholder="you@example.com">
+          </div>
+          <div class="fld">
+            <label for="cf-message">ההודעה שלכם <span class="req" aria-hidden="true">*</span></label>
+            <textarea id="cf-message" name="message" required aria-required="true" placeholder="ספרו לנו מה אתם רוצים לבנות..."></textarea>
+          </div>
+
+          <label class="contact-consent">
+            <input type="checkbox" id="cf-consent" name="consent" required aria-required="true">
+            <span>קראתי ואני מאשר/ת את <a href="#privacy">מדיניות הפרטיות</a> של BERLLA, ומסכים/ה לשימוש בפרטים שלי לצורך מענה לפנייה זו בלבד.</span>
+          </label>
+
+          <button type="submit" class="contact-submit">שלחו הודעה</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-cta">
+          <h2>בואו נבנה משהו יחד</h2>
+          <p>פנו אל BERLLA והתחילו את הפרויקט הבא שלכם איתנו היום.</p>
+          <div class="footer-cta-actions">
+            <a href="#contact" class="btn footer-primary">צור קשר</a>
+            <a href="#" class="btn btn--on-dark">עקבו</a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <h5>ניווט</h5>
+            <ul>
+              <li><a href="#">בית</a></li>
+              <li><a href="#about">אודות</a></li>
+              <li><a href="#portfolio">עבודות</a></li>
+              <li><a href="#process">תהליך</a></li>
+              <li><a href="#">ביקורות</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h5>חיבור</h5>
+            <ul>
+              <li><a href="#faq">שאלות</a></li>
+              <li><a href="#">Instagram</a></li>
+              <li><a href="#">LinkedIn</a></li>
+              <li><a href="#">Twitter</a></li>
+              <li><a href="mailto:hello@berlla.com">Email</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-mid">
+        <div class="footer-logo">BERLLA</div>
+        <div class="footer-socials-mid" aria-hidden="true">
+          <span class="footer-social-circle"></span>
+          <span class="footer-social-circle"></span>
+          <span class="footer-social-circle"></span>
+          <span class="footer-social-circle"></span>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2025 BERLLA. כל הזכויות שמורות.</div>
+        <div class="footer-socials">
+          <a href="#" aria-label="פייסבוק">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg>
+          </a>
+          <a href="#" aria-label="אינסטגרם">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.897 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.897-.422-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg>
+          </a>
+          <a href="#" aria-label="X (טוויטר)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="#" aria-label="לינקדאין">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a href="#" aria-label="יוטיוב">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Custom hero cursor element — positioned + scaled by GSAP -->
+  <div class="hero-cursor" aria-hidden="true"></div>
+
+  <!-- Unicorn Studio SDK — loads on first paint, auto-inits the hero-scene container.
+       The SDK attaches its own mouse listener to the container — no extra wiring needed. -->
+  <script>!function(){var u=window.UnicornStudio;if(u&&u.init){if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",function(){u.init()})}else{u.init()}}else{window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.1.9/dist/unicornStudio.umd.js",i.onload=function(){if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",function(){UnicornStudio.init()})}else{UnicornStudio.init()}},(document.head||document.body).appendChild(i)}}();</script>
+
+  <!-- GSAP + ScrollTrigger for the custom hero cursor -->
+  <script src="https://unpkg.com/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://unpkg.com/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script>
+    /* Smooth custom cursor — scoped to .hero only via ScrollTrigger.observe target */
+    (function () {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const cursor = document.querySelector('.hero-cursor');
+      const hero = document.querySelector('.hero');
+      if (!cursor || !hero || !window.gsap) return;
+
+      gsap.ticker.lagSmoothing(0);
+      gsap.set(cursor, { xPercent: -50, yPercent: -50, scale: 0 });
+
+      // Pre-configured quickTo tweens for smooth cursor tracking
+      const xTo = gsap.quickTo(cursor, "x", { duration: 0.5, ease: "quart.out" });
+      const yTo = gsap.quickTo(cursor, "y", { duration: 0.5, ease: "quart.out" });
+
+      // Track mouse globally — even when cursor is invisible. This means when the
+      // cursor scales back in after scroll, it's already at the right place.
+      // No snap-on-enter, no chase-to-position.
+      window.addEventListener('pointermove', (e) => {
+        xTo(e.clientX);
+        yTo(e.clientY);
+      });
+
+      // Hero hover controls visibility only — position is handled globally above
+      hero.addEventListener('pointerenter', () => {
+        gsap.to(cursor, { scale: 1, duration: 0.5, ease: "quart.out" });
+      });
+      hero.addEventListener('pointerleave', () => {
+        gsap.to(cursor, { scale: 0, duration: 0.3, ease: "quart.out" });
+      });
+    })();
+  </script>
+
+  <!-- Plan B: the .hero-scene is position:fixed in CSS, so the browser keeps
+       it pinned to the viewport atomically (no scroll-event → transform race,
+       no 1-frame desync stripe at the hero's edge). All this JS does is hide
+       the scene once .hero has scrolled out of view — otherwise the fixed
+       scene would sit on top of every section below the hero.
+       Scroll listener (not IntersectionObserver) because IO callbacks can
+       lag ~100ms on fast scroll; a pure boolean visibility toggle has at
+       most 1-frame lag and no stripe artifact since position isn't moving. -->
+  <script>
+    (function toggleSceneOutsideHero() {
+      const hero = document.querySelector('.hero');
+      const scene = document.querySelector('.hero-scene');
+      if (!hero || !scene) return;
+
+      function update() {
+        const rect = hero.getBoundingClientRect();
+        const inView = rect.bottom > 0 && rect.top < window.innerHeight;
+        scene.style.visibility = inView ? 'visible' : 'hidden';
+      }
+
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update, { passive: true });
+      update();
+    })();
+  </script>
+
+  <!-- Fade the scene in only once the SDK has injected its <canvas> and had
+       a frame to render. Without this, the scene pops in abruptly the moment
+       the SDK finishes initialising, on top of the hero's burgundy fallback —
+       visible as a hard color flash. The CSS keeps .hero-scene at opacity:0
+       until we add .is-loaded, which transitions it to 1 over 500ms.
+       3s safety timeout ensures we never leave the scene invisible if the
+       canvas never appears (CDN down, SDK error, etc.) — the burgundy
+       fallback still looks reasonable on its own. -->
+  <script>
+    (function fadeSceneInWhenReady() {
+      const scene = document.querySelector('.hero-scene');
+      if (!scene) return;
+
+      let done = false;
+      function markLoaded() {
+        if (done) return;
+        done = true;
+        scene.classList.add('is-loaded');
+        observer.disconnect();
+        clearTimeout(safety);
+      }
+
+      // Two RAFs after canvas insertion — first schedules the WebGL first
+      // paint, second lets us fade in after that paint has landed.
+      function readyAfterPaint() {
+        requestAnimationFrame(() => requestAnimationFrame(markLoaded));
+      }
+
+      const observer = new MutationObserver(() => {
+        if (scene.querySelector('canvas')) readyAfterPaint();
+      });
+      observer.observe(scene, { childList: true, subtree: true });
+
+      // Fast path: canvas may already be there if the SDK was cached
+      if (scene.querySelector('canvas')) readyAfterPaint();
+
+      // Safety net: never leave the scene invisible
+      const safety = setTimeout(markLoaded, 3000);
+    })();
+  </script>
+
+  <!-- Make mouse-reentry feel continuous from the SDK's perspective.
+       When the cursor leaves the document (e.g. to the Windows taskbar) we
+       remember WHERE it left ("departure"). When it returns somewhere else,
+       we run a RAF loop that streams synthetic mousemove events along an
+       eased path from departure → current mouse position over DURATION_MS.
+       During that window we BLOCK real mousemove events from reaching the
+       SDK (capture-phase stopImmediatePropagation on window) so the real
+       events don't race against our synthetic ones and snap the shader.
+       Result: the SDK sees what looks like a continuous mouse motion from
+       the old position to the new, instead of a teleport. Synthetic events
+       (isTrusted=false) pass through the blocker; real ones (isTrusted=true)
+       get filtered during interpolation only.
+
+       Only mousemove is intercepted — the .hero-cursor dot uses pointermove,
+       so it's unaffected. -->
+  <script>
+    (function smoothSceneMouseOnReentry() {
+      const scene = document.querySelector('.hero-scene');
+      if (!scene) return;
+
+      const DURATION_MS = 500;
+      let lastMouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+      let departureMouse = null;
+      let isInterpolating = false;
+      let rafId = null;
+
+      // Capture-phase on window — fires before any SDK listener down the tree.
+      // Tracks the real mouse position, and blocks real mousemoves from the
+      // SDK only while we're interpolating. Synthetic events are isTrusted=false
+      // so they pass this gate untouched and reach the SDK normally.
+      window.addEventListener('mousemove', (e) => {
+        if (!e.isTrusted) return;
+        lastMouse.x = e.clientX;
+        lastMouse.y = e.clientY;
+        if (isInterpolating) e.stopImmediatePropagation();
+      }, true);
+
+      function dispatchSynthetic(x, y) {
+        const ev = new MouseEvent('mousemove', {
+          clientX: x,
+          clientY: y,
+          bubbles: true,
+          cancelable: true,
+          view: window
+        });
+        scene.dispatchEvent(ev);
+        document.dispatchEvent(ev);
+      }
+
+      // easeInOutQuad — symmetric, no overshoot
+      function ease(t) { return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; }
+
+      document.addEventListener('mouseleave', () => {
+        // If an interpolation is still running (fast in/out), kill it and
+        // treat the current position as the new departure point
+        if (rafId !== null) cancelAnimationFrame(rafId);
+        isInterpolating = false;
+        rafId = null;
+        departureMouse = { x: lastMouse.x, y: lastMouse.y };
+      });
+
+      document.addEventListener('mouseenter', () => {
+        if (!departureMouse) return;
+        if (rafId !== null) cancelAnimationFrame(rafId);
+
+        const fromX = departureMouse.x;
+        const fromY = departureMouse.y;
+        const startTime = performance.now();
+        isInterpolating = true;
+
+        function tick(now) {
+          const t = Math.min((now - startTime) / DURATION_MS, 1);
+          const eased = ease(t);
+          // Chase the real mouse's current position — it may still be moving
+          // while we interpolate. lastMouse updates via the capture listener above.
+          const toX = lastMouse.x;
+          const toY = lastMouse.y;
+          dispatchSynthetic(
+            fromX + (toX - fromX) * eased,
+            fromY + (toY - fromY) * eased
+          );
+          if (t < 1) {
+            rafId = requestAnimationFrame(tick);
+          } else {
+            isInterpolating = false;
+            rafId = null;
+          }
+        }
+        rafId = requestAnimationFrame(tick);
+      });
+    })();
+  </script>
+
+  <script>
+    /* Scroll reveal — simple IntersectionObserver */
+    (function () {
+      if (!('IntersectionObserver' in window)) {
+        document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+        return;
+      }
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+      document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    })();
+  </script>
+
+  <script>
+    /* Process section fade-in. JS adds .fade-init synchronously to hide the
+       scroller, then IntersectionObserver adds .is-visible to fade it in
+       over 600ms when scrolled into view. Decoupled from default CSS so
+       the section stays visible if JS fails. */
+    (function () {
+      const target = document.querySelector('.process-scroller');
+      if (!target) return;
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      target.classList.add('fade-init');
+
+      const io = new IntersectionObserver((entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            target.classList.add('is-visible');
+            obs.disconnect();
+          }
+        });
+      }, { threshold: 0.1 });
+      io.observe(target);
+    })();
+
+    /* Pinned horizontal panel scroller — rauno.me homepage pattern.
+       Pinned for the duration of the track's horizontal overflow; while pinned,
+       scroll progress maps to track translateX. scrub: 0.5 adds spring-follow
+       lag. invalidateOnRefresh re-measures on resize.
+       Bails on small screens (CSS handles vertical fallback) and reduced motion. */
+    (function () {
+      if (!window.gsap || !window.ScrollTrigger) return;
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (matchMedia('(max-width: 960px)').matches) return;
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      const scroller = document.querySelector('.process-scroller');
+      const track = document.querySelector('[data-track]');
+      const panels = document.querySelectorAll('.process-panel');
+      const dots = document.querySelectorAll('.process-dot');
+      if (!scroller || !track || panels.length === 0) return;
+
+      ScrollTrigger.create({
+        trigger: scroller,
+        pin: true,
+        start: 'top top',
+        end: () => `+=${track.scrollWidth - window.innerWidth}`,
+        scrub: 0.5,
+        invalidateOnRefresh: true,
+        animation: gsap.to(track, {
+          x: () => -(track.scrollWidth - window.innerWidth),
+          ease: 'none',
+        }),
+        onUpdate: (self) => {
+          const activeIdx = Math.round(self.progress * (panels.length - 1));
+          dots.forEach((dot, i) => {
+            dot.classList.toggle('is-active', i === activeIdx);
+          });
+          if (self.progress > 0.02) {
+            scroller.classList.add('has-scrolled');
+          }
+        },
+      });
+
+      window.addEventListener('load', () => ScrollTrigger.refresh());
+    })();
+  </script>
+
+  <script>
+    /* FAQ accordion — animated open/close via grid-template-rows transition.
+       Custom button + region pattern (instead of native <details>) so the
+       opening can be smoothly animated. ARIA: aria-expanded on the trigger,
+       aria-controls pointing to a region with aria-labelledby back to it. */
+    (function () {
+      const items = document.querySelectorAll('.faq-item');
+      items.forEach(item => {
+        const btn = item.querySelector('.faq-q');
+        if (!btn) return;
+        btn.addEventListener('click', () => {
+          const open = item.classList.toggle('is-open');
+          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+      });
+    })();
+  </script>
+
+  <!-- ===== Contact section JS — WebGL fade-in, mouse re-entry, form submit ===== -->
+  <script>
+    /* Fade the contact scene in once SDK has injected its <canvas>. Mirrors
+       fadeSceneInWhenReady for the hero. 3s safety timeout in case canvas
+       never appears (CDN down, SDK error) — burgundy fallback still shows. */
+    (function fadeContactSceneInWhenReady() {
+      const scene = document.querySelector('.contact-scene');
+      if (!scene) return;
+
+      let done = false;
+      function markLoaded() {
+        if (done) return;
+        done = true;
+        scene.classList.add('is-loaded');
+        observer.disconnect();
+        clearTimeout(safety);
+      }
+      function readyAfterPaint() {
+        requestAnimationFrame(() => requestAnimationFrame(markLoaded));
+      }
+
+      const observer = new MutationObserver(() => {
+        if (scene.querySelector('canvas')) readyAfterPaint();
+      });
+      observer.observe(scene, { childList: true, subtree: true });
+
+      if (scene.querySelector('canvas')) readyAfterPaint();
+      const safety = setTimeout(markLoaded, 3000);
+    })();
+
+    /* Mouse re-entry smoothing for the contact scene — same pattern as the
+       hero's smoothSceneMouseOnReentry. When cursor leaves the document
+       (taskbar, other window) we save where it left; on return, a RAF loop
+       streams synthetic mousemoves along an eased path from departure →
+       current position over 500ms, blocking real mousemoves during that
+       window so the SDK sees continuous motion instead of a teleport. */
+    (function smoothContactSceneMouseOnReentry() {
+      const scene = document.querySelector('.contact-scene');
+      if (!scene) return;
+
+      const DURATION_MS = 500;
+      let lastMouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+      let departureMouse = null;
+      let isInterpolating = false;
+      let rafId = null;
+
+      window.addEventListener('mousemove', (e) => {
+        if (!e.isTrusted) return;
+        lastMouse.x = e.clientX;
+        lastMouse.y = e.clientY;
+        if (isInterpolating) e.stopImmediatePropagation();
+      }, true);
+
+      function dispatchSynthetic(x, y) {
+        const ev = new MouseEvent('mousemove', {
+          clientX: x,
+          clientY: y,
+          bubbles: true,
+          cancelable: true,
+          view: window
+        });
+        scene.dispatchEvent(ev);
+        document.dispatchEvent(ev);
+      }
+      function ease(t) { return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; }
+
+      document.addEventListener('mouseleave', () => {
+        if (rafId !== null) cancelAnimationFrame(rafId);
+        isInterpolating = false;
+        rafId = null;
+        departureMouse = { x: lastMouse.x, y: lastMouse.y };
+      });
+
+      document.addEventListener('mouseenter', () => {
+        if (!departureMouse) return;
+        if (rafId !== null) cancelAnimationFrame(rafId);
+
+        const fromX = departureMouse.x;
+        const fromY = departureMouse.y;
+        const startTime = performance.now();
+        isInterpolating = true;
+
+        function tick(now) {
+          const t = Math.min((now - startTime) / DURATION_MS, 1);
+          const eased = ease(t);
+          const toX = lastMouse.x;
+          const toY = lastMouse.y;
+          dispatchSynthetic(
+            fromX + (toX - fromX) * eased,
+            fromY + (toY - fromY) * eased
+          );
+          if (t < 1) {
+            rafId = requestAnimationFrame(tick);
+          } else {
+            isInterpolating = false;
+            rafId = null;
+          }
+        }
+        rafId = requestAnimationFrame(tick);
+      });
+    })();
+
+    /* Contact form submit — placeholder. Wire to a real backend (Formspree,
+       EmailJS, custom serverless) before launch. For now: native validation,
+       prevent default, acknowledge to user. */
+    (function () {
+      const form = document.getElementById('contactForm');
+      if (!form) return;
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+        const submitBtn = form.querySelector('.contact-submit');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'נשלח...';
+
+        // TODO: replace with real submission (Formspree example):
+        // fetch('https://formspree.io/f/YOUR_ID', {
+        //   method: 'POST', body: new FormData(form),
+        //   headers: { Accept: 'application/json' }
+        // }).then(...)
+
+        setTimeout(() => {
+          alert('הטופס מוכן (preview mode — לא מחובר לבקאנד).');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'שלחו הודעה';
+        }, 600);
+      });
+    })();
+  </script>
+</body>
+</html>
