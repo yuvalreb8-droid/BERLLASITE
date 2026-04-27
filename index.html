@@ -1740,13 +1740,15 @@
       </div>
     </section>
 
-    <!-- ===== CONTACT — hero-style section, NO WebGL =====
-         Originally had a Unicorn Studio scene matching the hero's, but two
-         simultaneous WebGL canvases doubled GPU cost across the page. The
-         radial burgundy gradient + corner darken overlay alone provide enough
-         "branded warmth" — the hero section already establishes the WebGL
-         vibe; repeating it here was visual luxury, not perf-affordable. -->
+    <!-- ===== CONTACT — hero-style section with WebGL =====
+         Same Unicorn Studio scene as .hero, but gated by visibility:
+         toggleContactScene below sets display:none until the user scrolls
+         within ~1 viewport height of the section, so the two scenes never
+         run simultaneously and total GPU cost stays at "one scene at a time". -->
     <section class="contact-hero" id="contact" aria-labelledby="contact-title">
+      <!-- WebGL scene — same project as .hero-scene. Activated only when the
+           contact section is approaching the viewport (see toggleContactScene). -->
+      <div class="contact-scene" data-us-project="ZuSNX1OqU0vaLaqRHNZE" data-us-dpi="1" aria-hidden="true"></div>
       <!-- Legibility overlay — darkens corners for text -->
       <div class="contact-overlay" aria-hidden="true"></div>
 
@@ -1983,6 +1985,61 @@
       if (scene.querySelector('canvas')) readyAfterPaint();
 
       // Safety net: never leave the scene invisible
+      const safety = setTimeout(markLoaded, 3000);
+    })();
+  </script>
+
+  <!-- Same visibility toggle for the contact scene, with a 1-viewport-height
+       warmup buffer: the scene activates when the user is one scroll away
+       from the section, so the SDK has time to render and fade in before the
+       section is actually visible. Hero and contact never both run because
+       hero deactivates the moment it scrolls out of view, while contact
+       only activates once it's within ~1vh of entering — there's no overlap. -->
+  <script>
+    (function toggleContactScene() {
+      const contact = document.querySelector('.contact-hero');
+      const scene = document.querySelector('.contact-scene');
+      if (!contact || !scene) return;
+
+      function update() {
+        const rect = contact.getBoundingClientRect();
+        const buffer = window.innerHeight;
+        const inView = rect.bottom > -buffer && rect.top < window.innerHeight + buffer;
+        scene.style.display = inView ? '' : 'none';
+      }
+
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update, { passive: true });
+      update();
+    })();
+  </script>
+
+  <!-- Same fade-in handshake as the hero, scoped to .contact-scene. -->
+  <script>
+    (function fadeContactSceneInWhenReady() {
+      const scene = document.querySelector('.contact-scene');
+      if (!scene) return;
+
+      let done = false;
+      function markLoaded() {
+        if (done) return;
+        done = true;
+        scene.classList.add('is-loaded');
+        observer.disconnect();
+        clearTimeout(safety);
+      }
+
+      function readyAfterPaint() {
+        requestAnimationFrame(() => requestAnimationFrame(markLoaded));
+      }
+
+      const observer = new MutationObserver(() => {
+        if (scene.querySelector('canvas')) readyAfterPaint();
+      });
+      observer.observe(scene, { childList: true, subtree: true });
+
+      if (scene.querySelector('canvas')) readyAfterPaint();
+
       const safety = setTimeout(markLoaded, 3000);
     })();
   </script>
