@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>BERLLA — דפי נחיתה שממירים</title>
+
+  <!-- Preconnect: fonts + WebGL SDK so resources start downloading immediately. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+  <!-- Google Fonts — Hebrew + Latin in one request. Same family list as the
+       legacy build so visual rhythm is preserved when sections are ported. -->
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@500;700&family=Bowlby+One&family=Frank+Ruhl+Libre:wght@400;500;700&family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400&family=Heebo:wght@300;400;500;600;700;800;900&family=Miriam+Libre:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       BERLLA — mobile-first foundation
+       Designed at 375px first. clamp() lets every value scale up
+       to 2560px without media queries. Add @media ONLY when the
+       layout visibly breaks at a specific width — never preemptively.
+       ============================================================ */
+
+    /* ===== Design tokens =====
+       Floors  = 375px (mobile) values.
+       Caps    = ~2560px values.
+       Body text floor: 16px (WCAG; also prevents iOS auto-zoom on inputs).
+       Touch targets:   44px (WCAG 2.5.5, iOS HIG, IS 5568). */
+    :root {
+      /* --- Color palette --- */
+      --color-bg:           #F4F0EB;   /* warm cream — primary section bg */
+      --color-bg-alt:       #EFEAE3;   /* alternating panels (process) */
+      --color-text:         #0E1629;   /* deep navy — body text */
+      --color-text-on-dark: #F4F0EB;   /* cream over navy/burgundy */
+      --color-accent:       #8B2E4A;   /* burgundy — link hover, focus, eyebrows */
+      --color-dark:         #0E1629;   /* deep navy — buttons, footer bg */
+      --color-hero-1:       #7a2440;   /* hero radial: outer */
+      --color-hero-2:       #3a0f1d;   /* hero radial: mid */
+      --color-hero-3:       #120408;   /* hero radial: center */
+      --color-portfolio-1:  #e8e4df;   /* portfolio placeholder gradient start */
+      --color-portfolio-2:  #d4d0ca;   /* portfolio placeholder gradient end */
+      --color-overlay:      rgba(14, 22, 41, 0.55);
+
+      /* --- Spacing scale (8pt base) ---
+         For component-internal spacing. Section-level uses --space-section-*. */
+      --space-1: 0.25rem;   /*  4px */
+      --space-2: 0.5rem;    /*  8px */
+      --space-3: 0.75rem;   /* 12px */
+      --space-4: 1rem;      /* 16px */
+      --space-5: 1.5rem;    /* 24px */
+      --space-6: 2rem;      /* 32px */
+      --space-7: 3rem;      /* 48px */
+      --space-8: 4rem;      /* 64px */
+
+      /* --- Section padding (fluid) ---
+         Vertical:    48px on mobile → 144px on huge screens.
+         Horizontal:  20px floor protects mobile edges; 64px cap stops content
+                      kissing the viewport on 4K displays. */
+      --space-section-y: clamp(3rem, 5vw + 1.25rem, 9rem);
+      --space-section-x: clamp(1.25rem, 4vw, 4rem);
+
+      /* --- Container ---
+         Max-width 1600px. Mobile uses padding-inline instead of constraining width. */
+      --container-max: 100rem;
+
+      /* --- Type scale (mobile-first floors at 16px+) ---
+         Body floor never drops below 16px (WCAG + iOS auto-zoom guard).
+         Caps reached around 1920–2560px. */
+      --text-xs:      clamp(0.75rem,  0.7rem  + 0.2vw, 0.875rem);    /* 12 → 14, captions/meta */
+      --text-sm:      clamp(0.875rem, 0.825rem + 0.2vw, 1rem);       /* 14 → 16 */
+      --text-base:    clamp(1rem,     0.95rem + 0.2vw, 1.125rem);    /* 16 → 18, body */
+      --text-lg:      clamp(1.125rem, 1.05rem + 0.4vw, 1.375rem);    /* 18 → 22 */
+      --text-xl:      clamp(1.375rem, 1.2rem  + 0.8vw, 1.875rem);    /* 22 → 30 */
+      --text-2xl:     clamp(1.75rem,  1.4rem  + 1.5vw, 2.5rem);      /* 28 → 40 */
+      --text-3xl:     clamp(2.25rem,  1.6rem  + 3vw,   3.5rem);      /* 36 → 56 */
+      --text-4xl:     clamp(2.75rem,  1.8rem  + 5vw,   5rem);        /* 44 → 80 */
+      --text-display: clamp(3.6rem,   2rem    + 12vw,  16rem);       /* 57.6 → 256 — hero brand only */
+
+      /* --- Line heights --- */
+      --lh-tight: 1.1;
+      --lh-snug:  1.3;
+      --lh-base:  1.6;
+
+      /* --- Font families --- */
+      --font-body:    'Heebo', system-ui, -apple-system, sans-serif;
+      --font-heading: 'Fraunces', 'Heebo', serif;
+      --font-display: 'Bowlby One', 'Fraunces', serif;
+      --font-ui:      'Assistant', 'Heebo', system-ui, sans-serif;
+
+      /* --- Touch targets ---
+         WCAG 2.5.5 + iOS HIG: 44×44 CSS px minimum hit area. */
+      --target-min: 44px;
+
+      /* --- Border radii --- */
+      --radius-sm:   0.5rem;
+      --radius-md:   1rem;
+      --radius-lg:   2rem;
+      --radius-pill: 999px;
+
+      /* --- Motion ---
+         --ease matches GSAP "quart.out" so CSS transitions feel like the JS animations. */
+      --ease:     cubic-bezier(0.22, 1, 0.36, 1);
+      --dur-fast: 200ms;
+      --dur-base: 400ms;
+      --dur-slow: 800ms;
+
+      /* --- Z-index scale (gaps left for inserts) --- */
+      --z-base:    0;
+      --z-section: 1;     /* sections AFTER hero need this — WebGL stacking constraint */
+      --z-nav:     50;
+      --z-cursor:  60;
+      --z-modal:   100;
+    }
+
+    /* ===== Modern reset ===== */
+    *, *::before, *::after { box-sizing: border-box; }
+    * { margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    html:focus-within { scroll-behavior: smooth; }
+    body {
+      min-height: 100svh;            /* dynamic viewport unit — survives iOS URL bar */
+      line-height: var(--lh-base);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    img, picture, svg, video, canvas {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+    input, button, textarea, select { font: inherit; color: inherit; }
+    button { background: none; border: 0; cursor: pointer; }
+    a       { color: inherit; text-decoration: none; }
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 700;
+      line-height: var(--lh-tight);
+      letter-spacing: -0.01em;
+    }
+    ul, ol { list-style: none; }
+
+    /* ===== Body baseline ===== */
+    body {
+      font-family: var(--font-body);
+      font-size:   var(--text-base);
+      color:       var(--color-text);
+      background:  var(--color-bg);
+    }
+
+    /* ===== Selection ===== */
+    ::selection {
+      background: var(--color-accent);
+      color:      var(--color-text-on-dark);
+    }
+
+    /* ===== Focus =====
+       Keyboard-only focus ring (never on mouse click). WCAG 2.4.7 — non-negotiable. */
+    :focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    /* ===== Skip link — first focusable element ===== */
+    .skip-link {
+      position: absolute;
+      top: 0;
+      right: 0;                                       /* RTL — anchor to top-right */
+      padding: var(--space-3) var(--space-5);
+      background: var(--color-dark);
+      color: var(--color-text-on-dark);
+      font-weight: 700;
+      z-index: var(--z-modal);
+      transform: translateY(-100%);
+      transition: transform var(--dur-fast) var(--ease);
+    }
+    .skip-link:focus-visible { transform: translateY(0); }
+
+    /* ===== Container ===== */
+    .container {
+      width: 100%;
+      max-width: var(--container-max);
+      margin-inline: auto;
+      padding-inline: var(--space-section-x);
+    }
+
+    /* ===== Touch target enforcement =====
+         Standalone interactives get 44×44 CSS px minimum.
+         Inline links inside body text are exempt (see below). */
+    a, button, [role="button"], input[type="checkbox"], input[type="radio"], summary {
+      min-height: var(--target-min);
+      min-width:  var(--target-min);
+    }
+    p a, li a, blockquote a, .skip-link {
+      min-height: 0;
+      min-width:  0;
+    }
+
+    /* ===== Reduced motion =====
+         WCAG 2.3.3 + IS 5568. Kill non-essential animation/parallax for users
+         who opt out. Transforms are kept (so layout-positioned elements stay put)
+         but their animation/transition durations collapse to ~0. */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* ============================================================
+       SECTIONS — to be appended in Step 4, mobile-first, in order:
+       1. Hero          5. Testimonials
+       2. About         6. FAQ
+       3. Process       7. Contact
+       4. Portfolio     8. Footer        9. Navbar (last)
+       ============================================================ */
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">דלג לתוכן הראשי</a>
+
+  <!-- ===== NAV — added last (Step 4 #9) ===== -->
+
+  <main id="main">
+    <!-- Sections will be appended mobile-first, one at a time, in Step 4. -->
+  </main>
+
+  <!-- Scripts: appended per-section in Step 4 only when each section needs them
+       (GSAP + ScrollTrigger for hero cursor / process scroller; Unicorn Studio
+       SDK for hero + contact WebGL). Foundation stays JS-free. -->
+</body>
+</html>
