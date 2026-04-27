@@ -210,11 +210,166 @@
     }
 
     /* ============================================================
-       SECTIONS — to be appended in Step 4, mobile-first, in order:
-       1. Hero          5. Testimonials
-       2. About         6. FAQ
-       3. Process       7. Contact
-       4. Portfolio     8. Footer        9. Navbar (last)
+       Section 1 — HERO
+       ------------------------------------------------------------
+       Layout strategy:
+         Mobile (default, 375–767px): vertical flex stack, content
+           grounded at the bottom of the viewport. Tagline above brand.
+         Desktop (≥48em / 768px): diagonal anchors — tagline absolute
+           top-right, brand absolute bottom-left. Matches legacy visual.
+
+       WebGL constraints (see feedback_berlla_hero_scene_plan_b.md):
+         - .hero-scene is position:fixed so it persists across hero's
+           full vertical extent without re-painting on scroll.
+         - .hero AND any ancestor must NOT use transform/filter/
+           perspective/will-change (those break position:fixed).
+         - DPR is clamped to 1 BEFORE the SDK loads (see scripts).
+       ============================================================ */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100svh;                 /* dynamic viewport — survives iOS URL bar collapse */
+      min-height: 36rem;              /* 576px floor — guards landscape iPhone */
+      overflow: hidden;                /* clips Unicorn Studio "Made with" watermark */
+      color: var(--color-text-on-dark);
+      background:
+        radial-gradient(
+          ellipse at center,
+          var(--color-hero-1) 0%,
+          var(--color-hero-2) 55%,
+          var(--color-hero-3) 100%
+        );
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: var(--space-section-x);
+      padding-block-end: var(--space-7);
+      cursor: none;                    /* desktop: hidden by .hero-cursor; touch overrides below */
+    }
+    /* Touch devices have no GSAP cursor — restore native cursor so taps still feel right */
+    @media (hover: none) {
+      .hero { cursor: auto; }
+    }
+
+    /* WebGL canvas container. Fixed positioning is essential — see notes above. */
+    .hero-scene {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity var(--dur-slow) var(--ease);
+    }
+    .hero-scene.is-loaded { opacity: 1; }
+
+    /* Stretch the SDK's canvas slightly so its bottom-right watermark sits below
+       hero's overflow:hidden cutoff. See feedback_unicorn_studio_patterns.md. */
+    .hero-scene > canvas {
+      width:  100% !important;
+      height: 110% !important;
+    }
+    /* Belt-and-braces: hide the watermark element directly if SDK exposes it */
+    a[href*="unicorn.studio"],
+    a[href*="unicornstudio"],
+    [class*="unicornStudio-badge"] {
+      display: none !important;
+    }
+
+    /* Soft vignette over scene for legibility of overlaid text */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 50% 60%, transparent 30%, rgba(0, 0, 0, 0.35) 100%);
+    }
+
+    /* Tagline block (mobile-first): full-width-ish, reads above the brand */
+    .hero-desc {
+      position: relative;
+      z-index: 2;
+      font-family: var(--font-ui);
+      font-size: var(--text-base);
+      line-height: var(--lh-base);
+      font-weight: 500;
+      max-width: 32rem;
+      margin-block-end: var(--space-5);
+      color: var(--color-text-on-dark);
+    }
+    .hero-desc strong {
+      display: block;
+      font-family: var(--font-body);
+      font-size: var(--text-xl);
+      font-weight: 800;
+      line-height: var(--lh-tight);
+      margin-block-end: var(--space-3);
+      color: var(--color-text-on-dark);
+    }
+
+    /* Brand mark — Bowlby One, oversized, anchors the composition */
+    .hero-brand {
+      position: relative;
+      z-index: 2;
+      font-family: var(--font-display);
+      font-weight: 400;                /* Bowlby One ships as a single weight */
+      font-size: var(--text-display);
+      line-height: 0.85;
+      letter-spacing: -0.04em;
+      color: var(--color-text-on-dark);
+    }
+
+    /* Custom hero cursor — desktop pointer devices only.
+       GSAP positions it after first mousemove; initial scale(0) keeps it invisible.
+       Hidden when reduced-motion or no hover capability. */
+    .hero-cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 1.5rem;
+      height: 1.5rem;
+      background: var(--color-text-on-dark);
+      border-radius: var(--radius-pill);
+      pointer-events: none;
+      z-index: var(--z-cursor);
+      mix-blend-mode: difference;
+      transform: translate3d(-50%, -50%, 0) scale(0);
+    }
+    @media (hover: none), (prefers-reduced-motion: reduce) {
+      .hero-cursor { display: none; }
+    }
+
+    /* ----- Hero — desktop layout (≥48em) -----
+       The single @media this section needs. Mobile stack feels right up to ~720px;
+       past that the screen has room for the legacy diagonal composition. */
+    @media (min-width: 48em) {
+      .hero {
+        display: block;
+        padding: 0;
+      }
+      .hero-desc {
+        position: absolute;
+        top: var(--space-7);
+        right: var(--space-7);
+        z-index: 2;
+        max-width: min(40rem, 50vw);
+        margin-block-end: 0;
+      }
+      .hero-brand {
+        position: absolute;
+        bottom: var(--space-4);
+        left: var(--space-6);
+        z-index: 2;
+      }
+    }
+
+    /* ============================================================
+       SECTIONS PENDING — Step 4, in order:
+       ✅ 1. Hero
+       ⏳ 2. About       6. FAQ
+          3. Process    7. Contact
+          4. Portfolio  8. Footer
+          5. Testimonials  9. Navbar (last)
        ============================================================ */
   </style>
 </head>
@@ -224,11 +379,138 @@
   <!-- ===== NAV — added last (Step 4 #9) ===== -->
 
   <main id="main">
-    <!-- Sections will be appended mobile-first, one at a time, in Step 4. -->
+    <!-- ===== HERO ===== -->
+    <section class="hero" aria-label="מבוא">
+      <!-- WebGL scene (Unicorn Studio) — decorative, pointer-events disabled.
+           data-us-dpi="1" caps the SDK pixelRatio at 1× regardless of device.
+           On Retina/4K this is ~4× fewer pixels per frame — big GPU savings
+           with imperceptible visual difference for soft, blurred scenes. -->
+      <div class="hero-scene" data-us-project="ZuSNX1OqU0vaLaqRHNZE" data-us-dpi="1" aria-hidden="true"></div>
+
+      <!-- Vignette overlay — keeps overlaid copy legible across any scene state -->
+      <div class="hero-overlay" aria-hidden="true"></div>
+
+      <!-- Tagline block (visible top-right on desktop, stacked above brand on mobile) -->
+      <div class="hero-desc">
+        <strong>מפסלים דפי נחיתה.</strong>
+        <p>אל תפקירו את הרושם הראשוני שלכם בידיים של סוכנויות גנריות.<br>אנחנו משלבים אסתטיקה עם פסיכולוגיה צרכנית כדי לגרום לאנשים להפוך ללקוחות.</p>
+      </div>
+
+      <!-- Brand wordmark — bottom-left on desktop, base of stack on mobile -->
+      <h1 class="hero-brand">BERLLA</h1>
+    </section>
   </main>
 
-  <!-- Scripts: appended per-section in Step 4 only when each section needs them
-       (GSAP + ScrollTrigger for hero cursor / process scroller; Unicorn Studio
-       SDK for hero + contact WebGL). Foundation stays JS-free. -->
+  <!-- Custom hero cursor element — positioned + scaled by GSAP. Sibling of <main>
+       so it isn't constrained by section stacking contexts. -->
+  <div class="hero-cursor" aria-hidden="true"></div>
+
+  <!-- ============================================================
+       Section 1 — Hero JS
+       Order matters: DPR cap MUST run before the SDK loads.
+       ============================================================ -->
+
+  <!-- 1. Force devicePixelRatio to 1 BEFORE the Unicorn Studio SDK loads.
+          On HiDPI displays, 2× DPR = 4× pixels per frame; clamping cuts GPU
+          work to 25% with no visible change for soft/blurred scenes. -->
+  <script>
+    Object.defineProperty(window, 'devicePixelRatio', {
+      value: 1, writable: false, configurable: true
+    });
+  </script>
+
+  <!-- 2. Unicorn Studio SDK — loads on first paint, auto-inits the .hero-scene
+          container via its data-us-project attribute. SDK attaches its own mouse
+          listener to the scene, so no extra wiring needed here. -->
+  <script>!function(){var u=window.UnicornStudio;if(u&&u.init){if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",function(){u.init()})}else{u.init()}}else{window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.1.9/dist/unicornStudio.umd.js",i.onload=function(){if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",function(){UnicornStudio.init()})}else{UnicornStudio.init()}},(document.head||document.body).appendChild(i)}}();</script>
+
+  <!-- 3. Fade-in handshake — the scene starts at opacity 0 (see CSS). When the
+          SDK injects its <canvas> we wait two RAFs (so the GPU has actually
+          painted) then add .is-loaded to fade it in. 3s safety timeout. -->
+  <script>
+    (function fadeHeroSceneInWhenReady() {
+      const scene = document.querySelector('.hero-scene');
+      if (!scene) return;
+
+      let done = false;
+      function markLoaded() {
+        if (done) return;
+        done = true;
+        scene.classList.add('is-loaded');
+        observer.disconnect();
+        clearTimeout(safety);
+      }
+      function readyAfterPaint() {
+        requestAnimationFrame(() => requestAnimationFrame(markLoaded));
+      }
+
+      const observer = new MutationObserver(() => {
+        if (scene.querySelector('canvas')) readyAfterPaint();
+      });
+      observer.observe(scene, { childList: true, subtree: true });
+
+      if (scene.querySelector('canvas')) readyAfterPaint();
+
+      const safety = setTimeout(markLoaded, 3000);
+    })();
+  </script>
+
+  <!-- 4. Visibility gate — set display:none on the scene once .hero scrolls out
+          of view. Scroll listener (not IntersectionObserver) because IO callbacks
+          can lag, leaving the WebGL running offscreen for a few frames. -->
+  <script>
+    (function toggleHeroScene() {
+      const hero  = document.querySelector('.hero');
+      const scene = document.querySelector('.hero-scene');
+      if (!hero || !scene) return;
+
+      function update() {
+        const rect = hero.getBoundingClientRect();
+        const inView = rect.bottom > 0 && rect.top < window.innerHeight;
+        scene.style.display = inView ? '' : 'none';
+      }
+
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update, { passive: true });
+      update();
+    })();
+  </script>
+
+  <!-- 5. GSAP + ScrollTrigger — used here for the hero cursor only;
+          ScrollTrigger lands here so the process section (added later) can use it
+          without re-loading the lib. -->
+  <script src="https://unpkg.com/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://unpkg.com/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+  <!-- 6. Custom hero cursor — desktop pointer devices only, scoped to .hero.
+          xTo/yTo are gsap.quickTo lerps that smooth the cursor's follow. -->
+  <script>
+    (function () {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (matchMedia('(hover: none)').matches) return;
+      if (!window.gsap) return;
+
+      const cursor = document.querySelector('.hero-cursor');
+      const hero   = document.querySelector('.hero');
+      if (!cursor || !hero) return;
+
+      gsap.ticker.lagSmoothing(0);
+      gsap.set(cursor, { xPercent: -50, yPercent: -50, scale: 0 });
+
+      const xTo = gsap.quickTo(cursor, "x", { duration: 0.5, ease: "quart.out" });
+      const yTo = gsap.quickTo(cursor, "y", { duration: 0.5, ease: "quart.out" });
+
+      hero.addEventListener('mousemove', (e) => {
+        xTo(e.clientX);
+        yTo(e.clientY);
+      });
+      hero.addEventListener('mouseenter', () => {
+        gsap.to(cursor, { scale: 1, duration: 0.5, ease: "quart.out" });
+      });
+      hero.addEventListener('mouseleave', () => {
+        gsap.to(cursor, { scale: 0, duration: 0.3, ease: "quart.out" });
+      });
+    })();
+  </script>
 </body>
 </html>
