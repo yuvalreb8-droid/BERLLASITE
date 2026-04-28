@@ -268,10 +268,22 @@
 
     /* WebGL canvas container. Fixed positioning is essential — see notes above.
        overflow:hidden clips anything the SDK injects (watermark badge etc.)
-       that extends beyond the canvas's visible top edge. */
+       that extends beyond the canvas's visible top edge.
+       Why explicit height:100lvh instead of inset:0: iOS Safari with
+       viewport-fit=cover treats `inset:0` on position:fixed as the dynamic
+       viewport (dvh) bounds — meaning when the URL bar is showing, .hero-scene
+       only covers the visible page area and stops before the URL bar zone.
+       Body bg burgundy then leaks through the URL bar zone as a "bar". Forcing
+       height:100lvh makes the scene physically cover the full screen including
+       behind the URL bar, so WebGL paints there too. 100vh fallback is
+       equivalent to lvh on iOS Safari for browsers that don't recognize lvh. */
     .hero-scene {
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100vh;                 /* fallback */
+      height: 100lvh;                /* preferred — full screen incl. URL bar zone */
       z-index: 0;
       pointer-events: none;
       opacity: 0;
