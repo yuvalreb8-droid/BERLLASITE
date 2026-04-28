@@ -273,11 +273,19 @@
       left:   calc(-1 * env(safe-area-inset-left,   0px));
       right:  calc(-1 * env(safe-area-inset-right,  0px));
       background: hotpink;             /* DEBUG — visible only behind canvas */
+      outline: 5px solid blue !important; /* DEBUG — actual rendered bounds */
       z-index: 0;
       pointer-events: none;
       opacity: 1;                      /* DEBUG — was 0 with fade-in; force visible */
       overflow: hidden;
       transition: opacity var(--dur-slow) var(--ease);
+    }
+    /* DEBUG — canvas inside .hero-scene */
+    .hero-scene > canvas {
+      width:  100% !important;
+      height: 120% !important;
+      outline: 3px solid red !important;
+      background: orange !important;
     }
     .hero-scene.is-loaded { opacity: 1; }
 
