@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <!-- iOS Safari tints its status bar + URL bar to this color (instead of
-       defaulting to the body background). #7a2440 = --color-hero-1, the outer
-       ring of the hero radial gradient — closest match to what's at the page
-       edges. Without this, the status bar leaks the cream body bg. -->
-  <meta name="theme-color" content="#7a2440">
+  <!-- theme-color set to `transparent` so iOS Safari renders its URL bar chrome
+       as a translucent backdrop instead of an opaque tint. The page content
+       (WebGL hero scene) shows through the URL bar zone — no solid burgundy
+       strip below the search bar covering the bottom of the hero.
+       Status bar at top is unaffected by this — it's always content-show-through
+       on iOS, and body bg burgundy fills any iOS-chrome leak there. -->
+  <meta name="theme-color" content="transparent">
   <title>BERLLA — דפי נחיתה שממירים</title>
 
   <!-- Preconnect: fonts + WebGL SDK so resources start downloading immediately. -->
@@ -300,7 +302,12 @@
       display: none !important;
     }
 
-    /* Soft vignette over scene for legibility of overlaid text */
+    /* Soft vignette over scene for legibility of overlaid text.
+       The mask fades the overlay to transparent at its bottom edge — without
+       it, there's a visible "seam" where the darkened hero meets the brighter
+       hero-extension area below it (the extension has no overlay). The mask
+       keeps the vignette where it's needed (around the text) while making the
+       transition into the extension area imperceptible. */
     .hero-overlay {
       position: absolute;
       inset: 0;
@@ -308,6 +315,14 @@
       pointer-events: none;
       background:
         radial-gradient(ellipse at 50% 60%, transparent 30%, rgba(0, 0, 0, 0.35) 100%);
+      -webkit-mask-image: linear-gradient(to bottom,
+        black 0,
+        black 70%,
+        transparent 100%);
+      mask-image: linear-gradient(to bottom,
+        black 0,
+        black 70%,
+        transparent 100%);
     }
 
     /* Tagline block — anchored top-right at all sizes (diagonal composition).
