@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <!-- iOS Safari tints its status bar + URL bar to this color (instead of
+       defaulting to the body background). #7a2440 = --color-hero-1, the outer
+       ring of the hero radial gradient — closest match to what's at the page
+       edges. Without this, the status bar leaks the cream body bg. -->
+  <meta name="theme-color" content="#7a2440">
   <title>BERLLA — דפי נחיתה שממירים</title>
 
   <!-- Preconnect: fonts + WebGL SDK so resources start downloading immediately. -->
@@ -139,12 +144,17 @@
     }
     ul, ol { list-style: none; }
 
-    /* ===== Body baseline ===== */
+    /* ===== Body baseline =====
+       Body bg is burgundy (matches the hero radial's outer ring) instead of
+       cream, so any iOS Safari chrome zone (status bar area, URL bar overscroll,
+       sub-pixel gaps between sections) shows burgundy instead of leaking the
+       page bg. Each section sets its own background explicitly — about, process,
+       portfolio, etc. cover body bg with their own colors as the user scrolls. */
     body {
       font-family: var(--font-body);
       font-size:   var(--text-base);
       color:       var(--color-text);
-      background:  var(--color-bg);
+      background:  var(--color-hero-1);
     }
 
     /* ===== Selection ===== */
@@ -226,9 +236,17 @@
          - DPR is clamped to 1 BEFORE the SDK loads (see scripts).
        ============================================================ */
     .hero {
-      position: relative;
+      position: relative;             /* positioning context for absolutely-positioned children */
       width: 100%;
-      height: 100svh;                 /* dynamic viewport — survives iOS URL bar collapse */
+      /* Two-line viewport sizing trick:
+           Line 1 (svh fallback) — older browsers without dvh support get the
+                                   "small" viewport height: stable, never shifts.
+           Line 2 (dvh preferred) — modern browsers use dynamic viewport height
+                                    so the hero auto-resizes with iOS Safari's
+                                    URL bar. Without this, when URL bar shrinks
+                                    on scroll, the about section peeks below. */
+      height: 100svh;
+      height: 100dvh;
       min-height: 36rem;              /* 576px floor — guards landscape iPhone */
       overflow: hidden;                /* clips Unicorn Studio "Made with" watermark */
       color: var(--color-text-on-dark);
@@ -239,11 +257,6 @@
           var(--color-hero-2) 55%,
           var(--color-hero-3) 100%
         );
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: var(--space-section-x);
-      padding-block-end: var(--space-7);
       cursor: none;                    /* desktop: hidden by .hero-cursor; touch overrides below */
     }
     /* Touch devices have no GSAP cursor — restore native cursor so taps still feel right */
@@ -251,27 +264,39 @@
       .hero { cursor: auto; }
     }
 
-    /* WebGL canvas container. Fixed positioning is essential — see notes above. */
+    /* WebGL canvas container. Fixed positioning is essential — see notes above.
+       overflow:hidden clips anything the SDK injects (watermark badge etc.)
+       that extends beyond the canvas's visible top edge. */
     .hero-scene {
       position: fixed;
       inset: 0;
       z-index: 0;
       pointer-events: none;
       opacity: 0;
+      overflow: hidden;
       transition: opacity var(--dur-slow) var(--ease);
     }
     .hero-scene.is-loaded { opacity: 1; }
 
-    /* Stretch the SDK's canvas slightly so its bottom-right watermark sits below
-       hero's overflow:hidden cutoff. See feedback_unicorn_studio_patterns.md. */
+    /* Stretch the SDK's canvas so its watermark sits below the visible viewport.
+       Bumped to 120% (was 110%) — at narrow aspect ratios the badge sometimes
+       lands within the visible region with only 10% extra. See
+       feedback_unicorn_studio_patterns.md. */
     .hero-scene > canvas {
       width:  100% !important;
-      height: 110% !important;
+      height: 120% !important;
     }
-    /* Belt-and-braces: hide the watermark element directly if SDK exposes it */
+    /* Hide the SDK's watermark/badge regardless of which DOM pattern this
+       version of the SDK uses. The 2.1.x line has shipped at least three
+       different markers for it (an <a> link, a div with a class, and an
+       SVG inside an unmarked anchor) — these cover all of them. */
+    .hero-scene a,                              /* any anchor inside scene = watermark */
+    .hero-scene > div:not(:has(canvas)),        /* sibling div wrapper next to canvas */
     a[href*="unicorn.studio"],
     a[href*="unicornstudio"],
-    [class*="unicornStudio-badge"] {
+    [class*="unicornStudio"],
+    [class*="unicorn-studio"],
+    [class*="UnicornStudio"] {
       display: none !important;
     }
 
@@ -285,16 +310,19 @@
         radial-gradient(ellipse at 50% 60%, transparent 30%, rgba(0, 0, 0, 0.35) 100%);
     }
 
-    /* Tagline block (mobile-first): full-width-ish, reads above the brand */
+    /* Tagline block — anchored top-right at all sizes (diagonal composition).
+       The desktop @media below only widens the offsets and caps max-width to
+       half the viewport, so the brand at bottom-left has room to breathe. */
     .hero-desc {
-      position: relative;
+      position: absolute;
+      top: var(--space-7);
+      right: var(--space-section-x);
       z-index: 2;
       font-family: var(--font-ui);
       font-size: var(--text-base);
       line-height: var(--lh-base);
       font-weight: 500;
       max-width: 32rem;
-      margin-block-end: var(--space-5);
       color: var(--color-text-on-dark);
     }
     .hero-desc strong {
@@ -306,10 +334,30 @@
       margin-block-end: var(--space-3);
       color: var(--color-text-on-dark);
     }
+    /* Balance the wrapped lines so they end at similar widths instead of
+       leaving a short orphan line at the bottom.
+       ─────────────────────────────────────────────────────────────────
+       PRO TERM: "text balancing" / "balanced ragged" (typography term).
+       The CSS native solution is `text-wrap: balance` — the browser tries
+       multiple line-break combinations and picks the one with the most
+       even line lengths. Supported Chrome 114+, Safari 17.5+, Firefox 121+;
+       older browsers fall back to default wrapping. Operates per chunk
+       separated by <br>, so each of the two sentences gets balanced on
+       its own. Sister property `text-wrap: pretty` only fixes the last
+       line (better for long body copy where balance can look unnatural).
+       Pre-CSS solution was JS libraries — Adobe BalanceText, Twitter's
+       text-balancer — those are now obsolete on modern targets.
+       ───────────────────────────────────────────────────────────────── */
+    .hero-desc p {
+      text-wrap: balance;
+    }
 
-    /* Brand mark — Bowlby One, oversized, anchors the composition */
+    /* Brand mark — Bowlby One, oversized, anchored bottom-left at all sizes.
+       Pairs with .hero-desc top-right for the diagonal composition. */
     .hero-brand {
-      position: relative;
+      position: absolute;
+      bottom: var(--space-4);
+      left: var(--space-section-x);
       z-index: 2;
       font-family: var(--font-display);
       font-weight: 400;                /* Bowlby One ships as a single weight */
@@ -339,37 +387,302 @@
       .hero-cursor { display: none; }
     }
 
-    /* ----- Hero — desktop layout (≥48em) -----
-       The single @media this section needs. Mobile stack feels right up to ~720px;
-       past that the screen has room for the legacy diagonal composition. */
+    /* ----- Hero — desktop refinements (≥48em) -----
+       The diagonal layout itself runs at every width. On wider screens we
+       widen the side insets and cap the desc max-width so it doesn't sprawl
+       across the whole viewport — keeps the diagonal balanced when there's
+       room to spare. */
     @media (min-width: 48em) {
-      .hero {
-        display: block;
-        padding: 0;
-      }
       .hero-desc {
-        position: absolute;
         top: var(--space-7);
         right: var(--space-7);
-        z-index: 2;
         max-width: min(40rem, 50vw);
-        margin-block-end: 0;
       }
       .hero-brand {
-        position: absolute;
-        bottom: var(--space-4);
         left: var(--space-6);
-        z-index: 2;
       }
+    }
+
+    /* ============================================================
+       Post-hero stacking — shared across every section that follows.
+       The .hero-scene WebGL element is position:fixed and renders on
+       a layer above normal-flow content regardless of DOM order, so
+       without an explicit z-index these sections would get covered
+       by the scene as they scroll into view. position:relative +
+       z-index:1 puts each section in its own stacking context, one
+       level above the scene. Add new section classes here as they
+       come online during Step 4.
+       See: feedback_berlla_hero_scene_plan_b.md
+       ============================================================ */
+    .about,
+    .portfolio,
+    .testimonials,
+    .process,
+    .faq,
+    .contact-hero,
+    .footer {
+      position: relative;
+      z-index: var(--z-section);
+    }
+
+    /* ============================================================
+       Section 2 — ABOUT
+       ------------------------------------------------------------
+       Layout strategy:
+         Mobile (default, 375–959px): single-column vertical flow.
+           People stack (אלה, then יובל), then the offering block
+           (eyebrow → 3-paragraph intro → 4 pillars). Body text is
+           centered for marketing tone — long bios read fine
+           centered at this width.
+         ≥36em (576px): pillars become 2×2; people sub-grid goes
+           side-by-side. Page is still 1-column overall.
+         ≥60em (960px): top-level splits into two columns with a
+           thin centered divider — LEFT (people) / RIGHT (offering).
+           Inside the now-narrow LEFT half, people collapse back to
+           1-column so each blob+bio gets the full half-width.
+           Body text reverts to right-aligned at this width.
+         ≥75em (1200px): people regain side-by-side inside LEFT.
+       ============================================================ */
+    .about {
+      background: var(--color-bg);
+      padding: var(--space-section-y) var(--space-section-x);
+      width: 100%;
+    }
+
+    /* Top-level grid — 1-col on mobile, 2-col + divider at ≥60em */
+    .about-grid {
+      position: relative;
+      max-width: var(--container-max);
+      margin-inline: auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: clamp(2.75rem, 4vw + 1.5rem, 5rem);
+    }
+
+    /* Each column flows vertically. min-width:0 prevents grid bleed
+       when columns become narrow at the desktop split. */
+    .about-left,
+    .about-right {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+      min-width: 0;
+    }
+    .about-left  { color: var(--color-accent); }
+    .about-right { color: var(--color-text); }
+
+    /* Column headings — match each other for symmetry across the divider */
+    .about-heading,
+    .about-eyebrow {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: var(--text-2xl);
+      line-height: var(--lh-tight);
+      letter-spacing: 0;
+      text-align: center;
+    }
+    .about-heading { color: var(--color-accent); }
+    .about-eyebrow { color: var(--color-text); }
+
+    /* People sub-grid — 1-col on mobile (each person gets full row),
+       2-col from 36em+ (room for two blobs side-by-side). */
+    .about-people {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-7);
+    }
+
+    .about-person {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+    }
+
+    /* Avatar blob — organic shape via asymmetric border-radius, softly
+       morphing every 16s. Floor 10rem (160px) on tiny phones; cap 14rem
+       (224px) on huge screens. Each blob is its own composite layer
+       (overflow:hidden) so the morph stays cheap to repaint. */
+    .about-blob {
+      width:  clamp(10rem, 14vw + 6rem, 14rem);
+      height: clamp(10rem, 14vw + 6rem, 14rem);
+      border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      align-self: center;
+      animation: blobMorph 16s ease-in-out infinite alternate;
+      box-shadow: 0 2px 14px rgba(139, 46, 74, 0.12);
+    }
+    .about-blob img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: inherit;
+    }
+    /* Second person gets a different starting shape + reversed timing
+       so both blobs don't morph in lockstep — feels more alive. */
+    .about-person:nth-child(2) .about-blob {
+      border-radius: 45% 55% 35% 65% / 55% 40% 60% 45%;
+      animation-duration: 19s;
+      animation-direction: alternate-reverse;
+    }
+    @keyframes blobMorph {
+      0%   { border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%; }
+      100% { border-radius: 40% 60% 45% 55% / 60% 45% 55% 40%; }
+    }
+
+    .about-person h3 {
+      font-family: var(--font-ui);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      color: var(--color-accent);
+      margin-block-end: var(--space-3);
+      text-align: center;
+    }
+    .about-person p {
+      font-family: var(--font-ui);
+      font-size: var(--text-base);
+      font-weight: 500;
+      line-height: 1.65;
+      color: var(--color-accent);
+      opacity: 0.92;
+      text-align: center;            /* mobile — desktop overrides below */
+    }
+    .about-person p + p { margin-block-start: var(--space-2); }
+
+    /* Right column — what we do */
+    .about-intro {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      margin-block-end: var(--space-6);
+    }
+    .about-intro p {
+      font-family: var(--font-ui);
+      font-size: var(--text-lg);
+      font-weight: 500;
+      line-height: 1.7;
+      color: var(--color-text);
+      text-align: center;            /* mobile — desktop overrides below */
+    }
+    .about-intro .about-intro-lead {
+      font-size: var(--text-xl);
+      font-weight: 700;
+      line-height: var(--lh-snug);
+    }
+
+    /* Pillars — 1-col on tiny phones, 2×2 from ≥36em */
+    .about-pillars {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-5);
+    }
+    .about-pillar h3 {
+      font-family: var(--font-ui);
+      font-size: var(--text-lg);
+      font-weight: 700;
+      color: var(--color-text);
+      margin-block-end: var(--space-2);
+      text-align: center;            /* mobile — desktop overrides below */
+    }
+    .about-pillar p {
+      font-family: var(--font-ui);
+      font-size: var(--text-base);
+      font-weight: 500;
+      line-height: 1.65;
+      color: var(--color-text);
+      opacity: 0.92;
+      text-align: center;            /* mobile — desktop overrides below */
+    }
+
+    /* Reveal — opacity + 20px lift, kicked off by IntersectionObserver
+       at 12% visibility threshold (see scripts at bottom). Reduced-motion
+       handled globally + below. */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition:
+        opacity   var(--dur-slow) var(--ease),
+        transform var(--dur-slow) var(--ease);
+    }
+    .reveal.in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ----- About — breakpoints -----
+       36em (576px) — pillars 2×2, people side-by-side (still 1-col page)
+       60em (960px) — top-level 2-col split + center divider; body text
+                      reverts to right-align (centering was a mobile-only
+                      treatment for narrow-column readability)
+       75em (1200px) — people regain side-by-side inside the left half */
+
+    @media (min-width: 36em) {
+      .about-pillars {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: var(--space-6) var(--space-7);
+      }
+      .about-people {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-6);
+      }
+    }
+
+    @media (min-width: 60em) {
+      .about-grid {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: clamp(3rem, 6vw, 6rem);
+        direction: ltr;                /* visual LEFT/RIGHT under RTL parent */
+      }
+      .about-grid > * {
+        direction: rtl;                /* restore reading direction inside cols */
+      }
+      .about-grid::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 1px;
+        background: rgba(14, 22, 41, 0.12);
+        transform: translateX(-50%);
+        pointer-events: none;
+      }
+      /* Inside the now-narrow left half, people stack again so each
+         blob and bio gets the full half-column width. */
+      .about-people {
+        grid-template-columns: 1fr;
+        gap: var(--space-7);
+      }
+      /* Body text — back to right-aligned at desktop. Centering was a
+         mobile-only choice; section headings + names stay centered. */
+      .about-person p,
+      .about-intro p,
+      .about-pillar h3,
+      .about-pillar p {
+        text-align: right;
+      }
+    }
+
+    @media (min-width: 75em) {
+      .about-people {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-6);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .about-blob { animation: none; }
+      .reveal { opacity: 1; transform: none; transition: none; }
     }
 
     /* ============================================================
        SECTIONS PENDING — Step 4, in order:
        ✅ 1. Hero
-       ⏳ 2. About       6. FAQ
-          3. Process    7. Contact
-          4. Portfolio  8. Footer
-          5. Testimonials  9. Navbar (last)
+       ✅ 2. About
+       ⏳ 3. Process     7. Contact
+          4. Portfolio   8. Footer
+          5. Testimonials 9. Navbar (last)
+          6. FAQ
        ============================================================ */
   </style>
 </head>
@@ -398,6 +711,75 @@
 
       <!-- Brand wordmark — bottom-left on desktop, base of stack on mobile -->
       <h1 class="hero-brand">BERLLA</h1>
+    </section>
+
+    <!-- ===== ABOUT ===== -->
+    <section class="about" id="about" aria-labelledby="about-title">
+      <div class="about-grid">
+
+        <!-- LEFT: the people. .reveal class triggers fade+lift on scroll. -->
+        <div class="about-left reveal">
+          <h2 id="about-title" class="about-heading">מי אנחנו</h2>
+
+          <div class="about-people">
+            <div class="about-person">
+              <div class="about-blob">
+                <img src="img/ella.jpeg" alt="תמונה של אלה" loading="lazy" decoding="async">
+              </div>
+              <div>
+                <h3>אלה</h3>
+                <p>אני מתרגמת רעיונות לחוויה ויזואלית מדויקת.</p>
+                <p>אני יודעת לקחת מחשבה מופשטת, לדייק אותה, ולהפוך אותה למשהו ממשי.</p>
+                <p>אני אחראית על עיצוב חוויית המשתמש, הקופירייטינג והאנימציות — כל מה שגורם לאתר להרגיש חד, ברור ובעל נוכחות.</p>
+                <p>אני לא מתחברת לפתרונות גנריים. חשוב לי ליצור שפה עם אופי וטביעת אצבע אמיתית, כזו שמרגישה נכונה לעסק שמאחוריה.</p>
+              </div>
+            </div>
+
+            <div class="about-person">
+              <div class="about-blob">
+                <img src="img/yuval.jpeg" alt="תמונה של יובל" loading="lazy" decoding="async">
+              </div>
+              <div>
+                <h3>יובל</h3>
+                <p>אני אחראי על הקידוד, המהירות, הצד הטכני וה־SEO.</p>
+                <p>אני מתמקד במה שקורה מאחורי הקלעים — כל מה שגורם לאתר להרגיש מהיר, חלק, מדויק ויציב.</p>
+                <p>אני לא מאמין בקיצורי דרך. חשוב לי לבנות דברים נכון, עם חשיבה מסודרת ותשומת לב לפרטים הקטנים שבסוף עושים את כל ההבדל.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: what we do — eyebrow, intro, four pillars -->
+        <div class="about-right about-what reveal">
+          <div class="about-eyebrow">מה אנחנו עושים</div>
+
+          <div class="about-intro">
+            <p class="about-intro-lead">100% דפי נחיתה</p>
+            <p>אנחנו לא עושים סושיאל ולא מנהלים קמפיינים. בחרנו להתמחות בדבר אחד, ולעשות אותו נכון.</p>
+            <p>התפקיד של דף נחיתה הוא להיות איש המכירות החזק ביותר שלכם.</p>
+          </div>
+
+          <div class="about-pillars">
+            <div class="about-pillar">
+              <h3>מבנה</h3>
+              <p>אנחנו מאפיינים את המבנה של העמוד כדי להוביל את העין נכון ולשמור על זרימה ברורה.</p>
+            </div>
+            <div class="about-pillar">
+              <h3>מסר</h3>
+              <p>אנחנו מחדדים את המסר, כדי שהאנשים הנכונים יבינו מהר למה דווקא אתם.</p>
+            </div>
+            <div class="about-pillar">
+              <h3>חוויה</h3>
+              <p>אנחנו מעצבים את החוויה כך שהעמוד ירגיש ברור, מדויק, ונעים מהרגע הראשון.</p>
+            </div>
+            <div class="about-pillar">
+              <h3>ביצוע</h3>
+              <p>אנחנו מטפלים בכל מה שקורה מאחורי הקלעים, כדי שהעמוד יהיה מהיר, יציב, חלק ואמין.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </section>
   </main>
 
@@ -510,6 +892,32 @@
       hero.addEventListener('mouseleave', () => {
         gsap.to(cursor, { scale: 0, duration: 0.3, ease: "quart.out" });
       });
+    })();
+  </script>
+
+  <!-- ============================================================
+       Section 2 — About JS
+       ============================================================ -->
+
+  <!-- 7. Scroll reveal — adds .in to any .reveal element when 12% of it
+          is visible. Stops observing each element after the first reveal
+          (one-shot). Falls back to "reveal everything" if the browser
+          doesn't support IntersectionObserver. -->
+  <script>
+    (function () {
+      if (!('IntersectionObserver' in window)) {
+        document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+        return;
+      }
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+      document.querySelectorAll('.reveal').forEach(el => io.observe(el));
     })();
   </script>
 </body>
