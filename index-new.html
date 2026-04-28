@@ -250,7 +250,10 @@
       height: 100svh;
       height: 100dvh;
       min-height: 36rem;              /* 576px floor — guards landscape iPhone */
-      overflow: hidden;                /* clips Unicorn Studio "Made with" watermark */
+      /* overflow:hidden REMOVED so .hero::before / .hero::after pseudo-elements
+         can extend ABOVE and BELOW hero's box into the iOS safe-area zones.
+         The Unicorn Studio watermark is now clipped at the .hero-scene level
+         instead (see .hero-scene { overflow: hidden } below). */
       color: var(--color-text-on-dark);
       background:
         radial-gradient(
@@ -260,6 +263,37 @@
           var(--color-hero-3) 100%
         );
       cursor: none;                    /* desktop: hidden by .hero-cursor; touch overrides below */
+    }
+    /* Safe-area shim — extends the visual hero into iOS chrome zones.
+       Why this exists: position:fixed elements (.hero-scene) are clipped to
+       the safe-area bounds on iOS Safari, even with viewport-fit=cover and
+       negative env() offsets. So the WebGL doesn't paint into the status bar
+       zone or URL-bar zone. Without intervention, body bg burgundy leaks
+       through those zones as a flat-color "bar".
+       These pseudo-elements are POSITION:ABSOLUTE on .hero (not fixed),
+       which iOS DOES allow to extend past the safe-area boundary. They
+       paint --color-hero-3 (the radial gradient's darkest outer color)
+       into both zones, visually blending with where the WebGL gradient
+       is already darkest at hero's top/bottom edges.
+       z-index:0 puts them at the same layer as .hero-scene — both behind
+       the .hero-overlay (z:1) and .hero-brand (z:2). */
+    .hero::before,
+    .hero::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      background: var(--color-hero-3);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .hero::before {
+      top: calc(env(safe-area-inset-top, 0) * -1);
+      height: env(safe-area-inset-top, 0);
+    }
+    .hero::after {
+      bottom: calc(env(safe-area-inset-bottom, 0) * -1);
+      height: env(safe-area-inset-bottom, 0);
     }
     /* Touch devices have no GSAP cursor — restore native cursor so taps still feel right */
     @media (hover: none) {
