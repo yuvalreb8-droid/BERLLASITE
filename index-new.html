@@ -238,15 +238,12 @@
     .hero {
       position: relative;             /* positioning context for absolutely-positioned children */
       width: 100%;
-      /* Two-line viewport sizing trick:
-           Line 1 (svh fallback) — older browsers without dvh support get the
-                                   "small" viewport height: stable, never shifts.
-           Line 2 (dvh preferred) — modern browsers use dynamic viewport height
-                                    so the hero auto-resizes with iOS Safari's
-                                    URL bar. Without this, when URL bar shrinks
-                                    on scroll, the about section peeks below. */
-      height: 100svh;
-      height: 100dvh;
+      /* Use largest viewport height (lvh) so the hero is always sized for the
+         max possible viewport — when iOS URL bar is showing, the hero physically
+         extends below the visible bottom edge, which guarantees the about section
+         can never peek through (it starts well below the URL bar). Stable size,
+         no layout shift when URL bar transitions in/out. */
+      height: 100lvh;
       min-height: 36rem;              /* 576px floor — guards landscape iPhone */
       overflow: hidden;                /* clips Unicorn Studio "Made with" watermark */
       color: var(--color-text-on-dark);
@@ -353,10 +350,15 @@
     }
 
     /* Brand mark — Bowlby One, oversized, anchored bottom-left at all sizes.
-       Pairs with .hero-desc top-right for the diagonal composition. */
+       Pairs with .hero-desc top-right for the diagonal composition.
+       position:fixed (not absolute) because the hero is now 100lvh — at iOS
+       Safari with URL bar showing, hero extends below visible viewport, so a
+       hero-anchored BERLLA would hide behind the URL bar. Fixed pins it to
+       the viewport corner regardless of hero size. env(safe-area-inset-bottom)
+       lifts it above the iPhone home indicator + bottom URL bar. */
     .hero-brand {
-      position: absolute;
-      bottom: var(--space-4);
+      position: fixed;
+      bottom: max(var(--space-4), env(safe-area-inset-bottom));
       left: var(--space-section-x);
       z-index: 2;
       font-family: var(--font-display);
