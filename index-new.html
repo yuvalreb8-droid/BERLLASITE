@@ -403,6 +403,21 @@
       }
     }
 
+    /* ----- Hero extension — invisible buffer between hero and about -----
+       The hero element is 100dvh (matches viewport). When iOS Safari's URL
+       bar transitions, dvh briefly lags behind the actual visible height,
+       letting the about section's cream bg peek at the bottom of the viewport.
+       This buffer adds 8rem of empty space in document flow between hero and
+       about, so even during URL-bar transitions, about starts well below the
+       visible bottom. The buffer has NO background — because .hero-scene is
+       position:fixed (covers viewport), the WebGL animation stays visible
+       across the buffer area. The user sees the WebGL "extending downward"
+       past where the hero element ends, instead of cream. */
+    .hero-extension {
+      height: 8rem;
+      pointer-events: none;
+    }
+
     /* ============================================================
        Post-hero stacking — shared across every section that follows.
        The .hero-scene WebGL element is position:fixed and renders on
@@ -713,6 +728,12 @@
       <h1 class="hero-brand">BERLLA</h1>
     </section>
 
+    <!-- Invisible buffer: pushes about down by 8rem so the WebGL scene
+         (position:fixed across viewport) stays visible past the hero in
+         the area where the about cream bg would otherwise peek through
+         during iOS URL-bar transitions. See .hero-extension CSS comment. -->
+    <div class="hero-extension" aria-hidden="true"></div>
+
     <!-- ===== ABOUT ===== -->
     <section class="about" id="about" aria-labelledby="about-title">
       <div class="about-grid">
@@ -843,12 +864,18 @@
   <script>
     (function toggleHeroScene() {
       const hero  = document.querySelector('.hero');
+      const ext   = document.querySelector('.hero-extension');
       const scene = document.querySelector('.hero-scene');
       if (!hero || !scene) return;
 
       function update() {
-        const rect = hero.getBoundingClientRect();
-        const inView = rect.bottom > 0 && rect.top < window.innerHeight;
+        const heroRect = hero.getBoundingClientRect();
+        // Treat hero + extension as a single "hero zone" — keep scene visible
+        // while either is in viewport. Without this, the scene would blank out
+        // the moment .hero scrolled out, even though .hero-extension is still
+        // visible and meant to show the WebGL.
+        const zoneBottom = ext ? ext.getBoundingClientRect().bottom : heroRect.bottom;
+        const inView = zoneBottom > 0 && heroRect.top < window.innerHeight;
         scene.style.display = inView ? '' : 'none';
       }
 
