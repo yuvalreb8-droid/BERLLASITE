@@ -250,10 +250,7 @@
       height: 100svh;
       height: 100dvh;
       min-height: 36rem;              /* 576px floor — guards landscape iPhone */
-      /* overflow:hidden REMOVED so .hero::before / .hero::after pseudo-elements
-         can extend ABOVE and BELOW hero's box into the iOS safe-area zones.
-         The Unicorn Studio watermark is now clipped at the .hero-scene level
-         instead (see .hero-scene { overflow: hidden } below). */
+      overflow: hidden;                /* clips Unicorn Studio "Made with" watermark */
       color: var(--color-text-on-dark);
       background:
         radial-gradient(
@@ -264,37 +261,6 @@
         );
       cursor: none;                    /* desktop: hidden by .hero-cursor; touch overrides below */
     }
-    /* Safe-area shim — extends the visual hero into iOS chrome zones.
-       Why this exists: position:fixed elements (.hero-scene) are clipped to
-       the safe-area bounds on iOS Safari, even with viewport-fit=cover and
-       negative env() offsets. So the WebGL doesn't paint into the status bar
-       zone or URL-bar zone. Without intervention, body bg burgundy leaks
-       through those zones as a flat-color "bar".
-       These pseudo-elements are POSITION:ABSOLUTE on .hero (not fixed),
-       which iOS DOES allow to extend past the safe-area boundary. They
-       paint --color-hero-3 (the radial gradient's darkest outer color)
-       into both zones, visually blending with where the WebGL gradient
-       is already darkest at hero's top/bottom edges.
-       z-index:0 puts them at the same layer as .hero-scene — both behind
-       the .hero-overlay (z:1) and .hero-brand (z:2). */
-    .hero::before,
-    .hero::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      background: var(--color-hero-3);
-      z-index: 0;
-      pointer-events: none;
-    }
-    .hero::before {
-      top: calc(env(safe-area-inset-top, 0) * -1);
-      height: env(safe-area-inset-top, 0);
-    }
-    .hero::after {
-      bottom: calc(env(safe-area-inset-bottom, 0) * -1);
-      height: env(safe-area-inset-bottom, 0);
-    }
     /* Touch devices have no GSAP cursor — restore native cursor so taps still feel right */
     @media (hover: none) {
       .hero { cursor: auto; }
@@ -303,22 +269,18 @@
     /* WebGL canvas container. Fixed positioning is essential — see notes above.
        overflow:hidden clips anything the SDK injects (watermark badge etc.)
        that extends beyond the canvas's visible top edge.
-       SAFE-AREA EXTENSION: iOS Safari constrains position:fixed elements to
-       safe-area bounds even with viewport-fit=cover and explicit 100lvh.
-       Negative env() offsets force .hero-scene to extend INTO the status bar
-       zone (top) and URL bar / home indicator zone (bottom), so WebGL paints
-       all the way to the screen edges instead of body bg burgundy leaking
-       through. The plain `top: 0` / `bottom: 0` declarations are fallbacks
-       for browsers that don't parse calc()+env() — they get ordinary
-       inset-0 behavior. */
+       Negative env(safe-area-inset-*) on all four sides combined with
+       viewport-fit=cover (in <meta name="viewport">) stretches the fixed
+       container by exactly the safe-area amounts, so it physically reaches
+       past the safe-area boundaries to the device's actual screen edges.
+       Result: WebGL paints into the status bar zone, the URL bar zone, and
+       any side notch zones (rotated landscape iPhone) — no body bg leak. */
     .hero-scene {
       position: fixed;
-      top: 0;
-      top: calc(env(safe-area-inset-top, 0) * -1);
-      left: 0;
-      right: 0;
-      bottom: 0;
-      bottom: calc(env(safe-area-inset-bottom, 0) * -1);
+      top:    calc(-1 * env(safe-area-inset-top,    0px));
+      bottom: calc(-1 * env(safe-area-inset-bottom, 0px));
+      left:   calc(-1 * env(safe-area-inset-left,   0px));
+      right:  calc(-1 * env(safe-area-inset-right,  0px));
       z-index: 0;
       pointer-events: none;
       opacity: 0;
