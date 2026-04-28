@@ -147,16 +147,13 @@
     ul, ol { list-style: none; }
 
     /* ===== Body baseline =====
-       Body bg is burgundy (matches the hero radial's outer ring) instead of
-       cream, so any iOS Safari chrome zone (status bar area, URL bar overscroll,
-       sub-pixel gaps between sections) shows burgundy instead of leaking the
-       page bg. Each section sets its own background explicitly — about, process,
-       portfolio, etc. cover body bg with their own colors as the user scrolls. */
+       TEMPORARY DEBUG: body bg = LIME GREEN to identify which element is
+       leaking through into safe-area zones. Will revert after diagnostic. */
     body {
       font-family: var(--font-body);
       font-size:   var(--text-base);
       color:       var(--color-text);
-      background:  var(--color-hero-1);
+      background:  lime;                            /* DEBUG */
     }
 
     /* ===== Selection ===== */
@@ -252,13 +249,7 @@
       min-height: 36rem;              /* 576px floor — guards landscape iPhone */
       overflow: hidden;                /* clips Unicorn Studio "Made with" watermark */
       color: var(--color-text-on-dark);
-      background:
-        radial-gradient(
-          ellipse at center,
-          var(--color-hero-1) 0%,
-          var(--color-hero-2) 55%,
-          var(--color-hero-3) 100%
-        );
+      background: cyan;                /* DEBUG — was radial gradient */
       cursor: none;                    /* desktop: hidden by .hero-cursor; touch overrides below */
     }
     /* Touch devices have no GSAP cursor — restore native cursor so taps still feel right */
@@ -281,9 +272,10 @@
       bottom: calc(-1 * env(safe-area-inset-bottom, 0px));
       left:   calc(-1 * env(safe-area-inset-left,   0px));
       right:  calc(-1 * env(safe-area-inset-right,  0px));
+      background: hotpink;             /* DEBUG — visible only behind canvas */
       z-index: 0;
       pointer-events: none;
-      opacity: 0;
+      opacity: 1;                      /* DEBUG — was 0 with fade-in; force visible */
       overflow: hidden;
       transition: opacity var(--dur-slow) var(--ease);
     }
