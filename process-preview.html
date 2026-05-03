@@ -38,17 +38,14 @@
 
     /* ===== Reset + base ===== */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    /* html bg = footer navy. iOS Safari rubber-band overscroll past the
-       bottom of the page now paints navy instead of leaking the body's
-       burgundy gradient below the footer. */
-    html { scroll-behavior: smooth; background-color: #0E1629; }
+    html { scroll-behavior: smooth; }
     body {
       font-family: 'Heebo', system-ui, -apple-system, sans-serif;
       color: #0E1629;
       /* Layered burgundy gradient: top 25% solid #7a2440, fading through
-         #3a0f1d to navy #0E1629 — ends at the footer color so any
-         sub-pixel section gap near the footer reads navy, not burgundy. */
-      background: linear-gradient(to bottom, #7a2440 0%, #7a2440 25%, #3a0f1d 60%, #0E1629 100%);
+         #3a0f1d to #120408 — same palette the .hero radial-gradient uses
+         as its WebGL fallback. Sub-pixel section gaps show this color. */
+      background: linear-gradient(to bottom, #7a2440 0%, #7a2440 25%, #3a0f1d 60%, #120408 100%);
       line-height: 1.6;
       font-weight: 400;
       -webkit-font-smoothing: antialiased;
@@ -305,19 +302,17 @@
          1rem floor. The +0.5rem adds breathing room above the inset. */
       bottom: max(1rem, env(safe-area-inset-bottom) + 0.5rem);
       left: 2rem;
+      font-family: 'Bowlby One', 'Fraunces', serif;
+      font-weight: 400; /* Bowlby One ships as a single weight */
+      /* Cap raised from 12rem to 16rem so the brand keeps growing past ~1450px viewports. */
+      font-size: clamp(3.6rem, 13.2vw, 16rem);
+      line-height: 0.85;
+      letter-spacing: -0.04em;
+      color: #F4F0EB;
       margin: 0;
+      direction: ltr;
       z-index: 2;
       pointer-events: none; /* decorative — let mouse reach scene below */
-      /* Image-based wordmark. Width controls visual size; height intrinsic
-         from the image's 3.65:1 aspect ratio. line-height:0 prevents the
-         h1 wrapper from adding line-box padding around the inline image. */
-      width: clamp(15rem, 55vw, 64rem);
-      line-height: 0;
-    }
-    .hero-brand img {
-      display: block;
-      width: 100%;
-      height: auto;
     }
 
     /* ===== About ===== */
@@ -1085,18 +1080,15 @@
       width: 100%;
       max-width: 380px;
       aspect-ratio: 4 / 5;
+      background: linear-gradient(135deg, #e8e4df, #d4d0ca);
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
+      color: rgba(14, 22, 41, 0.25);
       justify-self: start;
     }
-    .process-panel-img picture,
-    .process-panel-img img:not(.process-panel-num) {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
+    .process-panel-img svg { width: 64px; height: 64px; }
 
     /* Step dots — fixed at bottom of pinned area, JS toggles .is-active.
        0.42 alpha gets ~3:1 contrast vs cream — meets WCAG 1.4.11. */
@@ -1276,8 +1268,8 @@
 
     /* ===== Contact — hero-style WebGL section =====
        Full viewport. Radial burgundy fallback under a Unicorn Studio scene
-       (same project as .hero-scene). BERLLA wordmark bottom-left, contact
-       headline image top-right, pills stack right-anchored. */
+       (same project as .hero-scene). BERLLA bottom-left, intro+form stacked
+       on the right. */
     .contact-hero {
       position: relative;
       min-height: 100vh;
@@ -1288,16 +1280,15 @@
           #120408 100%);
       color: #F4F0EB;
       overflow: hidden;
-      /* Top padding = headline top offset + image height + breathing gap. */
-      padding: 9rem 4rem 2rem;
+      padding: 4rem 4rem 2rem;
       isolation: isolate;
     }
 
     /* WebGL scene — height: 120% extends the canvas below the section's
        visible area so the SDK's free-tier "Made with unicorn.studio"
        watermark (rendered at the bottom) falls in the overflow:hidden
-       clipped zone. NO pointer-events: none — the SDK needs mouse events
-       on the canvas. */
+       clipped zone. Same trick as .hero-scene's `height: 115vh`. NO
+       pointer-events: none — the SDK needs mouse events on the canvas. */
     .contact-scene {
       position: absolute;
       top: 0;
@@ -1328,25 +1319,25 @@
         radial-gradient(ellipse 45% 40% at top right, rgba(14, 22, 41, 0.6), transparent 65%);
     }
 
-    /* BERLLA wordmark — bottom-left of the section. Small left offset so
-       the leftmost letter (the B's stroke) isn't kissed by the viewport edge. */
+    /* BERLLA wordmark bottom-left — duplicates the hero brand mark; aria-hidden
+       since it's decorative in the contact context. */
     .contact-brand {
       position: absolute;
-      bottom: 0;
-      left: 1rem;
-      width: clamp(11.25rem, 41vw, 48rem);
+      bottom: 0.75rem;
+      left: 1.5rem;
+      font-family: 'Bowlby One', 'Fraunces', serif;
+      font-weight: 400;
+      font-size: clamp(2.5rem, 8vw, 6rem);
+      line-height: 0.85;
+      letter-spacing: -0.04em;
+      color: #F4F0EB;
+      direction: ltr;
       z-index: 2;
       pointer-events: none;
       user-select: none;
     }
-    .contact-brand img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
 
-    /* Right-anchored content stack — section padding-top pushes it below the
-       absolute headline at top-right. */
+    /* Right-anchored stack: intro (headline + sub + WhatsApp) above form. */
     .contact-content {
       position: relative;
       z-index: 3;
@@ -1354,24 +1345,18 @@
       margin-left: auto;
       margin-right: 0;
     }
-    .contact-intro { margin-bottom: 0.5rem; }
-
-    /* Headline pinned absolute to the section's top-right corner —
-       mirrors the BERLLA wordmark pinned bottom-left. Image-based. */
-    .contact-headline {
-      position: absolute;
-      top: 1.5rem;
-      right: 1.5rem;
-      z-index: 2;
-      margin: 0;
-      line-height: 0;
-      width: min(22rem, calc(100% - 3rem));
-      pointer-events: none;
+    .contact-intro {
+      margin-bottom: 0.5rem;
     }
-    .contact-headline img {
-      display: block;
-      width: 100%;
-      height: auto;
+
+    .contact-headline {
+      font-family: 'Miriam Libre', 'Heebo', sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      color: #F4F0EB;
+      margin-bottom: 0.375rem;
     }
     .contact-sub {
       font-family: 'Miriam Libre', 'Heebo', sans-serif;
@@ -1380,37 +1365,26 @@
       line-height: 1.5;
       color: #F4F0EB;
       opacity: 0.85;
-      margin-bottom: 1.5rem;
+      margin-bottom: 0.875rem;
       max-width: 32rem;
     }
 
-    /* Pills wrapper — inline-flex column with stretch makes every child
-       match the widest one's width. No fixed magic number; if copy changes
-       later the wrapper just re-measures. */
-    .contact-pills {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 0.625rem;
-    }
+    /* WhatsApp pill */
     .contact-whatsapp {
-      display: flex;
-      direction: rtl;
+      display: inline-flex;
       align-items: center;
-      /* RTL flex-start = right edge → icon + text hug the right side of the
-         pill instead of being centered within it. */
-      justify-content: flex-start;
       gap: 0.5rem;
       padding: 0.5rem 0.875rem;
       background: rgba(244, 240, 235, 0.12);
       border: 1px solid rgba(244, 240, 235, 0.3);
-      border-radius: 0;
+      border-radius: 999px;
       color: #F4F0EB;
       text-decoration: none;
       font-family: 'Miriam Libre', 'Heebo', sans-serif;
       font-weight: 500;
       font-size: 0.875rem;
       transition: background 200ms ease, border-color 200ms ease, transform 200ms ease;
+      margin-bottom: 0.875rem;
     }
     .contact-whatsapp:hover {
       background: rgba(244, 240, 235, 0.2);
@@ -1427,18 +1401,144 @@
       flex-shrink: 0;
     }
 
+    /* Form */
+    .contact-form {
+      display: grid;
+      gap: 0.5rem;
+    }
+    .fld {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .fld label {
+      font-family: 'Miriam Libre', 'Heebo', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #F4F0EB;
+      opacity: 0.92;
+    }
+    .req {
+      color: #ECC2C9;
+      margin-right: 0.25rem;
+    }
+    .fld input,
+    .fld textarea {
+      width: 100%;
+      padding: 0.5rem 0.875rem;
+      background: rgba(244, 240, 235, 0.08);
+      border: 1px solid rgba(244, 240, 235, 0.2);
+      border-radius: 8px;
+      color: #F4F0EB;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      direction: rtl;
+      transition: border-color 200ms ease, background 200ms ease;
+    }
+    .fld input::placeholder,
+    .fld textarea::placeholder {
+      color: rgba(244, 240, 235, 0.4);
+    }
+    .fld input:focus,
+    .fld textarea:focus {
+      outline: none;
+      border-color: #ECC2C9;
+      background: rgba(244, 240, 235, 0.14);
+    }
+    .fld input:focus-visible,
+    .fld textarea:focus-visible {
+      outline: 2px solid #ECC2C9;
+      outline-offset: 1px;
+    }
+    .fld textarea {
+      min-height: 56px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+    .fld input[type="email"] {
+      direction: ltr;
+      text-align: right;
+    }
+
+    /* Privacy consent — required by PPL Amendment 13 when collecting personal data */
+    .contact-consent {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      font-family: 'Miriam Libre', 'Heebo', sans-serif;
+      font-size: 0.75rem;
+      line-height: 1.45;
+      color: #F4F0EB;
+      opacity: 0.85;
+      cursor: pointer;
+      user-select: none;
+      margin-top: 0.125rem;
+    }
+    .contact-consent input[type="checkbox"] {
+      margin-top: 0.2rem;
+      accent-color: #ECC2C9;
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .contact-consent input[type="checkbox"]:focus-visible {
+      outline: 2px solid #ECC2C9;
+      outline-offset: 2px;
+    }
+    .contact-consent a {
+      color: #ECC2C9;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .contact-consent a:hover { opacity: 1; }
+
+    .contact-submit {
+      margin-top: 0.125rem;
+      padding: 0.5rem 1.5rem;
+      background: #F4F0EB;
+      color: #0E1629;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Miriam Libre', 'Heebo', sans-serif;
+      font-weight: 700;
+      font-size: 0.9375rem;
+      cursor: pointer;
+      transition: background 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+      align-self: start;
+    }
+    .contact-submit:hover {
+      background: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(244, 240, 235, 0.15);
+    }
+    .contact-submit:focus-visible {
+      outline: 2px solid #ECC2C9;
+      outline-offset: 3px;
+    }
+    .contact-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     /* Mobile contact */
     @media (max-width: 768px) {
       .contact-hero {
         min-height: auto;
-        padding: 8rem 1.5rem 7rem;
-      }
-      .contact-brand {
-        width: clamp(11.25rem, 56vw, 22.5rem);
+        padding: 4rem 1.5rem 7rem;
       }
       .contact-hero .contact-content {
         max-width: 100%;
         margin: 0 auto;
+      }
+      .contact-brand {
+        font-size: clamp(2.5rem, 12vw, 4.5rem);
+        bottom: 0.75rem;
+        left: 1rem;
+      }
+      .contact-headline {
+        font-size: clamp(1.75rem, 7vw, 2.5rem);
       }
     }
 
@@ -1451,30 +1551,12 @@
       padding: 2rem 2rem 1rem;
     }
     .footer-inner { max-width: 1280px; margin: 0 auto; }
-    /* Top row: 2-col — nav (right in RTL) + legal (left in RTL).
-       In RTL the first HTML child renders rightmost. */
     .footer-top {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-      align-items: start;
-      padding-bottom: 1.25rem;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      padding-bottom: 1rem;
       border-bottom: 1px solid rgba(244, 240, 235, 0.15);
-    }
-    /* Both cols center their content within their grid cell. */
-    .footer-col--right,
-    .footer-col--left { text-align: center; }
-    /* Logo on its own row beneath the top, centered horizontally. */
-    .footer-brand {
-      display: flex;
-      justify-content: center;
-      padding: 1.25rem 0;
-    }
-    .footer-brand img {
-      display: block;
-      width: 100%;
-      max-width: 11rem;
-      height: auto;
     }
     .footer-cta h2 {
       font-family: 'Fraunces', 'Heebo', serif;
@@ -1595,7 +1677,8 @@
       .hero { cursor: auto; } /* restore native cursor since .hero-cursor is gone */
       .hero-desc { top: 6rem; right: 1.5rem; left: 1.5rem; max-width: none; }
       .hero-brand {
-        width: clamp(15rem, 75vw, 30rem);
+        /* +20% over previous clamp(3rem, 14.4vw, 6rem) */
+        font-size: clamp(3.6rem, 17.28vw, 7.2rem);
         /* Flush to bottom-left corner — left margin matches bottom margin. */
         bottom: 0;
         left: 0;
@@ -1705,7 +1788,7 @@
       }
       .testimonials-grid { grid-template-columns: 1fr; }
       .process-intro { padding: 4.5rem 1.5rem 2.5rem; }
-      /* .footer-top stays 2-col on mobile by design — no override here. */
+      .footer-top { grid-template-columns: 1fr; }
       .nav-links { display: none; }
     }
     @media (max-width: 600px) {
@@ -1764,6 +1847,32 @@
         box-shadow: none;
       }
     }
+
+    /* ===== PROCESS-PREVIEW ISOLATION =========================================
+       Hide every section except .process so the process scroller can be
+       reviewed in isolation. All other styles + scripts stay in place so
+       the section renders exactly as it does in production. */
+    body > nav,
+    body > main > section:not(.process),
+    body > footer,
+    body > .skip-link {
+      display: none !important;
+    }
+    /* Cartoon placeholders: drop the gray gradient "small card" so the
+       illustration sits directly on the panel's own background. Keep the
+       aspect-ratio + flex centering so layout doesn't shift. */
+    .process-panel-img {
+      background: none !important;
+      border-radius: 0 !important;
+    }
+    .process-panel-img picture,
+    .process-panel-img img:not(.process-panel-num) {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    /* ===== END PROCESS-PREVIEW ISOLATION ==================================== */
 
     /* ===== "מה אנחנו עושים" — mobile-only parallax =========================
        Replaces the .about-right.about-what column on mobile (≤960px). Sticky-
@@ -1918,7 +2027,7 @@
         <strong>מפסלים דפי נחיתה.</strong>
         <p>אל תפקירו את הרושם הראשוני שלכם בידיים של סוכנויות גנריות.<br>אנחנו משלבים אסתטיקה עם פסיכולוגיה צרכנית כדי לגרום לאנשים להפוך ללקוחות.</p>
       </div>
-      <h1 class="hero-brand"><img src="img/berlla-wordmark.png" alt="BERLLA"></h1>
+      <h1 class="hero-brand">BERLLA</h1>
     </section>
 
     <!-- ===== ABOUT ===== -->
@@ -2097,7 +2206,7 @@
     </section>
 
     <!-- ===== TESTIMONIALS — stacked-card rotation ===== -->
-    <section class="testimonials" id="testimonials" aria-labelledby="testimonials-title">
+    <section class="testimonials" aria-labelledby="testimonials-title">
       <div class="testimonials-header reveal">
         <h2 id="testimonials-title" class="testimonials-heading">מה אומרים אחרי שעובדים איתנו</h2>
         <p class="testimonials-eyebrow">מאחורי כל אתר יש גם דרך, תקשורת, ואנשים שעברו אותה איתנו.</p>
@@ -2258,53 +2367,55 @@
     </section>
 
     <!-- ===== CONTACT — hero-style section with WebGL =====
-         Same Unicorn Studio scene as .hero, gated by visibility (toggleContactScene
-         below initializes only when user scrolls within ~1 viewport of the section,
-         so the two scenes never run simultaneously). BERLLA wordmark bottom-left,
-         contact headline image top-right, three direct-contact pills stacked right. -->
+         Same Unicorn Studio scene as .hero, but gated by visibility:
+         toggleContactScene below sets display:none until the user scrolls
+         within ~1 viewport height of the section, so the two scenes never
+         run simultaneously and total GPU cost stays at "one scene at a time". -->
     <section class="contact-hero" id="contact" aria-labelledby="contact-title">
+      <!-- WebGL scene — same project as .hero-scene. Activated only when the
+           contact section is approaching the viewport (see toggleContactScene). -->
       <div class="contact-scene" data-us-project="ZuSNX1OqU0vaLaqRHNZE" data-us-dpi="1" aria-hidden="true"></div>
+      <!-- Legibility overlay — darkens corners for text -->
       <div class="contact-overlay" aria-hidden="true"></div>
 
-      <!-- BERLLA wordmark — bottom-left -->
-      <div class="contact-brand" aria-hidden="true">
-        <img src="img/berlla-wordmark.png" alt="">
-      </div>
+      <!-- BERLLA wordmark bottom-left — decorative duplicate of hero brand mark -->
+      <div class="contact-brand" aria-hidden="true">BERLLA</div>
 
-      <!-- Headline pinned top-right (mirrors BERLLA bottom-left) -->
-      <h2 id="contact-title" class="contact-headline">
-        <img src="img/berlla-contact-headline.png" alt="בואו נדבר. בגדול.">
-      </h2>
-
-      <!-- Right-anchored content stack: sub-copy + three contact pills -->
+      <!-- Right-anchored content stack -->
       <div class="contact-content">
         <div class="contact-intro">
+          <h2 id="contact-title" class="contact-headline">בואו נדבר</h2>
           <p class="contact-sub">פרויקט בראש? שאלה לפני שמתחילים? נשמח לשמוע. מענה תוך 24 שעות.</p>
 
-          <div class="contact-pills">
-            <a href="https://wa.me/972500000000" target="_blank" rel="noopener" class="contact-whatsapp" aria-label="פתחו צ'אט WhatsApp עם BERLLA">
-              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-              </svg>
-              <span>שלחו ב-WhatsApp</span>
-            </a>
-
-            <a href="mailto:hello@berlla.com" class="contact-whatsapp" aria-label="שלחו אימייל ל-BERLLA">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="3" y="5" width="18" height="14"/>
-                <path d="m3 7 9 6 9-6"/>
-              </svg>
-              <span>שלחו אימייל</span>
-            </a>
-
-            <a href="tel:+972500000000" class="contact-whatsapp" aria-label="התקשרו ל-BERLLA">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-              </svg>
-              <span>התקשרו עכשיו</span>
-            </a>
-          </div>
+          <a href="https://wa.me/972500000000" target="_blank" rel="noopener" class="contact-whatsapp" aria-label="פתחו צ'אט WhatsApp עם BERLLA">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            <span>שלחו ב-WhatsApp</span>
+          </a>
         </div>
+
+        <form class="contact-form" id="contactForm" novalidate>
+          <div class="fld">
+            <label for="cf-name">שם מלא <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="cf-name" name="name" autocomplete="name" required aria-required="true" placeholder="ישראל ישראלי">
+          </div>
+          <div class="fld">
+            <label for="cf-email">אימייל <span class="req" aria-hidden="true">*</span></label>
+            <input type="email" id="cf-email" name="email" autocomplete="email" required aria-required="true" placeholder="you@example.com">
+          </div>
+          <div class="fld">
+            <label for="cf-message">ההודעה שלכם <span class="req" aria-hidden="true">*</span></label>
+            <textarea id="cf-message" name="message" required aria-required="true" placeholder="ספרו לנו מה אתם רוצים לבנות..."></textarea>
+          </div>
+
+          <label class="contact-consent">
+            <input type="checkbox" id="cf-consent" name="consent" required aria-required="true">
+            <span>קראתי ואני מאשר/ת את <a href="#privacy">מדיניות הפרטיות</a> של BERLLA, ומסכים/ה לשימוש בפרטים שלי לצורך מענה לפנייה זו בלבד.</span>
+          </label>
+
+          <button type="submit" class="contact-submit">שלחו הודעה</button>
+        </form>
       </div>
     </section>
   </main>
@@ -2313,35 +2424,66 @@
   <footer class="footer" role="contentinfo">
     <div class="footer-inner">
       <div class="footer-top">
-        <!-- HTML order in RTL grid: first child renders rightmost. -->
-        <div class="footer-col footer-col--right">
-          <h5>ניווט</h5>
-          <ul>
-            <li><a href="#">בית</a></li>
-            <li><a href="#about">אודות</a></li>
-            <li><a href="#portfolio">עבודות</a></li>
-            <li><a href="#testimonials">ביקורות</a></li>
-            <li><a href="#process">תהליך</a></li>
-            <li><a href="#contact">יצירת קשר</a></li>
-          </ul>
+        <div class="footer-cta">
+          <h2>בואו נבנה משהו יחד</h2>
+          <p>פנו אל BERLLA והתחילו את הפרויקט הבא שלכם איתנו היום.</p>
+          <div class="footer-cta-actions">
+            <a href="#contact" class="btn footer-primary">צור קשר</a>
+            <a href="#" class="btn btn--on-dark">עקבו</a>
+          </div>
         </div>
-        <div class="footer-col footer-col--left">
-          <h5>משפטי</h5>
-          <ul>
-            <li><a href="legal/terms.html">תנאי שימוש</a></li>
-            <li><a href="legal/accessibility.html">הצהרת נגישות</a></li>
-            <li><a href="legal/privacy.html">מדיניות פרטיות</a></li>
-          </ul>
+        <div class="footer-links">
+          <div class="footer-col">
+            <h5>ניווט</h5>
+            <ul>
+              <li><a href="#">בית</a></li>
+              <li><a href="#about">אודות</a></li>
+              <li><a href="#portfolio">עבודות</a></li>
+              <li><a href="#process">תהליך</a></li>
+              <li><a href="#">ביקורות</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h5>חיבור</h5>
+            <ul>
+              <li><a href="#">Instagram</a></li>
+              <li><a href="#">LinkedIn</a></li>
+              <li><a href="#">Twitter</a></li>
+              <li><a href="mailto:hello@berlla.com">Email</a></li>
+            </ul>
+          </div>
         </div>
       </div>
 
-      <!-- Logo on its own row beneath the link columns -->
-      <div class="footer-brand">
-        <img src="img/berlla-footer-logo.png" alt="BERLLA">
+      <div class="footer-mid">
+        <div class="footer-logo">BERLLA</div>
+        <div class="footer-socials-mid" aria-hidden="true">
+          <span class="footer-social-circle"></span>
+          <span class="footer-social-circle"></span>
+          <span class="footer-social-circle"></span>
+          <span class="footer-social-circle"></span>
+        </div>
       </div>
 
       <div class="footer-bottom">
         <div>© 2025 BERLLA. כל הזכויות שמורות.</div>
+        <div class="footer-socials">
+          <a href="#" aria-label="פייסבוק">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg>
+          </a>
+          <a href="#" aria-label="אינסטגרם">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.897 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.897-.422-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg>
+          </a>
+          <a href="#" aria-label="X (טוויטר)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="#" aria-label="לינקדאין">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a href="#" aria-label="יוטיוב">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+        </div>
       </div>
     </div>
   </footer>

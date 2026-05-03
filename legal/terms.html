@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#F4F0EB">
+  <meta name="description" content="תנאי השימוש של BERLLA — חוקי השימוש בשירותים, זכויות קניין רוחני, פעילויות אסורות, מגבלות אחריות, ויישוב סכסוכים.">
+  <meta name="robots" content="index, follow">
+  <title>תנאי שימוש — BERLLA</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@500;700&family=Bowlby+One&family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400&family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       BERLLA — Legal page foundation
+       Same chrome as legal/accessibility.html and legal/privacy.html.
+       Tokens copied verbatim from index-new.html (lines 30–220).
+       ============================================================ */
+
+    /* ===== Design tokens (verbatim from index-new.html) ===== */
+    :root {
+      --color-bg:           #F4F0EB;
+      --color-bg-alt:       #EFEAE3;
+      --color-text:         #0E1629;
+      --color-text-on-dark: #F4F0EB;
+      --color-accent:       #8B2E4A;
+      --color-dark:         #0E1629;
+      --color-hero-1:       #7a2440;
+      --color-hero-2:       #3a0f1d;
+      --color-hero-3:       #120408;
+      --color-portfolio-1:  #e8e4df;
+      --color-portfolio-2:  #d4d0ca;
+      --color-overlay:      rgba(14, 22, 41, 0.55);
+
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.5rem;
+      --space-6: 2rem;
+      --space-7: 3rem;
+      --space-8: 4rem;
+
+      --space-section-y: clamp(3rem, 5vw + 1.25rem, 9rem);
+      --space-section-x: clamp(1.25rem, 4vw, 4rem);
+
+      --container-max: 100rem;
+
+      --text-xs:      clamp(0.75rem,  0.7rem  + 0.2vw, 0.875rem);
+      --text-sm:      clamp(0.875rem, 0.825rem + 0.2vw, 1rem);
+      --text-base:    clamp(1rem,     0.95rem + 0.2vw, 1.125rem);
+      --text-lg:      clamp(1.125rem, 1.05rem + 0.4vw, 1.375rem);
+      --text-xl:      clamp(1.375rem, 1.2rem  + 0.8vw, 1.875rem);
+      --text-2xl:     clamp(1.75rem,  1.4rem  + 1.5vw, 2.5rem);
+      --text-3xl:     clamp(2.25rem,  1.6rem  + 3vw,   3.5rem);
+      --text-4xl:     clamp(2.75rem,  1.8rem  + 5vw,   5rem);
+      --text-display: clamp(3.6rem,   2rem    + 12vw,  16rem);
+
+      --lh-tight: 1.1;
+      --lh-snug:  1.3;
+      --lh-base:  1.6;
+
+      --font-body:    'Heebo', system-ui, -apple-system, sans-serif;
+      --font-heading: 'Fraunces', 'Heebo', serif;
+      --font-display: 'Bowlby One', 'Fraunces', serif;
+      --font-ui:      'Assistant', 'Heebo', system-ui, sans-serif;
+
+      --target-min: 44px;
+
+      --radius-sm:   0.5rem;
+      --radius-md:   1rem;
+      --radius-lg:   2rem;
+      --radius-pill: 999px;
+
+      --ease:     cubic-bezier(0.22, 1, 0.36, 1);
+      --dur-fast: 200ms;
+      --dur-base: 400ms;
+      --dur-slow: 800ms;
+
+      --z-base:    0;
+      --z-section: 1;
+      --z-nav:     50;
+      --z-cursor:  60;
+      --z-modal:   100;
+    }
+
+    /* ===== Modern reset (verbatim) ===== */
+    *, *::before, *::after { box-sizing: border-box; }
+    * { margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    html:focus-within { scroll-behavior: smooth; }
+    body {
+      min-height: 100svh;
+      line-height: var(--lh-base);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    img, picture, svg, video, canvas {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+    input, button, textarea, select { font: inherit; color: inherit; }
+    button { background: none; border: 0; cursor: pointer; }
+    a       { color: inherit; text-decoration: none; }
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 700;
+      line-height: var(--lh-tight);
+      letter-spacing: -0.01em;
+    }
+    ul, ol { list-style: none; }
+
+    body {
+      font-family: var(--font-body);
+      font-size:   var(--text-base);
+      color:       var(--color-text);
+      background:  var(--color-bg);
+    }
+
+    ::selection {
+      background: var(--color-accent);
+      color:      var(--color-text-on-dark);
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    /* ===== Skip link ===== */
+    .skip-link {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: var(--space-3) var(--space-5);
+      background: var(--color-dark);
+      color: var(--color-text-on-dark);
+      font-weight: 700;
+      z-index: var(--z-modal);
+      transform: translateY(-100%);
+      transition: transform var(--dur-fast) var(--ease);
+    }
+    .skip-link:focus-visible { transform: translateY(0); }
+
+    .container {
+      width: 100%;
+      max-width: var(--container-max);
+      margin-inline: auto;
+      padding-inline: var(--space-section-x);
+    }
+
+    a, button, [role="button"], input[type="checkbox"], input[type="radio"], summary {
+      min-height: var(--target-min);
+      min-width:  var(--target-min);
+    }
+    p a, li a, blockquote a, .skip-link, .legal-toc a, .legal-footer__nav a, .legal-doc dd a {
+      min-height: 0;
+      min-width:  0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* ============================================================
+       Legal page chrome
+       ============================================================ */
+    .legal-header {
+      position: sticky;
+      top: 0;
+      z-index: var(--z-nav);
+      background: var(--color-bg);
+      border-block-end: 1px solid rgba(14, 22, 41, 0.08);
+      backdrop-filter: saturate(180%);
+      -webkit-backdrop-filter: saturate(180%);
+    }
+    .legal-header__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      padding-block: var(--space-3);
+      min-height: 56px;
+    }
+    .legal-header__brand {
+      font-family: var(--font-display);
+      font-size: clamp(1.125rem, 0.9rem + 0.6vw, 1.5rem);
+      letter-spacing: 0.02em;
+      color: var(--color-text);
+    }
+    .legal-header__brand:hover,
+    .legal-header__brand:focus-visible {
+      color: var(--color-accent);
+    }
+    .legal-header__back {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-pill);
+      transition: color var(--dur-fast) var(--ease),
+                  background var(--dur-fast) var(--ease);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .legal-header__back::before {
+      content: "→";
+      display: inline-block;
+      transform: scaleX(-1);
+    }
+    .legal-header__back:hover,
+    .legal-header__back:focus-visible {
+      color: var(--color-accent);
+      background: rgba(139, 46, 74, 0.06);
+    }
+
+    /* ===== Document body ===== */
+    .legal-main {
+      padding-block: clamp(2rem, 4vw + 1rem, 5rem);
+    }
+    .legal-doc {
+      max-inline-size: 70ch;
+      margin-inline: auto;
+    }
+
+    .legal-doc__eyebrow {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: var(--text-xs);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      margin-block-end: var(--space-3);
+    }
+
+    .legal-doc h1 {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: var(--text-3xl);
+      line-height: var(--lh-tight);
+      letter-spacing: -0.02em;
+      margin-block-end: var(--space-4);
+    }
+
+    .legal-doc__lede {
+      font-size: var(--text-lg);
+      color: var(--color-text);
+      opacity: 0.85;
+      margin-block-end: var(--space-5);
+      max-inline-size: 60ch;
+    }
+
+    .legal-doc__meta {
+      font-family: var(--font-ui);
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      opacity: 0.6;
+      margin-block-end: var(--space-7);
+    }
+
+    .legal-doc__disclaimer {
+      padding: var(--space-4) var(--space-5);
+      background: rgba(139, 46, 74, 0.04);
+      border-inline-start: 3px solid var(--color-accent);
+      border-radius: var(--radius-sm);
+      margin-block-end: var(--space-7);
+      font-family: var(--font-ui);
+      font-size: var(--text-sm);
+      line-height: var(--lh-base);
+      color: var(--color-text);
+      opacity: 0.85;
+    }
+    .legal-doc__disclaimer p { margin-block-end: 0; }
+
+    .legal-doc h2 {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: var(--text-xl);
+      line-height: var(--lh-snug);
+      margin-block-start: var(--space-7);
+      margin-block-end: var(--space-4);
+      padding-block-start: var(--space-5);
+      border-block-start: 1px solid rgba(14, 22, 41, 0.1);
+      scroll-margin-block-start: 80px;
+    }
+    .legal-doc h2:first-of-type {
+      border-block-start: 0;
+      padding-block-start: 0;
+      margin-block-start: 0;
+    }
+
+    .legal-doc h3 {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: var(--text-lg);
+      margin-block-start: var(--space-5);
+      margin-block-end: var(--space-3);
+      scroll-margin-block-start: 80px;
+    }
+
+    .legal-doc p {
+      margin-block-end: var(--space-4);
+      line-height: var(--lh-base);
+    }
+
+    .legal-doc__summary {
+      font-style: italic;
+      padding-inline-start: var(--space-4);
+      border-inline-start: 2px solid rgba(139, 46, 74, 0.3);
+      margin-block-end: var(--space-5);
+      color: var(--color-text);
+      opacity: 0.9;
+    }
+    .legal-doc__summary strong { font-style: normal; }
+
+    .legal-doc p a,
+    .legal-doc li a,
+    .legal-doc dd a,
+    .legal-doc__summary a {
+      color: var(--color-accent);
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.2em;
+      transition: text-decoration-thickness var(--dur-fast) var(--ease);
+    }
+    .legal-doc p a:hover,
+    .legal-doc p a:focus-visible,
+    .legal-doc li a:hover,
+    .legal-doc li a:focus-visible,
+    .legal-doc dd a:hover,
+    .legal-doc dd a:focus-visible,
+    .legal-doc__summary a:hover,
+    .legal-doc__summary a:focus-visible {
+      text-decoration-thickness: 2px;
+    }
+
+    .legal-doc ul,
+    .legal-doc ol {
+      margin-block-end: var(--space-4);
+      padding-inline-start: var(--space-5);
+    }
+    .legal-doc ul { list-style: disc; }
+    .legal-doc ol { list-style: decimal; }
+    .legal-doc li {
+      margin-block-end: var(--space-2);
+      padding-inline-start: var(--space-2);
+    }
+    .legal-doc li::marker { color: var(--color-accent); }
+
+    /* Nested list — used in Prohibited Activities so the long bullet
+       list reads cleanly on long screens. Same marker color, slightly
+       tighter spacing. */
+    .legal-doc ul ul, .legal-doc ol ul, .legal-doc ul ol {
+      margin-block: var(--space-2);
+    }
+
+    .legal-toc {
+      background: var(--color-bg-alt);
+      padding: var(--space-5) var(--space-6);
+      border-radius: var(--radius-md);
+      margin-block-end: var(--space-7);
+    }
+    .legal-toc__heading {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: var(--text-xs);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      margin-block-end: var(--space-3);
+    }
+    .legal-toc ol {
+      list-style: decimal;
+      padding-inline-start: var(--space-5);
+    }
+    .legal-toc li {
+      margin-block-end: var(--space-1);
+      padding-inline-start: var(--space-1);
+    }
+    .legal-toc li::marker { color: var(--color-accent); font-weight: 700; }
+    .legal-toc a {
+      font-family: var(--font-ui);
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: color var(--dur-fast) var(--ease),
+                  border-color var(--dur-fast) var(--ease);
+    }
+    .legal-toc a:hover,
+    .legal-toc a:focus-visible {
+      color: var(--color-accent);
+      border-bottom-color: var(--color-accent);
+    }
+
+    .legal-doc address {
+      font-style: normal;
+      font-family: var(--font-ui);
+      padding: var(--space-4) var(--space-5);
+      background: var(--color-bg-alt);
+      border-radius: var(--radius-sm);
+      margin-block-end: var(--space-4);
+      line-height: var(--lh-base);
+    }
+    .legal-doc address p { margin-block-end: var(--space-1); }
+    .legal-doc address p:last-child { margin-block-end: 0; }
+
+    /* ===== TODO placeholder ===== */
+    .todo-placeholder {
+      display: inline-block;
+      padding: var(--space-1) var(--space-3);
+      background: rgba(139, 46, 74, 0.1);
+      border: 1px dashed var(--color-accent);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-ui);
+      font-weight: 700;
+      color: var(--color-accent);
+      font-size: 0.95em;
+    }
+    .todo-placeholder::before {
+      content: "TODO · ";
+      font-weight: 900;
+      letter-spacing: 0.05em;
+    }
+    .todo-placeholder--block {
+      display: block;
+      padding: var(--space-4) var(--space-5);
+      margin-block: var(--space-3);
+    }
+
+    /* ===== Footer ===== */
+    .legal-footer {
+      background: var(--color-bg-alt);
+      border-block-start: 1px solid rgba(14, 22, 41, 0.08);
+      padding-block: var(--space-7);
+      margin-block-start: var(--space-8);
+    }
+    .legal-footer__grid {
+      display: grid;
+      gap: var(--space-6);
+    }
+    @media (min-width: 48em) {
+      .legal-footer__grid {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-7);
+      }
+    }
+    .legal-footer__heading {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: var(--text-xs);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      margin-block-end: var(--space-3);
+    }
+    .legal-footer__nav ul {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      list-style: none;
+      padding: 0;
+    }
+    .legal-footer__nav a {
+      font-family: var(--font-ui);
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      padding-block: var(--space-1);
+      transition: color var(--dur-fast) var(--ease);
+    }
+    .legal-footer__nav a:hover,
+    .legal-footer__nav a:focus-visible {
+      color: var(--color-accent);
+    }
+    .legal-footer__nav a[aria-current="page"] {
+      color: var(--color-accent);
+      font-weight: 700;
+    }
+    .legal-footer__nav a[aria-current="page"]::before {
+      content: "▸ ";
+    }
+    .legal-footer__business {
+      font-family: var(--font-ui);
+      font-size: var(--text-sm);
+      line-height: var(--lh-base);
+    }
+    .legal-footer__business p { margin-block-end: var(--space-2); }
+    .legal-footer__meta {
+      grid-column: 1 / -1;
+      padding-block-start: var(--space-5);
+      border-block-start: 1px solid rgba(14, 22, 41, 0.08);
+      font-family: var(--font-ui);
+      font-size: var(--text-xs);
+      color: var(--color-text);
+      opacity: 0.7;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3) var(--space-5);
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#main">דילוג לתוכן הראשי</a>
+
+  <header class="legal-header" role="banner">
+    <div class="container legal-header__inner">
+      <a class="legal-header__brand" href="../">BERLLA</a>
+      <a class="legal-header__back" href="../">חזרה לעמוד הראשי</a>
+    </div>
+  </header>
+
+  <main id="main" class="legal-main" role="main">
+    <div class="container">
+      <article class="legal-doc">
+        <p class="legal-doc__eyebrow">מסמך משפטי</p>
+        <h1>תנאי שימוש</h1>
+        <p class="legal-doc__lede">
+          תנאים אלה קובעים את הזכויות והחובות שלך בעת שימוש באתר ובשירותי BERLLA. בעצם השימוש בשירותים, אתה מסכים להיות מחויב לתנאים אלה.
+        </p>
+        <p class="legal-doc__meta">
+          עדכון אחרון:
+          <time datetime="2026-04-28">28 באפריל 2026</time>
+        </p>
+
+        <div class="legal-doc__disclaimer" role="note">
+          <p>
+            מסמך זה נוסח על בסיס מסגרת בינלאומית מקובלת לתנאי שימוש מסחריים, ובהתאמה לעקרונות הדין הישראלי (לרבות חוק החוזים האחידים, התשמ״ג–1982 וחוק הגנת הצרכן, התשמ״א–1981). בכל מקרה של סתירה בין הוראות מסמך זה לבין הוראות הדין החל, יגברו הוראות הדין.
+          </p>
+        </div>
+
+        <h2 id="agreement">הסכמה לתנאים המשפטיים שלנו</h2>
+        <p>
+          אנחנו
+          <!-- TODO (Yuval): business legal name + ע.מ./ח.פ. -->
+          <span class="todo-placeholder">שם משפטי של העסק</span>
+          (״החברה״, ״אנחנו״, ״אנו״, ״שלנו״). אנו מפעילים את האתר בכתובת
+          <!-- TODO (Yuval): final production URL once domain is connected -->
+          <span class="todo-placeholder">כתובת האתר הסופית</span>,
+          וכן מוצרים ושירותים נוספים הקשורים או המקשרים לתנאים אלה (יחדיו: ״השירותים״).
+        </p>
+        <p>
+          ניתן ליצור אתנו קשר בדוא״ל
+          <!-- TODO (Yuval): contact email — Termly's Terms export had this empty.
+               If you want to use the same email as in privacy.html
+               (berlla.business.contact@gmail.com), say so and I'll fill it. -->
+          <span class="todo-placeholder">כתובת דוא״ל ליצירת קשר</span>
+          או בדואר רגיל לכתובת:
+        </p>
+        <address>
+          <!-- TODO (Yuval): registered business address. Termly's Terms export
+               had this empty. -->
+          <p><span class="todo-placeholder">כתובת רשומה של העסק</span></p>
+        </address>
+        <p>
+          תנאים משפטיים אלה מהווים הסכם משפטי מחייב בינך, בין אם באופן אישי ובין אם בשם תאגיד (״אתה״), ובין החברה, בנוגע לגישתך ולשימושך בשירותים. בעצם הגישה לשירותים, אתה מאשר כי קראת, הבנת והסכמת להיות מחויב בכל התנאים. אם אינך מסכים לכל התנאים — אתה מנוע במפורש מלהשתמש בשירותים, ועליך להפסיק את השימוש מיידית.
+        </p>
+        <p>
+          תנאים והבהרות נוספים שעשויים להתפרסם בשירותים מעת לעת מהווים חלק בלתי נפרד מתנאים אלה. אנו שומרים לעצמנו את הזכות, לפי שיקול דעתנו הבלעדי, לבצע שינויים בתנאים בכל עת ומכל סיבה. נודיע לך על שינויים על ידי עדכון תאריך ה״עדכון אחרון״ בראש המסמך, ואתה מוותר על כל זכות לקבל הודעה ספציפית על כל שינוי. באחריותך לעיין בתנאים מעת לעת ולעמוד על העדכונים. תהיה כפוף לכל שינוי, ויראו אותך כמי שהיה מודע לו והסכים לו, על ידי המשך שימושך בשירותים לאחר תאריך השינוי.
+        </p>
+        <p>
+          מומלץ להדפיס עותק של תנאים אלה לרשומותיך.
+        </p>
+
+        <h2 id="toc">תוכן עניינים</h2>
+        <nav class="legal-toc" aria-label="תוכן עניינים של תנאי השימוש">
+          <p class="legal-toc__heading">סעיפי התנאים</p>
+          <ol>
+            <li><a href="#services">השירותים שלנו</a></li>
+            <li><a href="#ip">זכויות קניין רוחני</a></li>
+            <li><a href="#userreps">הצהרות המשתמש</a></li>
+            <li><a href="#prohibited">פעילויות אסורות</a></li>
+            <li><a href="#ugc">תרומות תוכן משתמשים</a></li>
+            <li><a href="#license">רישיון תרומה</a></li>
+            <li><a href="#ssmanagment">ניהול השירותים</a></li>
+            <li><a href="#term">תקופה וסיום</a></li>
+            <li><a href="#modifications">שינויים והפסקות</a></li>
+            <li><a href="#law">הדין החל</a></li>
+            <li><a href="#disputes">יישוב סכסוכים</a></li>
+            <li><a href="#corrections">תיקונים</a></li>
+            <li><a href="#disclaimer">כתב ויתור</a></li>
+            <li><a href="#liability">הגבלות אחריות</a></li>
+            <li><a href="#indemnification">שיפוי</a></li>
+            <li><a href="#userdata">נתוני משתמש</a></li>
+            <li><a href="#electronic">תקשורת אלקטרונית, עסקאות וחתימות</a></li>
+            <li><a href="#misc">שונות</a></li>
+            <li><a href="#contactus">יצירת קשר</a></li>
+          </ol>
+        </nav>
+
+        <h2 id="services">1. השירותים שלנו</h2>
+        <p>
+          המידע המסופק בעת שימוש בשירותים אינו מיועד להפצה או לשימוש על ידי כל אדם או ישות, בכל תחום שיפוט או מדינה, שבהם הפצה או שימוש כאמור יהיו בניגוד לחוק או לתקנה, או יחייבו אותנו ברישום בתחום שיפוט או במדינה כאמור. לפיכך, מי שבוחר לגשת לשירותים ממיקומים אחרים עושה זאת ביוזמתו ואחראי בלעדית לציות לחוקים המקומיים, ככל שאלה חלים.
+        </p>
+
+        <h2 id="ip">2. זכויות קניין רוחני</h2>
+
+        <h3>הקניין הרוחני שלנו</h3>
+        <p>
+          אנו הבעלים או בעלי הרישיון של כל זכויות הקניין הרוחני בשירותים, לרבות כל קוד המקור, מסדי הנתונים, הפונקציונליות, התוכנה, עיצובי האתר, האודיו, הווידאו, הטקסט, התמונות והגרפיקה בשירותים (יחדיו: ״התוכן״), וכן הסימנים המסחריים, סימני שירות והלוגואים הכלולים בו (״הסימנים״).
+        </p>
+        <p>
+          התוכן והסימנים שלנו מוגנים בחוקי זכויות יוצרים וסימני מסחר (וכן בחוקים נוספים של קניין רוחני ותחרות בלתי הוגנת) ובאמנות בינלאומיות ברחבי העולם.
+        </p>
+        <p>
+          התוכן והסימנים מסופקים בשירותים ״כמות שהם״ (AS-IS), לשימושך האישי, הלא־מסחרי, או למטרות עסקיות פנימיות בלבד.
+        </p>
+
+        <h3>השימוש שלך בשירותים</h3>
+        <p>
+          בכפוף לציותך לתנאים אלה, לרבות סעיף ״<a href="#prohibited">פעילויות אסורות</a>״ להלן, אנו מעניקים לך רישיון לא־בלעדי, בלתי ניתן להעברה ובר־ביטול, ל:
+        </p>
+        <ul>
+          <li>גישה לשירותים; וכן</li>
+          <li>הורדה או הדפסה של עותק של חלק מהתוכן שאליו השגת גישה כדין,</li>
+        </ul>
+        <p>
+          אך ורק לשימושך האישי, הלא־מסחרי, או למטרות עסקיות פנימיות בלבד.
+        </p>
+        <p>
+          מלבד כפי שנקבע בסעיף זה או במקום אחר בתנאים, אסור להעתיק, לשכפל, לאגד, לפרסם מחדש, להעלות, לפרסם, להציג בפומבי, להמיר לקוד, לתרגם, להעביר, להפיץ, למכור, לתת ברישיון או לנצל באופן אחר חלק מהשירותים, התוכן או הסימנים — לכל מטרה מסחרית — ללא אישור מפורש מראש ובכתב מאתנו.
+        </p>
+        <p>
+          אם תרצה לעשות שימוש בשירותים, בתוכן או בסימנים שאינו כלול בסעיף זה או במקום אחר בתנאים, אנא פנה אלינו לכתובת:
+          <!-- TODO (Yuval): permission-request email. Termly's export had this
+               field empty. Likely the same as the main contact email. -->
+          <span class="todo-placeholder">כתובת דוא״ל לבקשות שימוש</span>.
+          אם נעניק לך הרשאה לפרסם, לשכפל או להציג בפומבי חלק מהשירותים או התוכן, עליך לזהות אותנו כבעלים או כבעלי הרישיון של השירותים, התוכן או הסימנים, ולוודא שכל הודעת זכות יוצרים או הודעה קניינית מופיעה או נראית בעת הפרסום, השכפול או ההצגה של התוכן.
+        </p>
+        <p>
+          אנו שומרים לעצמנו את כל הזכויות שלא הוענקו לך במפורש בשירותים, בתוכן ובסימנים. כל הפרה של זכויות קניין רוחני אלה תהווה הפרה מהותית של תנאים אלה, וזכותך להשתמש בשירותים תסתיים מיידית.
+        </p>
+
+        <h3>ההגשות שלך</h3>
+        <p>
+          אנא קרא בעיון סעיף זה ואת סעיף ״<a href="#prohibited">פעילויות אסורות</a>״ לפני שימוש בשירותים, כדי להבין את (א) הזכויות שאתה מעניק לנו, ו(ב) ההתחייבויות שיש לך בעת פרסום או העלאת תוכן באמצעות השירותים.
+        </p>
+        <p>
+          <strong>הגשות.</strong>
+          על ידי שליחה ישירה אלינו של שאלה, הערה, הצעה, רעיון, משוב או מידע אחר על השירותים (״הגשות״), אתה מסכים להעביר אלינו את כל זכויות הקניין הרוחני בהגשה כזו. אתה מסכים שתהיה לנו בעלות על הגשה זו ושנהיה זכאים לשימוש ולהפצה בלתי מוגבלים בה לכל מטרה חוקית, מסחרית או אחרת, ללא הכרה או פיצוי לך.
+        </p>
+        <p>
+          <strong>אתה אחראי על מה שאתה מפרסם או מעלה.</strong>
+          בעת שליחת הגשות אלינו דרך כל חלק מהשירותים, אתה:
+        </p>
+        <ul>
+          <li>מאשר שקראת והסכמת לסעיף ״<a href="#prohibited">פעילויות אסורות</a>״, ולא תפרסם, תשלח, תפרסם, תעלה או תשדר באמצעות השירותים כל הגשה שהיא בלתי חוקית, מטרידה, שונאת, מזיקה, משמיצה, גסה, בריונית, פוגענית, מפלה, מאיימת על אדם או קבוצה כלשהם, מינית במפורש, שקרית, לא מדויקת או מטעה;</li>
+          <li>ככל שמותר על פי דין, מוותר על כל זכות מוסרית בהגשות אלה;</li>
+          <li>מתחייב שכל הגשה כזו היא מקורית שלך או שיש לך את הזכויות והרשיונות הנחוצים להגיש אותה ולהעניק לנו את הזכויות הנזכרות לעיל ביחס להגשותיך; וכן</li>
+          <li>מתחייב שהגשותיך אינן מהוות מידע סודי.</li>
+        </ul>
+        <p>
+          אתה אחראי בלעדית להגשותיך, ואתה מסכים במפורש לפצות אותנו על כל אובדן שעלול להיגרם לנו עקב הפרתך של (א) סעיף זה, (ב) זכויות קניין רוחני של צד שלישי, או (ג) חוק רלוונטי.
+        </p>
+
+        <h2 id="userreps">3. הצהרות המשתמש</h2>
+        <p>
+          על ידי שימושך בשירותים, אתה מצהיר ומתחייב כי: (1) יש לך כשרות משפטית והנך מסכים לציית לתנאים אלה; (2) אינך קטין בתחום השיפוט שבו אתה מתגורר; (3) לא תיגש לשירותים באמצעים אוטומטיים או לא־אנושיים, בין אם באמצעות בוט, סקריפט או בדרך אחרת; (4) לא תשתמש בשירותים לכל מטרה בלתי חוקית או בלתי מורשית; וכן (5) השימוש שלך בשירותים לא יפר חוק או תקנה רלוונטיים.
+        </p>
+        <p>
+          אם תספק מידע שאינו אמיתי, לא מדויק, לא עדכני או לא מלא, יש לנו זכות להשעות או להפסיק את חשבונך ולסרב לכל שימוש נוכחי או עתידי בשירותים (או בחלק מהם).
+        </p>
+
+        <h2 id="prohibited">4. פעילויות אסורות</h2>
+        <p>
+          אסור לך לגשת לשירותים או להשתמש בהם לכל מטרה אחרת מהמטרה שלשמה אנו מעמידים את השירותים לרשותך. אין להשתמש בשירותים בקשר עם פעילויות מסחריות כלשהן, מלבד אלו המאושרות או נתמכות במפורש על ידינו.
+        </p>
+        <p>
+          כמשתמש בשירותים, אתה מסכים שלא:
+        </p>
+        <ul>
+          <li>תאסוף שיטתית נתונים או תוכן אחר מהשירותים כדי ליצור או להרכיב, במישרין או בעקיפין, אוסף, רשימה, מסד נתונים או מדריך — ללא רשות בכתב מאתנו.</li>
+          <li>תרמה, תונה או תטעה אותנו ומשתמשים אחרים, במיוחד בכל ניסיון ללמוד מידע רגיש על חשבון, כגון סיסמאות.</li>
+          <li>תעקוף, תשבית או תפריע באופן אחר לתכונות אבטחה של השירותים, לרבות תכונות שמונעות או מגבילות את השימוש או ההעתקה של תוכן.</li>
+          <li>תפגע, תכפיש או תזיק באופן אחר, לדעתנו, לנו ו/או לשירותים.</li>
+          <li>תשתמש במידע שהושג מהשירותים כדי להטריד, להתעלל או להזיק לאדם אחר.</li>
+          <li>תעשה שימוש בלתי הולם בשירותי התמיכה שלנו או תשלח דיווחים שגויים על שימוש לרעה.</li>
+          <li>תשתמש בשירותים בדרך שאינה תואמת חוקים או תקנות רלוונטיים.</li>
+          <li>תעסוק במסגור (framing) או בהפניה בלתי מורשית לשירותים.</li>
+          <li>תעלה או תשדר (או תנסה להעלות או לשדר) וירוסים, סוסים טרויאניים או חומר אחר, לרבות שימוש מופרז באותיות גדולות וספאם, שמפריע לשימוש המתמשך וההנאה של כל צד מהשירותים, או שמשנה, פוגם, מפריע לשימוש בשירותים, בתכונותיהם או בתחזוקתם.</li>
+          <li>תעסוק בכל שימוש אוטומטי במערכת — כגון שימוש בסקריפטים לשליחת תגובות או הודעות, או שימוש בכל כריית נתונים, רובוטים או כלי איסוף וחילוץ דומים.</li>
+          <li>תמחק את הודעת זכות היוצרים או הודעות קניין רוחני אחרות מכל תוכן.</li>
+          <li>תנסה להתחזות למשתמש או לאדם אחר, או תשתמש בשם משתמש של משתמש אחר.</li>
+          <li>תעלה או תשדר חומר המשמש מנגנון פסיבי או אקטיבי לאיסוף או העברת מידע, לרבות, ללא הגבלה, פורמטי גרפיקה (״gifs״), פיקסלים בגודל 1×1, web bugs, עוגיות או מכשירים דומים אחרים (המכונים לעתים ״spyware״ או ״מנגנוני איסוף פסיביים״).</li>
+          <li>תפריע, תשבש או תיצור עומס בלתי הוגן על השירותים או על הרשתות והשירותים המחוברים אליהם.</li>
+          <li>תטריד, תרגיז, תאיים או תפחיד עובדים או סוכנים שלנו העוסקים במתן השירותים.</li>
+          <li>תנסה לעקוף אמצעים בשירותים שנועדו למנוע או להגביל גישה לשירותים, או לחלק מהם.</li>
+          <li>תעתיק או תתאים את התוכנה של השירותים, לרבות אך לא רק Flash, PHP, HTML, JavaScript, או קוד אחר.</li>
+          <li>מלבד כפי שמותר על פי הדין החל, תפענח, תפרק, תעבור הנדסה לאחור או תרכיב מחדש כל תוכנה המהווה חלק מהשירותים.</li>
+          <li>מלבד כתוצאה משימוש סטנדרטי במנוע חיפוש או בדפדפן, תשתמש או תפיץ מערכת אוטומטית — לרבות spider, robot, cheat utility, scraper או offline reader — שניגשים לשירותים, או תשגר סקריפט בלתי מורשה או תוכנה אחרת.</li>
+          <li>תשתמש בסוכן רכישה או בסוכן קנייה כדי לבצע רכישות בשירותים.</li>
+          <li>תעשה שימוש בלתי מורשה בשירותים, לרבות איסוף שמות משתמש ו/או כתובות דוא״ל של משתמשים באמצעים אלקטרוניים או אחרים, למטרות שליחת דוא״ל לא רצוי, או יצירת חשבונות באמצעים אוטומטיים או באמתלות שווא.</li>
+          <li>תשתמש בשירותים כחלק מכל מאמץ להתחרות בנו, או תשתמש בשירותים לכל מאמץ הניב הכנסה או מיזם מסחרי.</li>
+        </ul>
+
+        <h2 id="ugc">5. תרומות תוכן משתמשים</h2>
+        <p>
+          השירותים אינם מציעים למשתמשים לשלוח או לפרסם תוכן. ייתכן שנספק לך הזדמנות ליצור, לשלוח, לפרסם, להציג, לשדר, לבצע, להפיץ או לשדר תוכן וחומרים אלינו או בשירותים — לרבות, אך לא רק, טקסט, כתבים, וידאו, אודיו, תמונות, גרפיקה, תגובות, הצעות או מידע אישי או חומר אחר (יחדיו: ״תרומות״). תרומות עשויות להיות נצפות על ידי משתמשים אחרים של השירותים ודרך אתרי צד שלישי. כשאתה יוצר או מעמיד לרשות תרומות, אתה מצהיר ומתחייב כי הן עומדות בכל התנאים שלנו ובכל דין רלוונטי.
+        </p>
+
+        <h2 id="license">6. רישיון תרומה</h2>
+        <p>
+          אתה והשירותים מסכימים שאנו רשאים לגשת, לאחסן, לעבד ולהשתמש בכל מידע ונתון אישי שאתה מספק וכן בבחירותיך (כולל הגדרות).
+        </p>
+        <p>
+          על ידי שליחת הצעות או משוב אחר בנוגע לשירותים, אתה מסכים שנוכל להשתמש ולחלוק משוב כזה לכל מטרה — ללא פיצוי לך.
+        </p>
+        <p>
+          איננו טוענים בעלות על תרומותיך. אתה שומר את הבעלות המלאה על כל תרומותיך וכל זכות קניין רוחני או זכות קניינית אחרת הקשורה אליהן. איננו אחראים לכל הצהרה או חוות דעת בתרומותיך הניתנות לרשותך באתרי השירותים. אתה אחראי בלעדית לתרומותיך ואתה מסכים במפורש לשחרר אותנו מכל אחריות ולהימנע מכל פעולה משפטית נגדנו ביחס לתרומותיך.
+        </p>
+
+        <h2 id="ssmanagment">7. ניהול השירותים</h2>
+        <p>
+          אנו שומרים לעצמנו את הזכות, אך לא את החובה, ל:
+        </p>
+        <ol>
+          <li>לפקח על השירותים על מנת לאתר הפרות של תנאים אלה;</li>
+          <li>לנקוט בפעולה משפטית מתאימה נגד מי שמפר חוק או תנאים אלה, לרבות, ללא הגבלה, דיווח על משתמשים כאלה לרשויות אכיפת חוק;</li>
+          <li>לפי שיקול דעתנו הבלעדי וללא הגבלה, לסרב, להגביל גישה, להגביל את הזמינות, או להשבית (ככל שהדבר אפשרי טכנולוגית) כל אחת מהתרומות שלך או חלק מהן;</li>
+          <li>לפי שיקול דעתנו הבלעדי וללא הגבלה, הודעה או חבות, להסיר מהשירותים או להשבית באופן אחר את כל הקבצים והתוכן שגדולים מדי או מהווים נטל כלשהו על המערכות שלנו; וכן</li>
+          <li>לנהל באופן אחר את השירותים בדרך שנועדה להגן על זכויותינו ורכושנו ולהקל על תפקודם התקין של השירותים.</li>
+        </ol>
+
+        <h2 id="term">8. תקופה וסיום</h2>
+        <p>
+          תנאים משפטיים אלה יישארו בתוקף מלא במהלך השימוש שלך בשירותים. ללא הגבלת כל הוראה אחרת בתנאים אלה, אנו שומרים לעצמנו את הזכות, לפי שיקול דעתנו הבלעדי וללא הודעה או חבות, לסרב לאפשר גישה ושימוש בשירותים (לרבות חסימת כתובות IP מסוימות) — לכל אדם, מכל סיבה או ללא סיבה, לרבות הפרה של כל הצהרה, התחייבות או התחייבות הכלולה בתנאים אלה או של כל חוק או תקנה רלוונטיים. אנו רשאים להפסיק את השימוש או ההשתתפות שלך בשירותים, או למחוק כל תוכן או מידע שפרסמת, בכל עת, ללא אזהרה, לפי שיקול דעתנו הבלעדי.
+        </p>
+        <p>
+          אם נסיים או נשעה את חשבונך מכל סיבה — אסור לך להירשם וליצור חשבון חדש תחת שמך, שם בדוי או שאול, או שם של צד שלישי כלשהו, גם אם אתה עשוי לפעול בשם הצד השלישי. בנוסף לסיום או השעיית חשבונך, אנו שומרים לעצמנו את הזכות לנקוט בפעולה משפטית מתאימה, לרבות חיפוש סעדים אזרחיים, פליליים ותרופות־מנע.
+        </p>
+
+        <h2 id="modifications">9. שינויים והפסקות</h2>
+        <p>
+          אנו שומרים לעצמנו את הזכות לשנות, לתקן או להסיר את תוכן השירותים בכל עת או מכל סיבה לפי שיקול דעתנו הבלעדי, ללא הודעה. עם זאת, אין לנו חובה לעדכן מידע כלשהו בשירותים. לא נהיה אחראים כלפיך או כלפי צד שלישי כלשהו עבור שינוי, שינוי מחיר, השעיה או הפסקת השירותים.
+        </p>
+        <p>
+          איננו יכולים להבטיח שהשירותים יהיו זמינים בכל עת. ייתכן שניתקל בבעיות חומרה, תוכנה או אחרות, או שנידרש לבצע תחזוקה הקשורה לשירותים, ויגרמו להפרעות, עיכובים או שגיאות. אנו שומרים לעצמנו את הזכות לשנות, לתקן, לעדכן, להשעות, להפסיק או באופן אחר לשנות את השירותים בכל עת או מכל סיבה ללא הודעה. אתה מסכים שלא תהיה לנו כל אחריות עבור כל אובדן, נזק או אי־נוחות שנגרמו על ידי חוסר היכולת שלך לגשת או להשתמש בשירותים במהלך כל זמן השבתה או הפסקה. שום דבר בתנאים אלה לא יפורש כמחייב אותנו לתחזק ולתמוך בשירותים, או לספק תיקונים, עדכונים או מהדורות בקשר אליהם.
+        </p>
+
+        <h2 id="law">10. הדין החל</h2>
+        <p>
+          תנאים משפטיים אלה יהיו כפופים ויפורשו על פי דיני
+          <!-- TODO (Yuval): governing law jurisdiction. For an Israeli business
+               serving Israeli clients, the standard is "מדינת ישראל".
+               This is a significant legal decision — confirm before launch. -->
+          <span class="todo-placeholder">מדינת השיפוט (לדוגמה: מדינת ישראל)</span>.
+          אתה מסכים באופן בלתי חוזר לכך שלבתי המשפט המוסמכים של
+          <!-- TODO (Yuval): exclusive jurisdiction city/district.
+               Standard for an Israeli business: "תל אביב-יפו" or the city of
+               your registered address. -->
+          <span class="todo-placeholder">מקום השיפוט (לדוגמה: תל אביב-יפו)</span>
+          תהיה הסמכות הבלעדית לפתור כל סכסוך שעלול להתעורר בקשר עם תנאים אלה.
+        </p>
+
+        <h2 id="disputes">11. יישוב סכסוכים</h2>
+
+        <h3>משא ומתן בלתי פורמלי</h3>
+        <p>
+          על מנת לזרז את הפתרון ולשלוט בעלות של כל סכסוך, מחלוקת או טענה הקשורים לתנאים אלה (כל אחד ״סכסוך״, ויחד ״סכסוכים״) שהובאו על ידיך או על ידינו (באופן אישי, ״צד״, ובאופן קולקטיבי ״הצדדים״) — הצדדים מסכימים לנסות תחילה לנהל משא ומתן באופן בלתי פורמלי על כל סכסוך (למעט אותם סכסוכים שצוינו במפורש להלן) במשך לפחות
+          <!-- TODO (Yuval): number of pre-arbitration negotiation days.
+               Standard practice: 30 days. -->
+          <span class="todo-placeholder">מספר ימים (לדוגמה: 30)</span>
+          ימים לפני יוזמת בוררות. משא ומתן בלתי פורמלי כזה יחל בהודעה בכתב מצד אחד לצד השני.
+        </p>
+
+        <h3>בוררות מחייבת</h3>
+        <p>
+          כל סכסוך הנובע מתנאים משפטיים אלה או הקשור אליהם, לרבות שאלה הנוגעת לקיומם, תקפותם או סיומם, יופנה ויפתר סופית על ידי
+          <!-- TODO (Yuval): arbitration body. Termly's default points to the
+               International Commercial Arbitration Court (ICAC) under the
+               European Arbitration Chamber in Brussels — this is unusual for
+               an Israeli small business. Standard alternatives:
+               - The Israeli Institute of Commercial Arbitration (המוסד הישראלי לבוררות עסקית)
+               - Direct adjudication by Israeli courts (no arbitration clause)
+               STRONGLY RECOMMEND a privacy/commercial lawyer reviews this
+               section before launch. -->
+          <span class="todo-placeholder todo-placeholder--block">
+            גוף הבוררות — נדרשת החלטה לפני השקה. ברירת המחדל של Termly מפנה את הסכסוך ללשכה האירופית לבוררות בבריסל. לעסק ישראלי המשרת לקוחות ישראליים מומלץ לשקול: (א) המוסד הישראלי לבוררות עסקית, או (ב) ויתור על סעיף בוררות וקביעה שבתי משפט בישראל יידונו ישירות בכל סכסוך.
+          </span>
+          מספר הבוררים יהיה
+          <span class="todo-placeholder">מספר בוררים (1 או 3)</span>.
+          מקום הבוררות יהיה
+          <span class="todo-placeholder">מקום הבוררות</span>.
+          שפת ההליכים תהיה
+          <span class="todo-placeholder">שפת ההליכים (לדוגמה: עברית)</span>.
+          הדין החל על תנאים אלה יהיה הדין המהותי של
+          <span class="todo-placeholder">הדין החל</span>.
+        </p>
+
+        <h3>הגבלות</h3>
+        <p>
+          הצדדים מסכימים שכל בוררות תוגבל לסכסוך בין הצדדים באופן אישי. במידה המותרת על פי דין: (א) לא תצטרף בוררות לכל הליך אחר; (ב) אין זכות או סמכות לכל סכסוך להיות נדון בבוררות על בסיס תובענה ייצוגית או באמצעות נהלי תובענה ייצוגית; וכן (ג) אין זכות או סמכות לכל סכסוך להיות מובא ייצוגית בשם הציבור הרחב או כל אדם אחר.
+        </p>
+
+        <h3>חריגים למשא ומתן ולבוררות</h3>
+        <p>
+          הצדדים מסכימים שהסכסוכים הבאים אינם כפופים להוראות לעיל בנוגע למשא ומתן בלתי פורמלי ובוררות מחייבת: (א) כל סכסוך המבקש לאכוף או להגן על תוקפן של זכויות קניין רוחני של צד; (ב) כל סכסוך הקשור או נובע מטענות גניבה, פיראטיות, פלישה לפרטיות, או שימוש בלתי מורשה; וכן (ג) כל טענה לסעד מניעתי. אם הוראה זו תימצא בלתי חוקית או לא ניתנת לאכיפה, אז אף צד לא יבחר לבוררות על סכסוך הנמצא בחלק ההוראה הזה שנמצא בלתי חוקי או לא ניתן לאכיפה, וסכסוך כזה יוכרע על ידי בית משפט בעל סמכות שיפוט מתאימה בתחומי בית המשפט הרשומים לסמכות שיפוט לעיל, והצדדים מסכימים להיכנע לסמכות השיפוט האישית של בית משפט זה.
+        </p>
+
+        <h2 id="corrections">12. תיקונים</h2>
+        <p>
+          ייתכן שיהיה מידע בשירותים הכולל שגיאות הקלדה, אי־דיוקים או השמטות, לרבות תיאורים, תמחור, זמינות ומידע נוסף. אנו שומרים לעצמנו את הזכות לתקן כל שגיאה, אי־דיוק או השמטה ולשנות או לעדכן את המידע בשירותים בכל עת, ללא הודעה מוקדמת.
+        </p>
+
+        <h2 id="disclaimer">13. כתב ויתור</h2>
+        <p>
+          השירותים מסופקים על בסיס ״כמות שהם״ (AS-IS) ו״כפי שהם זמינים״ (AS-AVAILABLE). אתה מסכים שהשימוש שלך בשירותים יהיה על אחריותך הבלעדית. במידה המקסימלית המותרת על פי דין, אנו מסירים את כל האחריות, המפורשת או המשתמעת, בקשר עם השירותים והשימוש שלך בהם, לרבות, ללא הגבלה, האחריות המשתמעת לסחירות, התאמה למטרה מסוימת, ואי־הפרה. איננו נותנים שום ערובה או הצהרה לגבי דיוק או שלמות התוכן של השירותים, או לגבי התוכן של אתרים או יישומים סלולריים המקושרים לשירותים, ולא נישא באחריות עבור: (1) שגיאות, טעויות או אי־דיוקים בתוכן ובחומרים; (2) פציעה אישית או נזק לרכוש, מכל סוג, הנובע מגישתך ושימושך בשירותים; (3) כל גישה בלתי מורשית לשרתים המאובטחים שלנו ו/או לכל מידע אישי או פיננסי המאוחסן בהם; (4) כל הפרעה או הפסקת שידור אל או מהשירותים; (5) באגים, וירוסים, סוסים טרויאניים או דומיהם שעלולים להיות מועברים אל או באמצעות השירותים על ידי צד שלישי; ו/או (6) כל שגיאה או השמטה בתוכן ובחומרים, או עבור כל אובדן או נזק מכל סוג שנגרם כתוצאה מהשימוש בכל תוכן שפורסם, שודר או הפך זמין באופן אחר באמצעות השירותים.
+        </p>
+        <p>
+          איננו מחויבים, מאשרים, מבטיחים או נושאים באחריות עבור כל מוצר או שירות שמפורסם או מוצע על ידי צד שלישי באמצעות השירותים, אתר אינטרנט מקושר היפר, או כל אתר אינטרנט או יישום סלולרי שמופיע בכל באנר או פרסומת אחרת. לא נהיה צד או אחראים בכל דרך לפיקוח על כל עסקה בינך לבין כל ספקי צד שלישי של מוצרים או שירותים. כמו ברכישת מוצר או שירות באמצעות כל מדיום או בכל סביבה — עליך להפעיל שיקול דעת ולנקוט בזהירות כאשר זה מתאים.
+        </p>
+
+        <h2 id="liability">14. הגבלות אחריות</h2>
+        <p>
+          בשום מקרה לא נהיה אנו, הדירקטורים, העובדים או הסוכנים שלנו אחראים כלפיך או כלפי צד שלישי כלשהו עבור נזקים ישירים, עקיפים, תוצאתיים, לדוגמה, מקריים, מיוחדים או עונשיים — לרבות אובדן רווחים, אובדן הכנסה, אובדן נתונים או נזקים אחרים — הנובעים משימושך בשירותים, גם אם הוזהרנו על אפשרות נזקים כאלה. על אף האמור, אחריותנו כלפיך — מכל סיבה שהיא וללא קשר לצורת הפעולה — תהיה מוגבלת בכל עת לסכום ששולם, אם בכלל, על ידיך לנו. חוקים מסוימים אינם מאפשרים מגבלות על אחריות משתמעת או החרגה או הגבלה של נזקים מסוימים. אם חוקים אלה חלים עליך, חלק מהוויתורים או מההגבלות לעיל עשויים שלא לחול עליך, וייתכן שיש לך זכויות נוספות.
+        </p>
+
+        <h2 id="indemnification">15. שיפוי</h2>
+        <p>
+          אתה מסכים להגן, לשפות ולשמור עלינו ללא נזק — לרבות חברות הבת שלנו, חברות בנות אחרות וכל אחד מהדירקטורים, סוכנים, שותפים ועובדים שלנו — מפני ונגד כל אובדן, נזק, אחריות, תביעה או דרישה (לרבות שכר טרחת עו״ד והוצאות סבירות) שנעשו על ידי כל צד שלישי עקב או הנובעים מ:
+        </p>
+        <ol>
+          <li>השימוש שלך בשירותים;</li>
+          <li>הפרה של תנאים אלה;</li>
+          <li>כל הפרה של הצהרותיך והבטחותיך הקבועות בתנאים אלה;</li>
+          <li>הפרה שלך של זכויות צד שלישי, לרבות אך לא רק זכויות קניין רוחני; או</li>
+          <li>כל מעשה מזיק גלוי כלפי כל משתמש אחר של השירותים שאתו התחברת באמצעות השירותים.</li>
+        </ol>
+        <p>
+          על אף האמור, אנו שומרים לעצמנו את הזכות, על חשבונך, להתערב ולנהל באופן בלעדי את ההגנה והשליטה בכל עניין שעבורו אתה נדרש לשפות אותנו, ואתה מסכים לשתף פעולה, על חשבונך, עם הגנתנו בתביעות כאלה. נעשה מאמצים סבירים להודיע לך על כל תביעה, פעולה או הליך שלגביו ידוע לנו והכפוף לשיפוי זה.
+        </p>
+
+        <h2 id="userdata">16. נתוני משתמש</h2>
+        <p>
+          נשמור נתונים מסוימים שאתה משדר לשירותים לצורך ניהול ביצועי השירותים, וכן נתונים הקשורים לשימושך בשירותים. אף שאנו מבצעים גיבויים שגרתיים של נתונים, אתה אחראי בלעדית לכל הנתונים שאתה משדר או הקשורים לכל פעילות שביצעת באמצעות השירותים. אתה מסכים שלא תהיה לנו אחריות כלפיך עבור כל אובדן או שיבוש של נתונים אלה, ובזאת אתה מוותר על כל זכות פעולה נגדנו הנובעת מאובדן או שיבוש כזה.
+        </p>
+
+        <h2 id="electronic">17. תקשורת אלקטרונית, עסקאות וחתימות</h2>
+        <p>
+          ביקור בשירותים, שליחת דוא״ל אלינו ומילוי טפסים מקוונים מהווים תקשורת אלקטרונית. אתה מסכים לקבל תקשורת אלקטרונית, ואתה מסכים שכל ההסכמים, ההודעות, הגילויים והתקשורות שאנו מספקים לך באופן אלקטרוני (באמצעות דוא״ל ובשירותים) מספקים כל דרישה משפטית שתקשורת כזו תהיה בכתב.
+        </p>
+        <p>
+          אתה מסכים בזאת לשימוש בחתימות אלקטרוניות, חוזים, הזמנות ורשומות אחרות, ולמסירה אלקטרונית של הודעות, מדיניות ורשומות של עסקאות שיוזמו או הושלמו על ידינו או באמצעות השירותים. אתה מוותר בזאת על כל זכויות או דרישות לפי חוקים, תקנות, כללים, צווים או חוקים אחרים בכל תחום שיפוט שיכולים לדרוש חתימה מקורית או מסירה או שמירה של רשומות לא־אלקטרוניות, או של תשלומים או הענקת אשראי באמצעות כל אמצעי אחר מאשר אמצעים אלקטרוניים.
+        </p>
+
+        <h2 id="misc">18. שונות</h2>
+        <p>
+          תנאים אלה וכל מדיניות או כללי הפעלה שפורסמו על ידנו בשירותים או ביחס לשירותים מהווים את ההסכם המלא בינך לבינינו. אי־מימוש או אי־אכיפה של זכותנו או הוראתנו של תנאים אלה לא תפעל כויתור על זכות או הוראה כזו. תנאים אלה פועלים במידה המקסימלית המותרת על פי דין.
+        </p>
+        <p>
+          אנו רשאים להעביר חלק מזכויותינו וחובותינו או את כולן לאחרים בכל עת. לא נהיה אחראים או חבים עבור כל אובדן, נזק, עיכוב או כשל בפעולה שנגרמו בשל סיבה שאינה בשליטתנו הסבירה.
+        </p>
+        <p>
+          אם הוראה כלשהי או חלק מהוראה של תנאים אלה תיקבע כלא חוקית, בטלה או לא ניתנת לאכיפה — הוראה כזו או חלק ממנה ייחשבו לניתנים להפרדה מתנאים אלה ולא ישפיעו על תוקפן ועל אכיפתן של ההוראות הנותרות. אין מיזם משותף, שותפות, יחסי עבודה או סוכנות שנוצרו בינך לבינינו כתוצאה מתנאים אלה או מהשימוש בשירותים.
+        </p>
+        <p>
+          אתה מסכים שתנאים אלה לא יפורשו נגדנו מכוח עריכתם. אתה מוותר בזאת על כל הגנות שייתכן שתהיה לך על בסיס הצורה האלקטרונית של תנאים אלה ועל אי־החתימה על ידי הצדדים לכאן לבצע תנאים אלה.
+        </p>
+
+        <h2 id="contactus">19. יצירת קשר</h2>
+        <p>
+          לפתרון תלונה לגבי השירותים או לקבלת מידע נוסף לגבי השימוש בשירותים, ניתן ליצור אתנו קשר:
+        </p>
+        <!-- TODO (Yuval): same business identification as on the home-page footer.
+             All fields here were empty in the Termly Terms export. -->
+        <address>
+          <p><span class="todo-placeholder">שם משפטי של העסק</span></p>
+          <p><span class="todo-placeholder">כתובת רשומה</span></p>
+          <p>
+            דוא״ל:
+            <span class="todo-placeholder">כתובת דוא״ל ליצירת קשר</span>
+          </p>
+        </address>
+      </article>
+    </div>
+  </main>
+
+  <footer class="legal-footer" role="contentinfo">
+    <div class="container legal-footer__grid">
+      <nav class="legal-footer__nav" aria-label="מסמכים משפטיים">
+        <p class="legal-footer__heading">מסמכים משפטיים</p>
+        <ul>
+          <li><a href="privacy.html">מדיניות פרטיות</a></li>
+          <li><a href="terms.html" aria-current="page">תנאי שימוש</a></li>
+          <li><a href="cookies.html">מדיניות עוגיות (Cookies)</a></li>
+          <li><a href="accessibility.html">הצהרת נגישות</a></li>
+        </ul>
+      </nav>
+
+      <div class="legal-footer__business">
+        <p class="legal-footer__heading">פרטי העסק</p>
+        <!-- TODO (Yuval): same business details as on the home-page footer.
+             Keep these two synced — Israeli Consumer Protection law requires
+             business identification on every public-facing page. -->
+        <p><span class="todo-placeholder">שם משפטי של העסק</span></p>
+        <p><span class="todo-placeholder">מספר ע.מ./ח.פ.</span></p>
+        <p><span class="todo-placeholder">כתובת רשומה</span></p>
+        <p>
+          <a href="../#contact">יצירת קשר</a>
+        </p>
+      </div>
+
+      <div class="legal-footer__meta">
+        <span>© 2026 BERLLA. כל הזכויות שמורות.</span>
+        <span>עודכן: <time datetime="2026-04-28">28.04.2026</time></span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

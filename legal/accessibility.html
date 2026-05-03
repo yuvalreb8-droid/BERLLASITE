@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#F4F0EB">
+  <meta name="description" content="הצהרת הנגישות של אתר BERLLA — פירוט הסדרי הנגישות באתר, רמת התאימות לתקן ישראלי 5568 ול-WCAG 2.0 AA, מגבלות ידועות, ופרטי רכז הנגישות.">
+  <meta name="robots" content="index, follow">
+  <title>הצהרת נגישות — BERLLA</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@500;700&family=Bowlby+One&family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400&family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       BERLLA — Legal page foundation
+       Tokens, reset, and a11y primitives copied verbatim from
+       index-new.html (lines 30–220) so legal pages share design DNA
+       with the marketing site without an external stylesheet.
+       Below the verbatim block is the legal-doc layout.
+       ============================================================ */
+
+    /* ===== Design tokens (verbatim from index-new.html) ===== */
+    :root {
+      --color-bg:           #F4F0EB;
+      --color-bg-alt:       #EFEAE3;
+      --color-text:         #0E1629;
+      --color-text-on-dark: #F4F0EB;
+      --color-accent:       #8B2E4A;
+      --color-dark:         #0E1629;
+      --color-hero-1:       #7a2440;
+      --color-hero-2:       #3a0f1d;
+      --color-hero-3:       #120408;
+      --color-portfolio-1:  #e8e4df;
+      --color-portfolio-2:  #d4d0ca;
+      --color-overlay:      rgba(14, 22, 41, 0.55);
+
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.5rem;
+      --space-6: 2rem;
+      --space-7: 3rem;
+      --space-8: 4rem;
+
+      --space-section-y: clamp(3rem, 5vw + 1.25rem, 9rem);
+      --space-section-x: clamp(1.25rem, 4vw, 4rem);
+
+      --container-max: 100rem;
+
+      --text-xs:      clamp(0.75rem,  0.7rem  + 0.2vw, 0.875rem);
+      --text-sm:      clamp(0.875rem, 0.825rem + 0.2vw, 1rem);
+      --text-base:    clamp(1rem,     0.95rem + 0.2vw, 1.125rem);
+      --text-lg:      clamp(1.125rem, 1.05rem + 0.4vw, 1.375rem);
+      --text-xl:      clamp(1.375rem, 1.2rem  + 0.8vw, 1.875rem);
+      --text-2xl:     clamp(1.75rem,  1.4rem  + 1.5vw, 2.5rem);
+      --text-3xl:     clamp(2.25rem,  1.6rem  + 3vw,   3.5rem);
+      --text-4xl:     clamp(2.75rem,  1.8rem  + 5vw,   5rem);
+      --text-display: clamp(3.6rem,   2rem    + 12vw,  16rem);
+
+      --lh-tight: 1.1;
+      --lh-snug:  1.3;
+      --lh-base:  1.6;
+
+      --font-body:    'Heebo', system-ui, -apple-system, sans-serif;
+      --font-heading: 'Fraunces', 'Heebo', serif;
+      --font-display: 'Bowlby One', 'Fraunces', serif;
+      --font-ui:      'Assistant', 'Heebo', system-ui, sans-serif;
+
+      --target-min: 44px;
+
+      --radius-sm:   0.5rem;
+      --radius-md:   1rem;
+      --radius-lg:   2rem;
+      --radius-pill: 999px;
+
+      --ease:     cubic-bezier(0.22, 1, 0.36, 1);
+      --dur-fast: 200ms;
+      --dur-base: 400ms;
+      --dur-slow: 800ms;
+
+      --z-base:    0;
+      --z-section: 1;
+      --z-nav:     50;
+      --z-cursor:  60;
+      --z-modal:   100;
+    }
+
+    /* ===== Modern reset (verbatim) ===== */
+    *, *::before, *::after { box-sizing: border-box; }
+    * { margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    html:focus-within { scroll-behavior: smooth; }
+    body {
+      min-height: 100svh;
+      line-height: var(--lh-base);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    img, picture, svg, video, canvas {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+    input, button, textarea, select { font: inherit; color: inherit; }
+    button { background: none; border: 0; cursor: pointer; }
+    a       { color: inherit; text-decoration: none; }
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 700;
+      line-height: var(--lh-tight);
+      letter-spacing: -0.01em;
+    }
+    ul, ol { list-style: none; }
+
+    /* ===== Body baseline =====
+       Legal pages use cream as body bg (not burgundy like the marketing
+       home). These pages have no full-bleed hero, so cream is right —
+       and theme-color matches it so iOS Safari URL bar tints to cream. */
+    body {
+      font-family: var(--font-body);
+      font-size:   var(--text-base);
+      color:       var(--color-text);
+      background:  var(--color-bg);
+    }
+
+    ::selection {
+      background: var(--color-accent);
+      color:      var(--color-text-on-dark);
+    }
+
+    /* ===== Focus (verbatim) ===== */
+    :focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    /* ===== Skip link (verbatim) ===== */
+    .skip-link {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: var(--space-3) var(--space-5);
+      background: var(--color-dark);
+      color: var(--color-text-on-dark);
+      font-weight: 700;
+      z-index: var(--z-modal);
+      transform: translateY(-100%);
+      transition: transform var(--dur-fast) var(--ease);
+    }
+    .skip-link:focus-visible { transform: translateY(0); }
+
+    /* ===== Container (verbatim) ===== */
+    .container {
+      width: 100%;
+      max-width: var(--container-max);
+      margin-inline: auto;
+      padding-inline: var(--space-section-x);
+    }
+
+    /* ===== Touch targets (verbatim) ===== */
+    a, button, [role="button"], input[type="checkbox"], input[type="radio"], summary {
+      min-height: var(--target-min);
+      min-width:  var(--target-min);
+    }
+    p a, li a, blockquote a, .skip-link, .legal-toc a, .legal-footer__nav a {
+      min-height: 0;
+      min-width:  0;
+    }
+
+    /* ===== Reduced motion (verbatim) ===== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* ============================================================
+       Legal page chrome — header, doc column, footer
+       ============================================================ */
+
+    /* ===== Header bar =====
+       Sticky so the back-link is always one tap away as users scroll
+       a long legal document. Cream bg with subtle bottom border —
+       quieter than the marketing navbar, signals "you're on a doc page". */
+    .legal-header {
+      position: sticky;
+      top: 0;
+      z-index: var(--z-nav);
+      background: var(--color-bg);
+      border-block-end: 1px solid rgba(14, 22, 41, 0.08);
+      backdrop-filter: saturate(180%);
+      -webkit-backdrop-filter: saturate(180%);
+    }
+    .legal-header__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      padding-block: var(--space-3);
+      min-height: 56px;
+    }
+    .legal-header__brand {
+      font-family: var(--font-display);
+      font-size: clamp(1.125rem, 0.9rem + 0.6vw, 1.5rem);
+      letter-spacing: 0.02em;
+      color: var(--color-text);
+    }
+    .legal-header__brand:hover,
+    .legal-header__brand:focus-visible {
+      color: var(--color-accent);
+    }
+    .legal-header__back {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-pill);
+      transition: color var(--dur-fast) var(--ease),
+                  background var(--dur-fast) var(--ease);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .legal-header__back::before {
+      content: "→";
+      display: inline-block;
+      transform: scaleX(-1);
+    }
+    .legal-header__back:hover,
+    .legal-header__back:focus-visible {
+      color: var(--color-accent);
+      background: rgba(139, 46, 74, 0.06);
+    }
+
+    /* ===== Document body =====
+       Doc column: max-inline-size 70ch keeps lines comfortably readable
+       (Hebrew + Latin both fall in the 50–75 character ideal). Generous
+       vertical rhythm because legal docs are long and dense. */
+    .legal-main {
+      padding-block: clamp(2rem, 4vw + 1rem, 5rem);
+    }
+    .legal-doc {
+      max-inline-size: 70ch;
+      margin-inline: auto;
+    }
+
+    /* Eyebrow above the H1 — sets context, classifies the document. */
+    .legal-doc__eyebrow {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: var(--text-xs);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      margin-block-end: var(--space-3);
+    }
+
+    .legal-doc h1 {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: var(--text-3xl);
+      line-height: var(--lh-tight);
+      letter-spacing: -0.02em;
+      margin-block-end: var(--space-4);
+    }
+
+    .legal-doc__lede {
+      font-size: var(--text-lg);
+      color: var(--color-text);
+      opacity: 0.85;
+      margin-block-end: var(--space-7);
+      max-inline-size: 60ch;
+    }
+
+    /* Section headings — visual hierarchy that mirrors the doc's
+       outline. H2 gets a thin burgundy rule above it for scanability. */
+    .legal-doc h2 {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: var(--text-xl);
+      line-height: var(--lh-snug);
+      margin-block-start: var(--space-7);
+      margin-block-end: var(--space-4);
+      padding-block-start: var(--space-5);
+      border-block-start: 1px solid rgba(14, 22, 41, 0.1);
+    }
+    .legal-doc h2:first-of-type {
+      border-block-start: 0;
+      padding-block-start: 0;
+      margin-block-start: 0;
+    }
+
+    .legal-doc h3 {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: var(--text-lg);
+      margin-block-start: var(--space-5);
+      margin-block-end: var(--space-3);
+    }
+
+    .legal-doc p {
+      margin-block-end: var(--space-4);
+      line-height: var(--lh-base);
+    }
+
+    /* Body links — burgundy underline. Underline thickens on hover. */
+    .legal-doc p a,
+    .legal-doc li a,
+    .legal-doc dd a {
+      color: var(--color-accent);
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.2em;
+      transition: text-decoration-thickness var(--dur-fast) var(--ease);
+    }
+    .legal-doc p a:hover,
+    .legal-doc p a:focus-visible,
+    .legal-doc li a:hover,
+    .legal-doc li a:focus-visible,
+    .legal-doc dd a:hover,
+    .legal-doc dd a:focus-visible {
+      text-decoration-thickness: 2px;
+    }
+
+    /* Bullet lists — bring back markers (the global reset removed them
+       for navbars; legal docs need them for readability). RTL puts the
+       bullet on the right, so use padding-inline-start. */
+    .legal-doc ul,
+    .legal-doc ol {
+      margin-block-end: var(--space-4);
+      padding-inline-start: var(--space-5);
+    }
+    .legal-doc ul { list-style: disc; }
+    .legal-doc ol { list-style: decimal; }
+    .legal-doc li {
+      margin-block-end: var(--space-2);
+      padding-inline-start: var(--space-2);
+    }
+    .legal-doc li::marker { color: var(--color-accent); }
+
+    /* Definition list — used for the coordinator contact block.
+       Term in bold, description indented. Compact, scannable. */
+    .legal-doc dl {
+      margin-block-end: var(--space-4);
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: var(--space-2) var(--space-5);
+      align-items: baseline;
+    }
+    .legal-doc dt {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      color: var(--color-text);
+    }
+    .legal-doc dd { color: var(--color-text); }
+
+    @media (max-width: 30em) {
+      .legal-doc dl {
+        grid-template-columns: 1fr;
+        gap: var(--space-1);
+      }
+      .legal-doc dt { margin-block-start: var(--space-2); }
+    }
+
+    /* ===== TODO placeholder =====
+       Visually obvious so Yuval can spot every "fill me in" at a glance
+       on his phone review. Burgundy-tinted card with a "TODO" badge.
+       To remove later: unwrap the .todo-placeholder span and drop the
+       <!-- TODO: ... --> comment above it. */
+    .todo-placeholder {
+      display: inline-block;
+      padding: var(--space-1) var(--space-3);
+      background: rgba(139, 46, 74, 0.1);
+      border: 1px dashed var(--color-accent);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-ui);
+      font-weight: 700;
+      color: var(--color-accent);
+      font-size: 0.95em;
+    }
+    .todo-placeholder::before {
+      content: "TODO · ";
+      font-weight: 900;
+      letter-spacing: 0.05em;
+    }
+    /* Block-level variant for full paragraphs that need filling */
+    .todo-placeholder--block {
+      display: block;
+      padding: var(--space-4) var(--space-5);
+      margin-block: var(--space-3);
+    }
+
+    /* ===== Footer ===== */
+    .legal-footer {
+      background: var(--color-bg-alt);
+      border-block-start: 1px solid rgba(14, 22, 41, 0.08);
+      padding-block: var(--space-7);
+      margin-block-start: var(--space-8);
+    }
+    .legal-footer__grid {
+      display: grid;
+      gap: var(--space-6);
+    }
+    @media (min-width: 48em) {
+      .legal-footer__grid {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-7);
+      }
+    }
+    .legal-footer__heading {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: var(--text-xs);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      margin-block-end: var(--space-3);
+    }
+    .legal-footer__nav ul {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      list-style: none;
+      padding: 0;
+    }
+    .legal-footer__nav a {
+      font-family: var(--font-ui);
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      padding-block: var(--space-1);
+      transition: color var(--dur-fast) var(--ease);
+    }
+    .legal-footer__nav a:hover,
+    .legal-footer__nav a:focus-visible {
+      color: var(--color-accent);
+    }
+    .legal-footer__nav a[aria-current="page"] {
+      color: var(--color-accent);
+      font-weight: 700;
+    }
+    .legal-footer__nav a[aria-current="page"]::before {
+      content: "▸ ";
+    }
+    .legal-footer__business {
+      font-family: var(--font-ui);
+      font-size: var(--text-sm);
+      line-height: var(--lh-base);
+    }
+    .legal-footer__business p { margin-block-end: var(--space-2); }
+    .legal-footer__meta {
+      grid-column: 1 / -1;
+      padding-block-start: var(--space-5);
+      border-block-start: 1px solid rgba(14, 22, 41, 0.08);
+      font-family: var(--font-ui);
+      font-size: var(--text-xs);
+      color: var(--color-text);
+      opacity: 0.7;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3) var(--space-5);
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- WCAG 2.4.1 — first focusable element jumps keyboard users past
+       the header straight into page content. -->
+  <a class="skip-link" href="#main">דילוג לתוכן הראשי</a>
+
+  <header class="legal-header" role="banner">
+    <div class="container legal-header__inner">
+      <a class="legal-header__brand" href="../">BERLLA</a>
+      <a class="legal-header__back" href="../">חזרה לעמוד הראשי</a>
+    </div>
+  </header>
+
+  <main id="main" class="legal-main" role="main">
+    <div class="container">
+      <article class="legal-doc">
+        <p class="legal-doc__eyebrow">מסמך משפטי</p>
+        <h1>הצהרת נגישות</h1>
+        <p class="legal-doc__lede">
+          BERLLA מחויבת להפוך את האתר שלה לנגיש לכלל המשתמשים, לרבות אנשים עם מוגבלויות. הצהרה זו מפרטת את הסדרי הנגישות הקיימים באתר, את המגבלות הידועות לנו, ואת הדרכים ליצירת קשר עם רכז הנגישות.
+        </p>
+
+        <h2>כללי</h2>
+        <p>
+          אנו ב־BERLLA רואים בנגישות אינטרנטית ערך מרכזי בפיתוח האתר. אנו מאמינים שהאינטרנט הוא חלק חיוני באיכות החיים של כלל בני האדם, ועושים מאמץ לאפשר לכל המשתמשים — לרבות אנשים עם מוגבלות ראייה, שמיעה, מוטוריקה, או קוגניציה — לצרוך את התכנים באתר באופן עצמאי, מלא, ושוויוני.
+        </p>
+        <p>
+          הצהרה זו מתייחסת לאתר BERLLA הזמין בכתובת
+          <!-- TODO: insert the live production URL once domain is connected -->
+          <span class="todo-placeholder">כתובת האתר הסופית (לדוגמה: berlla.co.il)</span>.
+        </p>
+
+        <h2>אודות העסק</h2>
+        <p>
+          אתר BERLLA הוא אתר השיווק של:
+        </p>
+        <!-- TODO: replace with business legal name + ע.מ./ח.פ. + registered address -->
+        <span class="todo-placeholder todo-placeholder--block">
+          שם משפטי של העסק (לדוגמה: ברלה בע״מ) · מספר ע.מ./ח.פ. · כתובת רשומה
+        </span>
+
+        <h2>רמת התאימות לתקן</h2>
+        <p>
+          האתר עומד בדרישות
+          <strong>תקן ישראלי 5568</strong>
+          ברמת תאימות
+          <strong>AA</strong>,
+          המבוסס על הנחיות
+          <strong>WCAG 2.0</strong>
+          של ארגון
+          <abbr title="World Wide Web Consortium">W3C</abbr>,
+          וכן בדרישות תקנות שוויון זכויות לאנשים עם מוגבלות (התאמות נגישות לשירות), התשע״ג–2013.
+        </p>
+
+        <h2>הסדרי הנגישות באתר</h2>
+        <p>בין היתר, ננקטו באתר הצעדים הבאים:</p>
+        <ul>
+          <li>מבנה כותרות היררכי וסמנטי (H1 ← H2 ← H3) המאפשר ניווט קל באמצעות קוראי מסך.</li>
+          <li>ניגודיות צבעים העומדת בדרישות התקן: יחס של לפחות 4.5:1 לטקסט גוף ולפחות 3:1 לטקסט גדול.</li>
+          <li>ניווט מלא באמצעות מקלדת — ניתן להגיע לכל אלמנט אינטראקטיבי באמצעות מקש Tab.</li>
+          <li>אינדיקציה ויזואלית ברורה של פוקוס מקלדת על כל קישור, כפתור, ושדה טופס.</li>
+          <li>קישור ״דילוג לתוכן הראשי״ בראש כל עמוד, המאפשר למשתמשי קוראי מסך ומקלדת לדלג על אזורי ניווט חוזרים.</li>
+          <li>טקסט חלופי (alt) לתמונות תוכן; תמונות דקורטיביות מסומנות כך שיתעלמו מהן קוראי מסך.</li>
+          <li>הגדרת שפת המסמך כעברית וכיוון כתיבה מימין לשמאל (<code>lang="he"</code>, <code>dir="rtl"</code>).</li>
+          <li>כיבוד העדפת המשתמש להפחתת תנועה (prefers-reduced-motion) — אנימציות לא חיוניות מבוטלות עבור משתמשים שהגדירו זאת במערכת ההפעלה.</li>
+          <li>שדות בטפסים מתויגים באמצעות תווית (label) מקושרת, כך שקוראי מסך יקריאו את שם השדה.</li>
+          <li>אזורי הקלקה (touch targets) במידות 44×44 פיקסלים לפחות — תואם הנחיות WCAG 2.5.5.</li>
+          <li>גודל טקסט גוף בסיסי של 16 פיקסלים לפחות, ותמיכה בהגדלת טקסט עד 200% ללא אובדן תוכן או פונקציונליות.</li>
+          <li>תמיכה בקריאה באמצעות תוכנות קוראי מסך נפוצות, ובכללן NVDA, JAWS ו־VoiceOver.</li>
+          <li>קישורים בעלי טקסט מתאר ברור — איננו משתמשים בקישורים גנריים מסוג ״לחץ כאן״ או ״קרא עוד״ ללא הקשר.</li>
+        </ul>
+
+        <h2>מגבלות נגישות</h2>
+        <p>
+          חרף מאמצינו להנגיש את כלל התכנים והעמודים באתר, ייתכן שיימצאו חלקים שטרם הונגשו במלואם. אנו פועלים באופן מתמיד לתיקון פערים אלה. להלן המגבלות הידועות לנו במועד פרסום הצהרה זו:
+        </p>
+        <ul>
+          <li>
+            <strong>סצנת הפתיחה (Hero):</strong>
+            כוללת אנימציה גרפית מבוססת WebGL. האנימציה היא דקורטיבית בלבד ואינה נושאת מידע — כלל המידע של הסצנה זמין בטקסט הסמוך. עבור משתמשים שהגדירו prefers-reduced-motion, האנימציה אינה הכרחית לשימוש באתר.
+          </li>
+          <!-- TODO (Yuval): if any third-party embed (form, analytics widget, social embed)
+               is added to the site that you can't control accessibility for, list it here.
+               Israeli law expects honest disclosure of known gaps — over-claiming is worse
+               than under-claiming. Examples to consider: Termly cookie banner, embedded
+               YouTube videos, third-party form services. -->
+          <span class="todo-placeholder todo-placeholder--block">
+            מגבלות נוספות אם יש (לדוגמה: רכיבי צד שלישי שאין לנו שליטה מלאה על נגישותם)
+          </span>
+        </ul>
+        <p>
+          אם נתקלת בבעיית נגישות באתר שאינה מתועדת לעיל, נשמח שתפנה אלינו דרך פרטי הקשר של רכז הנגישות מטה. נטפל בפנייה בהקדם האפשרי.
+        </p>
+
+        <h2>רכז נגישות</h2>
+        <p>לפניות, הצעות לשיפור, ויידוע על תקלות נגישות ניתן לפנות לרכז הנגישות של BERLLA:</p>
+        <!-- TODO (Yuval): Israeli law (Equal Rights for Persons with Disabilities Regulations,
+             5773-2013, §35) requires a NAMED individual — not a generic role. Replace each
+             placeholder below with the real person's details before launch. The same person
+             can later be updated; the requirement is that someone is identified. -->
+        <dl>
+          <dt>שם:</dt>
+          <dd><span class="todo-placeholder">שם מלא של רכז הנגישות</span></dd>
+
+          <dt>תפקיד:</dt>
+          <dd><span class="todo-placeholder">תפקיד הרכז בארגון</span></dd>
+
+          <dt>טלפון:</dt>
+          <dd><span class="todo-placeholder">מספר טלפון ליצירת קשר</span></dd>
+
+          <dt>דוא״ל:</dt>
+          <dd><span class="todo-placeholder">כתובת דוא״ל ליצירת קשר</span></dd>
+
+          <dt>זמן מענה:</dt>
+          <dd>עד 14 ימי עסקים מקבלת הפנייה.</dd>
+        </dl>
+
+        <h2>איך לדווח על בעיית נגישות</h2>
+        <p>
+          בפנייה לרכז הנגישות, נבקש לכלול את הפרטים הבאים על מנת שנוכל לטפל בבקשה ביעילות:
+        </p>
+        <ol>
+          <li>תיאור הבעיה במילים שלך — מה ניסית לעשות ומה לא עבד.</li>
+          <li>כתובת העמוד הספציפי באתר שבו נתקלת בבעיה.</li>
+          <li>סוג המכשיר (מחשב/טלפון/טאבלט) ומערכת ההפעלה שבה השתמשת.</li>
+          <li>שם הדפדפן (Chrome, Safari, Firefox וכד׳) והגרסה אם ידועה.</li>
+          <li>אם השתמשת בטכנולוגיה מסייעת — שם התוכנה והגרסה (לדוגמה: NVDA 2024.1).</li>
+        </ol>
+
+        <h2>תאריך עדכון ההצהרה</h2>
+        <p>
+          הצהרה זו עודכנה לאחרונה ביום
+          <time datetime="2026-04-28">28 באפריל 2026</time>.
+        </p>
+        <p>
+          אנו מתחייבים לסקור הצהרה זו לפחות אחת לשנה, וכן בכל פעם שמתבצע שינוי משמעותי בהסדרי הנגישות באתר.
+        </p>
+      </article>
+    </div>
+  </main>
+
+  <footer class="legal-footer" role="contentinfo">
+    <div class="container legal-footer__grid">
+      <nav class="legal-footer__nav" aria-label="מסמכים משפטיים">
+        <p class="legal-footer__heading">מסמכים משפטיים</p>
+        <ul>
+          <li><a href="privacy.html">מדיניות פרטיות</a></li>
+          <li><a href="terms.html">תנאי שימוש</a></li>
+          <li><a href="cookies.html">מדיניות עוגיות (Cookies)</a></li>
+          <li><a href="accessibility.html" aria-current="page">הצהרת נגישות</a></li>
+        </ul>
+      </nav>
+
+      <div class="legal-footer__business">
+        <p class="legal-footer__heading">פרטי העסק</p>
+        <!-- TODO (Yuval): same business details as on the home-page footer.
+             Keep these two synced — Israeli Consumer Protection law requires
+             business identification on every public-facing page. -->
+        <p><span class="todo-placeholder">שם משפטי של העסק</span></p>
+        <p><span class="todo-placeholder">מספר ע.מ./ח.פ.</span></p>
+        <p><span class="todo-placeholder">כתובת רשומה</span></p>
+        <p>
+          <a href="../#contact">יצירת קשר</a>
+        </p>
+      </div>
+
+      <div class="legal-footer__meta">
+        <span>© 2026 BERLLA. כל הזכויות שמורות.</span>
+        <span>עודכן: <time datetime="2026-04-28">28.04.2026</time></span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

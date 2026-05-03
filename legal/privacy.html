@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#F4F0EB">
+  <meta name="description" content="מדיניות הפרטיות של BERLLA — איזה מידע אישי אנו אוספים, כיצד אנו מעבדים אותו, מה זכויותיך לפי חוק הגנת הפרטיות הישראלי, ואיך לפנות אלינו לבקשות גישה, תיקון או מחיקה.">
+  <meta name="robots" content="index, follow">
+  <title>מדיניות פרטיות — BERLLA</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@500;700&family=Bowlby+One&family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400&family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       BERLLA — Legal page foundation
+       Tokens, reset, and a11y primitives copied verbatim from
+       index-new.html (lines 30–220) so legal pages share design DNA
+       with the marketing site without an external stylesheet.
+       Below the verbatim block is the legal-doc layout.
+       Same styles as legal/accessibility.html.
+       ============================================================ */
+
+    /* ===== Design tokens (verbatim from index-new.html) ===== */
+    :root {
+      --color-bg:           #F4F0EB;
+      --color-bg-alt:       #EFEAE3;
+      --color-text:         #0E1629;
+      --color-text-on-dark: #F4F0EB;
+      --color-accent:       #8B2E4A;
+      --color-dark:         #0E1629;
+      --color-hero-1:       #7a2440;
+      --color-hero-2:       #3a0f1d;
+      --color-hero-3:       #120408;
+      --color-portfolio-1:  #e8e4df;
+      --color-portfolio-2:  #d4d0ca;
+      --color-overlay:      rgba(14, 22, 41, 0.55);
+
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.5rem;
+      --space-6: 2rem;
+      --space-7: 3rem;
+      --space-8: 4rem;
+
+      --space-section-y: clamp(3rem, 5vw + 1.25rem, 9rem);
+      --space-section-x: clamp(1.25rem, 4vw, 4rem);
+
+      --container-max: 100rem;
+
+      --text-xs:      clamp(0.75rem,  0.7rem  + 0.2vw, 0.875rem);
+      --text-sm:      clamp(0.875rem, 0.825rem + 0.2vw, 1rem);
+      --text-base:    clamp(1rem,     0.95rem + 0.2vw, 1.125rem);
+      --text-lg:      clamp(1.125rem, 1.05rem + 0.4vw, 1.375rem);
+      --text-xl:      clamp(1.375rem, 1.2rem  + 0.8vw, 1.875rem);
+      --text-2xl:     clamp(1.75rem,  1.4rem  + 1.5vw, 2.5rem);
+      --text-3xl:     clamp(2.25rem,  1.6rem  + 3vw,   3.5rem);
+      --text-4xl:     clamp(2.75rem,  1.8rem  + 5vw,   5rem);
+      --text-display: clamp(3.6rem,   2rem    + 12vw,  16rem);
+
+      --lh-tight: 1.1;
+      --lh-snug:  1.3;
+      --lh-base:  1.6;
+
+      --font-body:    'Heebo', system-ui, -apple-system, sans-serif;
+      --font-heading: 'Fraunces', 'Heebo', serif;
+      --font-display: 'Bowlby One', 'Fraunces', serif;
+      --font-ui:      'Assistant', 'Heebo', system-ui, sans-serif;
+
+      --target-min: 44px;
+
+      --radius-sm:   0.5rem;
+      --radius-md:   1rem;
+      --radius-lg:   2rem;
+      --radius-pill: 999px;
+
+      --ease:     cubic-bezier(0.22, 1, 0.36, 1);
+      --dur-fast: 200ms;
+      --dur-base: 400ms;
+      --dur-slow: 800ms;
+
+      --z-base:    0;
+      --z-section: 1;
+      --z-nav:     50;
+      --z-cursor:  60;
+      --z-modal:   100;
+    }
+
+    /* ===== Modern reset (verbatim) ===== */
+    *, *::before, *::after { box-sizing: border-box; }
+    * { margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    html:focus-within { scroll-behavior: smooth; }
+    body {
+      min-height: 100svh;
+      line-height: var(--lh-base);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    img, picture, svg, video, canvas {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+    input, button, textarea, select { font: inherit; color: inherit; }
+    button { background: none; border: 0; cursor: pointer; }
+    a       { color: inherit; text-decoration: none; }
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 700;
+      line-height: var(--lh-tight);
+      letter-spacing: -0.01em;
+    }
+    ul, ol { list-style: none; }
+
+    body {
+      font-family: var(--font-body);
+      font-size:   var(--text-base);
+      color:       var(--color-text);
+      background:  var(--color-bg);
+    }
+
+    ::selection {
+      background: var(--color-accent);
+      color:      var(--color-text-on-dark);
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    /* ===== Skip link ===== */
+    .skip-link {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: var(--space-3) var(--space-5);
+      background: var(--color-dark);
+      color: var(--color-text-on-dark);
+      font-weight: 700;
+      z-index: var(--z-modal);
+      transform: translateY(-100%);
+      transition: transform var(--dur-fast) var(--ease);
+    }
+    .skip-link:focus-visible { transform: translateY(0); }
+
+    .container {
+      width: 100%;
+      max-width: var(--container-max);
+      margin-inline: auto;
+      padding-inline: var(--space-section-x);
+    }
+
+    a, button, [role="button"], input[type="checkbox"], input[type="radio"], summary {
+      min-height: var(--target-min);
+      min-width:  var(--target-min);
+    }
+    p a, li a, blockquote a, .skip-link, .legal-toc a, .legal-footer__nav a, .legal-doc dd a {
+      min-height: 0;
+      min-width:  0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* ============================================================
+       Legal page chrome
+       ============================================================ */
+    .legal-header {
+      position: sticky;
+      top: 0;
+      z-index: var(--z-nav);
+      background: var(--color-bg);
+      border-block-end: 1px solid rgba(14, 22, 41, 0.08);
+      backdrop-filter: saturate(180%);
+      -webkit-backdrop-filter: saturate(180%);
+    }
+    .legal-header__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      padding-block: var(--space-3);
+      min-height: 56px;
+    }
+    .legal-header__brand {
+      font-family: var(--font-display);
+      font-size: clamp(1.125rem, 0.9rem + 0.6vw, 1.5rem);
+      letter-spacing: 0.02em;
+      color: var(--color-text);
+    }
+    .legal-header__brand:hover,
+    .legal-header__brand:focus-visible {
+      color: var(--color-accent);
+    }
+    .legal-header__back {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-pill);
+      transition: color var(--dur-fast) var(--ease),
+                  background var(--dur-fast) var(--ease);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .legal-header__back::before {
+      content: "→";
+      display: inline-block;
+      transform: scaleX(-1);
+    }
+    .legal-header__back:hover,
+    .legal-header__back:focus-visible {
+      color: var(--color-accent);
+      background: rgba(139, 46, 74, 0.06);
+    }
+
+    /* ===== Document body ===== */
+    .legal-main {
+      padding-block: clamp(2rem, 4vw + 1rem, 5rem);
+    }
+    .legal-doc {
+      max-inline-size: 70ch;
+      margin-inline: auto;
+    }
+
+    .legal-doc__eyebrow {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: var(--text-xs);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      margin-block-end: var(--space-3);
+    }
+
+    .legal-doc h1 {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: var(--text-3xl);
+      line-height: var(--lh-tight);
+      letter-spacing: -0.02em;
+      margin-block-end: var(--space-4);
+    }
+
+    .legal-doc__lede {
+      font-size: var(--text-lg);
+      color: var(--color-text);
+      opacity: 0.85;
+      margin-block-end: var(--space-5);
+      max-inline-size: 60ch;
+    }
+
+    /* Last-updated meta — small, dimmed, sits under the lede. */
+    .legal-doc__meta {
+      font-family: var(--font-ui);
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      opacity: 0.6;
+      margin-block-end: var(--space-7);
+    }
+
+    /* Disclaimer note — very subtle, near the top.
+       Italic + smaller + muted. Honest about scope without alarming users. */
+    .legal-doc__disclaimer {
+      padding: var(--space-4) var(--space-5);
+      background: rgba(139, 46, 74, 0.04);
+      border-inline-start: 3px solid var(--color-accent);
+      border-radius: var(--radius-sm);
+      margin-block-end: var(--space-7);
+      font-family: var(--font-ui);
+      font-size: var(--text-sm);
+      line-height: var(--lh-base);
+      color: var(--color-text);
+      opacity: 0.85;
+    }
+    .legal-doc__disclaimer p { margin-block-end: 0; }
+
+    .legal-doc h2 {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: var(--text-xl);
+      line-height: var(--lh-snug);
+      margin-block-start: var(--space-7);
+      margin-block-end: var(--space-4);
+      padding-block-start: var(--space-5);
+      border-block-start: 1px solid rgba(14, 22, 41, 0.1);
+      scroll-margin-block-start: 80px; /* sticky-header offset for anchor jumps */
+    }
+    .legal-doc h2:first-of-type {
+      border-block-start: 0;
+      padding-block-start: 0;
+      margin-block-start: 0;
+    }
+
+    .legal-doc h3 {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: var(--text-lg);
+      margin-block-start: var(--space-5);
+      margin-block-end: var(--space-3);
+      scroll-margin-block-start: 80px;
+    }
+
+    .legal-doc p {
+      margin-block-end: var(--space-4);
+      line-height: var(--lh-base);
+    }
+
+    /* "In Short:" summary blocks at the start of each major section.
+       Italic, slightly indented, same font as body. */
+    .legal-doc__summary {
+      font-style: italic;
+      padding-inline-start: var(--space-4);
+      border-inline-start: 2px solid rgba(139, 46, 74, 0.3);
+      margin-block-end: var(--space-5);
+      color: var(--color-text);
+      opacity: 0.9;
+    }
+    .legal-doc__summary strong { font-style: normal; }
+
+    /* Body links — burgundy underline. Underline thickens on hover. */
+    .legal-doc p a,
+    .legal-doc li a,
+    .legal-doc dd a,
+    .legal-doc__summary a {
+      color: var(--color-accent);
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.2em;
+      transition: text-decoration-thickness var(--dur-fast) var(--ease);
+    }
+    .legal-doc p a:hover,
+    .legal-doc p a:focus-visible,
+    .legal-doc li a:hover,
+    .legal-doc li a:focus-visible,
+    .legal-doc dd a:hover,
+    .legal-doc dd a:focus-visible,
+    .legal-doc__summary a:hover,
+    .legal-doc__summary a:focus-visible {
+      text-decoration-thickness: 2px;
+    }
+
+    /* Lists */
+    .legal-doc ul,
+    .legal-doc ol {
+      margin-block-end: var(--space-4);
+      padding-inline-start: var(--space-5);
+    }
+    .legal-doc ul { list-style: disc; }
+    .legal-doc ol { list-style: decimal; }
+    .legal-doc li {
+      margin-block-end: var(--space-2);
+      padding-inline-start: var(--space-2);
+    }
+    .legal-doc li::marker { color: var(--color-accent); }
+
+    /* Table of contents — uses ordered list with custom counter so the
+       numbering matches each section's H2. */
+    .legal-toc {
+      background: var(--color-bg-alt);
+      padding: var(--space-5) var(--space-6);
+      border-radius: var(--radius-md);
+      margin-block-end: var(--space-7);
+    }
+    .legal-toc__heading {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: var(--text-xs);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      margin-block-end: var(--space-3);
+    }
+    .legal-toc ol {
+      list-style: decimal;
+      padding-inline-start: var(--space-5);
+    }
+    .legal-toc li {
+      margin-block-end: var(--space-1);
+      padding-inline-start: var(--space-1);
+    }
+    .legal-toc li::marker { color: var(--color-accent); font-weight: 700; }
+    .legal-toc a {
+      font-family: var(--font-ui);
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: color var(--dur-fast) var(--ease),
+                  border-color var(--dur-fast) var(--ease);
+    }
+    .legal-toc a:hover,
+    .legal-toc a:focus-visible {
+      color: var(--color-accent);
+      border-bottom-color: var(--color-accent);
+    }
+
+    /* Address block — semantic <address>, plain typography */
+    .legal-doc address {
+      font-style: normal;
+      font-family: var(--font-ui);
+      padding: var(--space-4) var(--space-5);
+      background: var(--color-bg-alt);
+      border-radius: var(--radius-sm);
+      margin-block-end: var(--space-4);
+      line-height: var(--lh-base);
+    }
+    .legal-doc address p { margin-block-end: var(--space-1); }
+    .legal-doc address p:last-child { margin-block-end: 0; }
+
+    /* ===== TODO placeholder (same as accessibility.html) ===== */
+    .todo-placeholder {
+      display: inline-block;
+      padding: var(--space-1) var(--space-3);
+      background: rgba(139, 46, 74, 0.1);
+      border: 1px dashed var(--color-accent);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-ui);
+      font-weight: 700;
+      color: var(--color-accent);
+      font-size: 0.95em;
+    }
+    .todo-placeholder::before {
+      content: "TODO · ";
+      font-weight: 900;
+      letter-spacing: 0.05em;
+    }
+    .todo-placeholder--block {
+      display: block;
+      padding: var(--space-4) var(--space-5);
+      margin-block: var(--space-3);
+    }
+
+    /* ===== Footer (same as accessibility.html) ===== */
+    .legal-footer {
+      background: var(--color-bg-alt);
+      border-block-start: 1px solid rgba(14, 22, 41, 0.08);
+      padding-block: var(--space-7);
+      margin-block-start: var(--space-8);
+    }
+    .legal-footer__grid {
+      display: grid;
+      gap: var(--space-6);
+    }
+    @media (min-width: 48em) {
+      .legal-footer__grid {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-7);
+      }
+    }
+    .legal-footer__heading {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: var(--text-xs);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      margin-block-end: var(--space-3);
+    }
+    .legal-footer__nav ul {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      list-style: none;
+      padding: 0;
+    }
+    .legal-footer__nav a {
+      font-family: var(--font-ui);
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      padding-block: var(--space-1);
+      transition: color var(--dur-fast) var(--ease);
+    }
+    .legal-footer__nav a:hover,
+    .legal-footer__nav a:focus-visible {
+      color: var(--color-accent);
+    }
+    .legal-footer__nav a[aria-current="page"] {
+      color: var(--color-accent);
+      font-weight: 700;
+    }
+    .legal-footer__nav a[aria-current="page"]::before {
+      content: "▸ ";
+    }
+    .legal-footer__business {
+      font-family: var(--font-ui);
+      font-size: var(--text-sm);
+      line-height: var(--lh-base);
+    }
+    .legal-footer__business p { margin-block-end: var(--space-2); }
+    .legal-footer__meta {
+      grid-column: 1 / -1;
+      padding-block-start: var(--space-5);
+      border-block-start: 1px solid rgba(14, 22, 41, 0.08);
+      font-family: var(--font-ui);
+      font-size: var(--text-xs);
+      color: var(--color-text);
+      opacity: 0.7;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3) var(--space-5);
+      justify-content: space-between;
+    }
+
+    @media (max-width: 30em) {
+      .legal-doc dl {
+        grid-template-columns: 1fr;
+        gap: var(--space-1);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#main">דילוג לתוכן הראשי</a>
+
+  <header class="legal-header" role="banner">
+    <div class="container legal-header__inner">
+      <a class="legal-header__brand" href="../">BERLLA</a>
+      <a class="legal-header__back" href="../">חזרה לעמוד הראשי</a>
+    </div>
+  </header>
+
+  <main id="main" class="legal-main" role="main">
+    <div class="container">
+      <article class="legal-doc">
+        <p class="legal-doc__eyebrow">מסמך משפטי</p>
+        <h1>מדיניות פרטיות</h1>
+        <p class="legal-doc__lede">
+          מדיניות זו מסבירה כיצד BERLLA מטפלת במידע האישי שלך — מה אנו אוספים, למה, עם מי אנו חולקים אותו, וכיצד תוכל לממש את הזכויות שלך לפי חוק הגנת הפרטיות הישראלי.
+        </p>
+        <p class="legal-doc__meta">
+          עדכון אחרון:
+          <time datetime="2026-04-28">28 באפריל 2026</time>
+        </p>
+
+        <div class="legal-doc__disclaimer" role="note">
+          <p>
+            מסמך זה נכתב בהסתמך על מסגרת בינלאומית מקובלת להגנת מידע אישי, ובהתאמה לעקרונות חוק הגנת הפרטיות, התשמ״א–1981 (לרבות תיקון 13, התשפ״ד–2024). בכל מקרה של סתירה בין הוראות מדיניות זו לבין הוראות הדין החל, יגברו הוראות הדין.
+          </p>
+        </div>
+
+        <h2 id="general">כללי</h2>
+        <p>
+          מדיניות פרטיות זו של
+          <!-- TODO (Yuval): business legal name + ע.מ./ח.פ. -->
+          <span class="todo-placeholder">שם משפטי של העסק</span>
+          (הפועל בשם המסחרי ״BERLLA״; להלן: ״אנחנו״, ״אנו״, ״שלנו״), מתארת כיצד ומדוע אנו ניגשים, אוספים, שומרים, משתמשים ו/או חולקים (״מעבדים״) את המידע האישי שלך כאשר אתה משתמש בשירותינו (״השירותים״), לרבות כאשר אתה:
+        </p>
+        <ul>
+          <li>
+            מבקר באתר שלנו בכתובת
+            <!-- TODO (Yuval): final production URL once domain is connected -->
+            <span class="todo-placeholder">כתובת האתר הסופית</span>,
+            או באתר אחר שלנו המקשר למדיניות פרטיות זו.
+          </li>
+          <li>
+            משתמש בשירותי BERLLA — סטודיו לעיצוב אתרים שבונה אתרים מותאמים אישית לעסקים קטנים ובינוניים, באמצעות תהליך עבודה מבוסס AI להשגת תוצאות מהירות ומקצועיות.
+          </li>
+          <li>
+            יוצר אתנו קשר בדרכים נוספות, לרבות פעילות שיווקית או אירועים.
+          </li>
+        </ul>
+        <p>
+          <strong>שאלות או חששות?</strong>
+          קריאת מדיניות פרטיות זו תעזור לך להבין את זכויות הפרטיות והבחירות שלך. אנו אחראים על קבלת ההחלטות לגבי האופן שבו המידע האישי שלך מעובד. אם אינך מסכים עם המדיניות וההליכים שלנו, אנא אל תשתמש בשירותינו. אם נותרו לך שאלות, ניתן לפנות אלינו בדוא״ל
+          <a href="mailto:berlla.business.contact@gmail.com">berlla.business.contact@gmail.com</a>.
+        </p>
+
+        <h2 id="summary">תקציר נקודות מפתח</h2>
+        <p>
+          סקירה מהירה של הנושאים העיקריים. כל סעיף מפורט בהמשך — אפשר להגיע אליו דרך
+          <a href="#toc">תוכן העניינים</a>
+          מטה.
+        </p>
+        <ul>
+          <li>
+            <strong>איזה מידע אישי אנו מעבדים?</strong>
+            בהתאם לאופן שבו אתה מתקשר אתנו, אנו עשויים לעבד מידע אישי שמסרת לנו (כגון שם, כתובת דוא״ל, ומספר טלפון), ומידע שנאסף אוטומטית (כגון כתובת IP ומאפייני מכשיר). פירוט מלא בסעיף
+            <a href="#infocollect">איזה מידע אנו אוספים</a>.
+          </li>
+          <li>
+            <strong>האם אנו מעבדים מידע אישי רגיש?</strong>
+            לא. איננו מעבדים מידע רגיש (כגון מוצא גזעי או אתני, נטייה מינית, או אמונה דתית).
+          </li>
+          <li>
+            <strong>האם אנו אוספים מידע מצדדים שלישיים?</strong>
+            לא.
+          </li>
+          <li>
+            <strong>כיצד אנו מעבדים את המידע שלך?</strong>
+            כדי לספק, לשפר ולנהל את שירותינו, לתקשר אתך, למניעת הונאה ולעמידה בחוק. למידע נוסף ראה
+            <a href="#infouse">כיצד אנו מעבדים את המידע</a>.
+          </li>
+          <li>
+            <strong>עם מי אנו חולקים מידע אישי?</strong>
+            רק במצבים מסוימים ועם צדדים שלישיים מוגדרים. למידע נוסף ראה
+            <a href="#whoshare">מתי ועם מי אנו חולקים מידע</a>.
+          </li>
+          <li>
+            <strong>כיצד אנו שומרים על בטיחות המידע שלך?</strong>
+            יש לנו אמצעי הגנה ארגוניים וטכניים מתאימים. עם זאת, אין שידור אלקטרוני שניתן להבטיח כי הוא בטוח ב־100%. למידע נוסף ראה
+            <a href="#infosafe">שמירת בטיחות המידע</a>.
+          </li>
+          <li>
+            <strong>מה הן זכויותיך?</strong>
+            יש לך זכויות מפורטות לפי חוק הגנת הפרטיות הישראלי, ובהן זכות עיון, תיקון, מחיקה והתנגדות לדיוור ישיר. למידע נוסף ראה
+            <a href="#privacyrights">זכויות הפרטיות שלך</a>.
+          </li>
+          <li>
+            <strong>כיצד תממש את זכויותיך?</strong>
+            הדרך הפשוטה ביותר היא לפנות אלינו בדוא״ל
+            <a href="mailto:berlla.business.contact@gmail.com">berlla.business.contact@gmail.com</a>.
+            נטפל בכל בקשה בהתאם לחוקי הגנת המידע החלים.
+          </li>
+        </ul>
+
+        <h2 id="toc">תוכן עניינים</h2>
+        <nav class="legal-toc" aria-label="תוכן עניינים של המדיניות">
+          <p class="legal-toc__heading">סעיפי המדיניות</p>
+          <ol>
+            <li><a href="#infocollect">איזה מידע אנו אוספים?</a></li>
+            <li><a href="#infouse">כיצד אנו מעבדים את המידע שלך?</a></li>
+            <li><a href="#whoshare">מתי ועם מי אנו חולקים את המידע האישי שלך?</a></li>
+            <li><a href="#cookies">האם אנו משתמשים בעוגיות וטכנולוגיות מעקב אחרות?</a></li>
+            <li><a href="#inforetain">כמה זמן אנו שומרים את המידע שלך?</a></li>
+            <li><a href="#infosafe">כיצד אנו שומרים על בטיחות המידע שלך?</a></li>
+            <li><a href="#infominors">האם אנו אוספים מידע מקטינים?</a></li>
+            <li><a href="#privacyrights">מה הן זכויות הפרטיות שלך?</a></li>
+            <li><a href="#DNT">בקרות עבור Do-Not-Track</a></li>
+            <li><a href="#policyupdates">האם אנו מעדכנים מדיניות זו?</a></li>
+            <li><a href="#contact">כיצד תוכל לפנות אלינו לגבי מדיניות זו?</a></li>
+            <li><a href="#request">כיצד תוכל לעיין, לעדכן או למחוק מידע שאנו אוספים ממך?</a></li>
+          </ol>
+        </nav>
+
+        <h2 id="infocollect">1. איזה מידע אנו אוספים?</h2>
+
+        <h3 id="personalinfo">מידע אישי שאתה מוסר לנו</h3>
+        <p class="legal-doc__summary">
+          <strong>בקצרה:</strong>
+          אנו אוספים מידע אישי שאתה מוסר לנו מרצונך.
+        </p>
+        <p>
+          אנו אוספים מידע אישי שאתה מוסר לנו מרצונך כאשר אתה מביע עניין בקבלת מידע על השירותים שלנו, משתתף בפעילויות באתר, או יוצר אתנו קשר.
+        </p>
+        <p>
+          <strong>מידע אישי שאתה מוסר.</strong>
+          סוג המידע האישי שאנו אוספים תלוי באופי האינטראקציה שלך אתנו ובשירותים שאתה משתמש בהם. המידע האישי שאנו אוספים עשוי לכלול:
+        </p>
+        <ul>
+          <li>שמות</li>
+          <li>מספרי טלפון</li>
+          <li>כתובות דוא״ל</li>
+        </ul>
+        <p>
+          <strong>מידע רגיש.</strong>
+          איננו מעבדים מידע רגיש.
+        </p>
+        <p>
+          כל המידע האישי שאתה מוסר חייב להיות אמיתי, מלא ומדויק, ועליך להודיע לנו על כל שינוי בו.
+        </p>
+
+        <h3 id="autoinfo">מידע שנאסף באופן אוטומטי</h3>
+        <p class="legal-doc__summary">
+          <strong>בקצרה:</strong>
+          חלק מהמידע — כגון כתובת ה־IP שלך וזיהויים של הדפדפן והמכשיר — נאסף באופן אוטומטי כאשר אתה מבקר בשירותינו.
+        </p>
+        <p>
+          אנו אוספים אוטומטית מידע מסוים כאשר אתה מבקר, משתמש או מנווט בשירותים. מידע זה אינו חושף את זהותך הספציפית (כגון שמך או פרטי הקשר שלך) אך עשוי לכלול מידע על המכשיר והשימוש: כתובת ה־IP, מאפייני דפדפן ומכשיר, מערכת הפעלה, העדפות שפה, כתובת מקור (URL מפנה), שם המכשיר, מדינה, מיקום, מידע על אופן ועיתוי שימושך בשירותים, ומידע טכני נוסף. מידע זה דרוש בעיקר לתחזוקה ואבטחה של שירותינו ולצורך אנליטיקה ודיווח פנימיים.
+        </p>
+        <p>
+          כמו עסקים רבים אחרים, אנו אוספים גם מידע באמצעות עוגיות וטכנולוגיות דומות. למידע נוסף ראה את
+          <a href="cookies.html">מדיניות העוגיות שלנו</a>.
+        </p>
+        <p>המידע שאנו אוספים אוטומטית כולל:</p>
+        <ul>
+          <li>
+            <strong>נתוני יומן ושימוש</strong> —
+            מידע אבחוני, ביצועי ושימוש ששרתינו אוספים אוטומטית כאשר אתה ניגש לשירותים. עשוי לכלול: כתובת IP, מידע מכשיר, סוג דפדפן והגדרותיו, מידע על פעילותך בשירותים (חותמות זמן, עמודים שצפית בהם, חיפושים, פעולות נוספות), ומידע על אירועי מכשיר (פעילות מערכת, דוחות שגיאות, הגדרות חומרה).
+          </li>
+          <li>
+            <strong>נתוני מכשיר</strong> —
+            מידע על המחשב, הטלפון, הטאבלט או המכשיר שאתה משתמש בו: כתובת IP (או שרת proxy), מספרי זיהוי של מכשיר ואפליקציה, מיקום, סוג דפדפן, דגם החומרה, ספק שירותי האינטרנט ו/או הספק הסלולרי, מערכת ההפעלה, ופרטי תצורת המערכת.
+          </li>
+        </ul>
+
+        <h2 id="infouse">2. כיצד אנו מעבדים את המידע שלך?</h2>
+        <p class="legal-doc__summary">
+          <strong>בקצרה:</strong>
+          אנו מעבדים את המידע שלך כדי לספק, לשפר ולנהל את שירותינו, לתקשר אתך, לאבטחה ומניעת הונאה, ולעמידה בחוק. ייתכן שנעבד את המידע גם למטרות נוספות — בכפוף להסכמתך.
+        </p>
+        <p>
+          <strong>אנו מעבדים את המידע האישי שלך מסיבות מגוונות, בהתאם לאופן שבו אתה מתקשר עם השירותים שלנו, לרבות:</strong>
+        </p>
+        <ul>
+          <li>
+            <strong>לאספקת שירותים למשתמש.</strong>
+            נעבד את המידע שלך כדי לספק לך את השירות שביקשת.
+          </li>
+          <li>
+            <strong>למענה לפניות ותמיכה.</strong>
+            נעבד את המידע שלך כדי להגיב לפניותיך ולפתור בעיות אפשריות עם השירות שביקשת.
+          </li>
+          <li>
+            <strong>לשליחת מידע מנהלי.</strong>
+            נעבד את המידע שלך כדי לשלוח לך פרטים על שירותינו, על שינויים בתנאים ובמדיניות, ומידע דומה אחר.
+          </li>
+          <li>
+            <strong>לבקשת משוב.</strong>
+            נעבד את המידע שלך כדי לבקש משוב וליצור אתך קשר על השימוש בשירותינו.
+          </li>
+          <li>
+            <strong>לשליחת תקשורת שיווקית וקידומית.</strong>
+            נעבד את המידע האישי ששלחת לנו למטרות שיווקיות, בכפוף להעדפותיך השיווקיות. ניתן לבטל הרשמה לתקשורת שיווקית בכל עת — ראה
+            <a href="#privacyrights">מה הן זכויות הפרטיות שלך</a>
+            בהמשך.
+          </li>
+          <li>
+            <strong>להערכה ושיפור של שירותינו.</strong>
+            לזיהוי מגמות שימוש, להערכת אפקטיביות של קמפיינים, ולשיפור השירותים, המוצרים, השיווק וחוויית המשתמש.
+          </li>
+          <li>
+            <strong>לזיהוי מגמות שימוש.</strong>
+            נעבד מידע על אופן השימוש בשירותינו כדי להבין טוב יותר את אופן השימוש כך שנוכל לשפרם.
+          </li>
+          <li>
+            <strong>לעמידה בחובות חוקיות.</strong>
+            נעבד מידע כדי לעמוד בחובותינו החוקיות, להגיב לבקשות חוקיות, ולממש, לבסס או להגן על זכויותינו החוקיות.
+          </li>
+        </ul>
+
+        <h2 id="whoshare">3. מתי ועם מי אנו חולקים את המידע האישי שלך?</h2>
+        <p class="legal-doc__summary">
+          <strong>בקצרה:</strong>
+          ייתכן שנחלוק מידע במצבים ספציפיים שמתוארים בסעיף זה ו/או עם הצדדים השלישיים הבאים.
+        </p>
+        <p>
+          <strong>ספקים, יועצים, ונותני שירותים אחרים.</strong>
+          ייתכן שנחלוק את המידע שלך עם ספקים, נותני שירותים, קבלנים או סוכנים (״צדדים שלישיים״) שמספקים שירותים עבורנו או בשמנו ודורשים גישה למידע זה לצורך עבודתם. יש לנו חוזים מחייבים עם הצדדים השלישיים הללו, שתכליתם להגן על המידע האישי שלך. הם אינם רשאים לבצע דבר עם המידע האישי שלך אלא אם הורנו להם, ואסור להם לחלוק את המידע עם ארגון אחר מלבדנו. הם גם מתחייבים להגן על המידע שמוחזק בידיהם בשמנו ולשמור אותו אך ורק לפרק הזמן שאנו מורים.
+        </p>
+        <p>הצדדים השלישיים שאנו עשויים לחלוק אתם מידע אישי כוללים:</p>
+        <ul>
+          <li><strong>ניתוח אינטרנט וסלולרי:</strong> Google Analytics</li>
+        </ul>
+        <p>
+          ייתכן שנצטרך גם לחלוק את המידע האישי שלך במצבים הבאים:
+        </p>
+        <ul>
+          <li>
+            <strong>העברות עסקיות.</strong>
+            ייתכן שנחלוק או נעביר את המידע שלך בקשר למיזוגים, מכירת נכסי החברה, מימון או רכישת חלק מהעסק שלנו או כולו על ידי חברה אחרת.
+          </li>
+          <li>
+            <strong>שותפים עסקיים.</strong>
+            ייתכן שנחלוק מידע עם שותפים עסקיים שלנו כדי להציע לך מוצרים, שירותים או מבצעים מסוימים.
+          </li>
+        </ul>
+
+        <h2 id="cookies">4. האם אנו משתמשים בעוגיות וטכנולוגיות מעקב אחרות?</h2>
+        <p class="legal-doc__summary">
+          <strong>בקצרה:</strong>
+          אנו עשויים להשתמש בעוגיות ובטכנולוגיות מעקב אחרות לצורך איסוף ושמירת המידע שלך.
+        </p>
+        <p>
+          אנו עשויים להשתמש בעוגיות וטכנולוגיות מעקב דומות (כגון web beacons ופיקסלים) לאיסוף מידע כאשר אתה מתקשר עם השירותים שלנו. חלק מטכנולוגיות המעקב המקוונות עוזרות לנו לתחזק את אבטחת השירותים, למנוע קריסות, לתקן באגים, לשמור את העדפותיך, ולעזור בפונקציות בסיסיות של האתר.
+        </p>
+        <p>
+          כמו כן, אנו מתירים לצדדים שלישיים ולנותני שירותים להשתמש בטכנולוגיות מעקב מקוונות בשירותינו לצורך אנליטיקה ופרסום, לרבות לניהול והצגת פרסומות, להתאמה אישית של פרסומות לתחומי העניין שלך, או לשליחת תזכורות עגלת קניות נטושות (בהתאם להעדפות התקשורת שלך). הצדדים השלישיים ונותני השירותים משתמשים בטכנולוגיה שלהם כדי לספק פרסום על מוצרים ושירותים המותאמים לתחומי העניין שלך, אשר עשוי להופיע בשירותינו או באתרים אחרים.
+        </p>
+        <p>
+          מידע מפורט על אופן השימוש בטכנולוגיות אלה ועל אופן הסירוב לעוגיות מסוימות, מצוי ב<a href="cookies.html">מדיניות העוגיות שלנו</a>.
+        </p>
+
+        <h3 id="ga">Google Analytics</h3>
+        <p>
+          אנו עשויים לחלוק את המידע שלך עם Google Analytics לצורך מעקב וניתוח השימוש בשירותים. כדי לבטל מעקב על ידי Google Analytics בשירותים, ניתן לבקר ב־<a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">tools.google.com/dlpage/gaoptout</a>. למידע נוסף על נוהלי הפרטיות של Google, ניתן לבקר בעמוד <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy &amp; Terms</a>.
+        </p>
+
+        <h2 id="inforetain">5. כמה זמן אנו שומרים את המידע שלך?</h2>
+        <p class="legal-doc__summary">
+          <strong>בקצרה:</strong>
+          אנו שומרים את המידע שלך לפרק הזמן הנדרש למימוש המטרות שתוארו במדיניות זו, אלא אם הדין דורש אחרת.
+        </p>
+        <p>
+          נשמור את המידע האישי שלך אך ורק לפרק הזמן הנדרש למימוש המטרות שתוארו במדיניות זו, אלא אם פרק זמן ארוך יותר נדרש או מותר על פי דין (כגון מס, חשבונאות, או דרישות חוקיות אחרות). אף מטרה הקבועה במדיניות זו לא תחייב אותנו לשמור את המידע האישי שלך לפרק זמן ארוך מהנדרש למתן שירותינו ולעמידה בחובות חוקיות, בדרך כלל לא יותר משנתיים לאחר פנייה אחרונה.
+        </p>
+        <p>
+          כשאין לנו צורך עסקי לגיטימי מתמשך לעבד את המידע האישי שלך, נמחק אותו או ננטרל אותו (anonymize), או — אם אין זה אפשרי (לדוגמה, מכיוון שהמידע נשמר בארכיוני גיבוי) — נשמור אותו באופן מאובטח ונבודד אותו מעיבוד נוסף עד שמחיקתו תהיה אפשרית.
+        </p>
+
+        <h2 id="infosafe">6. כיצד אנו שומרים על בטיחות המידע שלך?</h2>
+        <p class="legal-doc__summary">
+          <strong>בקצרה:</strong>
+          אנו פועלים להגן על המידע האישי שלך באמצעות מערכת של אמצעי אבטחה ארגוניים וטכניים.
+        </p>
+        <p>
+          הטמענו אמצעי אבטחה טכניים וארגוניים מתאימים וסבירים שמטרתם להגן על אבטחת המידע האישי שאנו מעבדים. עם זאת, חרף אמצעי ההגנה והמאמצים שלנו לאבטח את המידע, אין שידור אלקטרוני באינטרנט או טכנולוגיית אחסון מידע שניתן להבטיח כי הם בטוחים ב־100%. לכן איננו יכולים להבטיח שהאקרים, פושעי סייבר או צדדים שלישיים בלתי מורשים אחרים לא יוכלו להתגבר על אבטחתנו ולאסוף, לגשת, לגנוב או לשנות את המידע שלך באופן בלתי הולם. אף שנעשה כמיטב יכולתנו להגן על המידע האישי שלך, שידור מידע אישי אל ומשירותינו הוא באחריותך הבלעדית. עליך לגשת לשירותים אך ורק בסביבה מאובטחת.
+        </p>
+
+        <h2 id="infominors">7. האם אנו אוספים מידע מקטינים?</h2>
+        <p class="legal-doc__summary">
+          <strong>בקצרה:</strong>
+          איננו אוספים ביודעין מידע מקטינים מתחת לגיל 18, ואיננו פונים אליהם בשיווק.
+        </p>
+        <p>
+          איננו אוספים ביודעין מידע מקטינים מתחת לגיל 18, ואיננו מבקשים מהם נתונים או פונים אליהם בשיווק, וכן איננו מוכרים ביודעין מידע אישי שלהם. בעצם השימוש בשירותינו, אתה מצהיר כי הנך בן 18 לפחות, או שהנך הורה או אפוטרופוס של קטין כזה ומסכים לשימוש הקטין בשירותים. אם נדע שמידע אישי ממשתמש מתחת לגיל 18 נאסף, נסיר את החשבון וננקוט באמצעים סבירים למחוק את המידע במהירות. אם נודע לך על מידע שייתכן שאספנו מקטין מתחת לגיל 18, אנא פנה אלינו בדוא״ל
+          <a href="mailto:berlla.business.contact@gmail.com">berlla.business.contact@gmail.com</a>.
+        </p>
+
+        <h2 id="privacyrights">8. מה הן זכויות הפרטיות שלך?</h2>
+        <p class="legal-doc__summary">
+          <strong>בקצרה:</strong>
+          יש לך זכויות מסוימות ביחס למידע האישי שלך — לרבות זכות עיון, תיקון, מחיקה והתנגדות לדיוור ישיר. תוכל לעיין, לשנות או לבטל את חשבונך בכל עת.
+        </p>
+
+        <h3 id="israeli-rights">זכויותיך לפי חוק הגנת הפרטיות הישראלי</h3>
+        <p>
+          ככל שאתה תושב ישראל, חוק הגנת הפרטיות, התשמ״א–1981 (לרבות תיקון 13, התשפ״ד–2024) מקנה לך, בין היתר, את הזכויות הבאות ביחס למידע האישי שלך:
+        </p>
+        <ul>
+          <li><strong>זכות עיון</strong> — לדעת איזה מידע אישי שלך מוחזק במאגרי המידע שלנו.</li>
+          <li><strong>זכות תיקון</strong> — לבקש תיקון של מידע שאינו נכון, מלא, ברור או מעודכן.</li>
+          <li><strong>זכות מחיקה</strong> — לבקש מחיקת המידע במקרים המתאימים.</li>
+          <li><strong>זכות התנגדות לדיוור ישיר</strong> — להודיע על סירובך לקבלת דברי פרסומת או לכלילתך במאגר לדיוור ישיר.</li>
+        </ul>
+        <p>
+          למימוש זכויות אלה, ניתן לפנות אלינו בדוא״ל
+          <a href="mailto:berlla.business.contact@gmail.com">berlla.business.contact@gmail.com</a>.
+          נשיב לפנייתך בהקדם האפשרי, ובכל מקרה לא יאוחר מ־30 יום ממועד קבלתה.
+        </p>
+
+        <h3 id="withdrawconsent">משיכת הסכמה</h3>
+        <p>
+          אם אנו מסתמכים על הסכמתך לעיבוד המידע האישי שלך, יש לך זכות למשוך את הסכמתך בכל עת. ניתן לעשות זאת ביצירת קשר אתנו באמצעות הפרטים בסעיף
+          <a href="#contact">כיצד תוכל לפנות אלינו לגבי מדיניות זו</a>
+          בהמשך.
+        </p>
+        <p>
+          שים לב — משיכת ההסכמה לא תשפיע על חוקיות העיבוד שבוצע לפני המשיכה, ולא תשפיע על עיבוד המידע האישי שמתבצע על בסיס יסודות חוקיים אחרים מלבד הסכמה.
+        </p>
+
+        <h3 id="optout">ביטול הרשמה לתקשורת שיווקית</h3>
+        <p>
+          ניתן לבטל הרשמה לתקשורת שיווקית וקידומית בכל עת — ע״י תגובה לאימייל שיווקי עם המילה ״UNSUBSCRIBE״ בנושא ההודעה, או באמצעות פנייה אלינו לפי הפרטים בסעיף
+          <a href="#contact">כיצד תוכל לפנות אלינו לגבי מדיניות זו</a>.
+          לאחר מכן תוסר מרשימות הדיוור השיווקי. עם זאת, ייתכן שעדיין נתקשר אתך לגבי הודעות הקשורות לשירות עצמו, כדי להגיב לבקשות שירות, או למטרות לא שיווקיות אחרות.
+        </p>
+
+        <h3 id="cookieprefs">עוגיות וטכנולוגיות דומות</h3>
+        <p>
+          רוב דפדפני האינטרנט מוגדרים לקבל עוגיות כברירת מחדל. אם אתה מעדיף, ניתן בדרך כלל לבחור להגדיר את הדפדפן להסיר עוגיות ולסרב לעוגיות. אם תבחר להסיר או לסרב לעוגיות, ייתכן שהדבר ישפיע על תכונות או שירותים מסוימים בשירותינו. למידע נוסף, ראה את
+          <a href="cookies.html">מדיניות העוגיות שלנו</a>.
+        </p>
+
+        <h2 id="DNT">9. בקרות עבור Do-Not-Track</h2>
+        <p>
+          רוב דפדפני האינטרנט וחלק ממערכות ההפעלה והאפליקציות הסלולריות כוללים תכונה או הגדרה של Do-Not-Track (״DNT״) שניתן להפעיל כדי לסמן את העדפת הפרטיות שלך לא לעקוב אחר פעילותך באינטרנט. בשלב זה, לא נקבע סטנדרט טכנולוגי אחיד להכרה ויישום של אותות DNT. ככזה, איננו מגיבים כיום לאותות DNT של דפדפן או למנגנון אחר שמתקשר אוטומטית את בחירתך לא להיות במעקב מקוון. אם ייקבע סטנדרט מחייב בעתיד, נעדכן את מדיניות הפרטיות בהתאם.
+        </p>
+
+        <h2 id="policyupdates">10. האם אנו מעדכנים מדיניות זו?</h2>
+        <p class="legal-doc__summary">
+          <strong>בקצרה:</strong>
+          כן, נעדכן את ההצהרה לפי הצורך כדי להיות בהתאמה לחוק.
+        </p>
+        <p>
+          ייתכן שנעדכן את מדיניות הפרטיות מעת לעת. הגרסה המעודכנת תסומן בתאריך עדכון מעודכן בראש מדיניות הפרטיות. אם נבצע שינויים מהותיים, ייתכן שנודיע לך על כך באמצעות הודעה בולטת באתר או באמצעות שליחת התראה ישירה. אנו מעודדים אותך לעיין במדיניות הפרטיות בתדירות גבוהה כדי להיות מעודכן לגבי האופן שבו אנו מגנים על המידע שלך.
+        </p>
+
+        <h2 id="contact">11. כיצד תוכל לפנות אלינו לגבי מדיניות זו?</h2>
+        <p>
+          לשאלות או הערות לגבי הצהרה זו, ניתן לפנות לאיש הקשר שלנו לעניינים של פרטיות:
+        </p>
+        <!-- TODO (Yuval): confirm public-facing privacy contact details before launch.
+             Israeli PPL requires identifying a contact for data subjects; the same
+             person may also serve as the accessibility coordinator. -->
+        <ul>
+          <li>
+            <strong>דוא״ל:</strong>
+            <span class="todo-placeholder">כתובת דוא״ל לפניות פרטיות</span>
+          </li>
+          <li>
+            <strong>טלפון:</strong>
+            <span class="todo-placeholder">מספר טלפון לפניות פרטיות</span>
+          </li>
+        </ul>
+        <p>או בדואר רגיל לכתובת:</p>
+        <address>
+          <!-- TODO (Yuval): business legal name + registered address.
+               You filled שבטי ישראל 37/א in Termly — confirm if this is the
+               address you want public on the privacy policy, or if you'd
+               prefer a separate registered office / PO box. -->
+          <p><span class="todo-placeholder">שם משפטי של העסק</span></p>
+          <p><span class="todo-placeholder">כתובת רשומה ליצירת קשר</span></p>
+        </address>
+
+        <h2 id="request">12. כיצד תוכל לעיין, לעדכן או למחוק את המידע שאנו אוספים ממך?</h2>
+        <p>
+          בהתאם לחוקים החלים במדינתך, ייתכן שיש לך זכות לבקש גישה למידע האישי שאנו אוספים ממך, פרטים על האופן שבו עיבדנו אותו, לתקן אי־דיוקים, או למחוק את המידע האישי שלך. ייתכן גם שיש לך זכות למשוך את הסכמתך לעיבוד המידע האישי שלך. זכויות אלה עשויות להיות מוגבלות בנסיבות מסוימות על פי החוק החל.
+        </p>
+        <p>
+          כדי לבקש לעיין, לעדכן או למחוק את המידע האישי שלך, אנא פנה אלינו בדוא״ל
+          <a href="mailto:berlla.business.contact@gmail.com">berlla.business.contact@gmail.com</a>.
+          נטפל בבקשתך בהקדם, ובכל מקרה לא יאוחר מ־30 יום ממועד קבלתה.
+        </p>
+      </article>
+    </div>
+  </main>
+
+  <footer class="legal-footer" role="contentinfo">
+    <div class="container legal-footer__grid">
+      <nav class="legal-footer__nav" aria-label="מסמכים משפטיים">
+        <p class="legal-footer__heading">מסמכים משפטיים</p>
+        <ul>
+          <li><a href="privacy.html" aria-current="page">מדיניות פרטיות</a></li>
+          <li><a href="terms.html">תנאי שימוש</a></li>
+          <li><a href="cookies.html">מדיניות עוגיות (Cookies)</a></li>
+          <li><a href="accessibility.html">הצהרת נגישות</a></li>
+        </ul>
+      </nav>
+
+      <div class="legal-footer__business">
+        <p class="legal-footer__heading">פרטי העסק</p>
+        <!-- TODO (Yuval): same business details as on the home-page footer.
+             Keep these two synced — Israeli Consumer Protection law requires
+             business identification on every public-facing page. -->
+        <p><span class="todo-placeholder">שם משפטי של העסק</span></p>
+        <p><span class="todo-placeholder">מספר ע.מ./ח.פ.</span></p>
+        <p><span class="todo-placeholder">כתובת רשומה</span></p>
+        <p>
+          <a href="../#contact">יצירת קשר</a>
+        </p>
+      </div>
+
+      <div class="legal-footer__meta">
+        <span>© 2026 BERLLA. כל הזכויות שמורות.</span>
+        <span>עודכן: <time datetime="2026-04-28">28.04.2026</time></span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

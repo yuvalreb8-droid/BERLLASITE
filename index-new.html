@@ -147,13 +147,16 @@
     ul, ol { list-style: none; }
 
     /* ===== Body baseline =====
-       TEMPORARY DEBUG: body bg = LIME GREEN to identify which element is
-       leaking through into safe-area zones. Will revert after diagnostic. */
+       Body bg is burgundy (matches the hero radial's outer ring) instead of
+       cream, so any iOS Safari chrome zone or sub-pixel gap shows burgundy
+       instead of leaking the page bg. Each section sets its own background
+       explicitly — about, process, portfolio, etc. cover body bg with their
+       own colors as the user scrolls. */
     body {
       font-family: var(--font-body);
       font-size:   var(--text-base);
       color:       var(--color-text);
-      background:  lime;                            /* DEBUG */
+      background:  var(--color-hero-1);
     }
 
     /* ===== Selection ===== */
@@ -249,7 +252,13 @@
       min-height: 36rem;              /* 576px floor — guards landscape iPhone */
       overflow: hidden;                /* clips Unicorn Studio "Made with" watermark */
       color: var(--color-text-on-dark);
-      background: cyan;                /* DEBUG — was radial gradient */
+      background:
+        radial-gradient(
+          ellipse at center,
+          var(--color-hero-1) 0%,
+          var(--color-hero-2) 55%,
+          var(--color-hero-3) 100%
+        );
       cursor: none;                    /* desktop: hidden by .hero-cursor; touch overrides below */
     }
     /* Touch devices have no GSAP cursor — restore native cursor so taps still feel right */
@@ -272,20 +281,11 @@
       bottom: calc(-1 * env(safe-area-inset-bottom, 0px));
       left:   calc(-1 * env(safe-area-inset-left,   0px));
       right:  calc(-1 * env(safe-area-inset-right,  0px));
-      background: hotpink;             /* DEBUG — visible only behind canvas */
-      outline: 5px solid blue !important; /* DEBUG — actual rendered bounds */
       z-index: 0;
       pointer-events: none;
-      opacity: 1;                      /* DEBUG — was 0 with fade-in; force visible */
+      opacity: 0;
       overflow: hidden;
       transition: opacity var(--dur-slow) var(--ease);
-    }
-    /* DEBUG — canvas inside .hero-scene */
-    .hero-scene > canvas {
-      width:  100% !important;
-      height: 120% !important;
-      outline: 3px solid red !important;
-      background: orange !important;
     }
     .hero-scene.is-loaded { opacity: 1; }
 
@@ -440,7 +440,6 @@
     .hero-extension {
       height: 8rem;
       pointer-events: none;
-      background: yellow;              /* DEBUG */
     }
 
     /* ============================================================
@@ -907,6 +906,63 @@
       window.addEventListener('scroll', update, { passive: true });
       window.addEventListener('resize', update, { passive: true });
       update();
+    })();
+  </script>
+
+  <!-- 4b. Canvas fill enforcer — Unicorn Studio's SDK sets inline width/height
+          on the canvas based on its initial bounding rect, which doesn't match
+          our negative-env-extended .hero-scene container. Override the canvas's
+          inline styles so it physically fills the container, and re-apply on
+          every relevant lifecycle event:
+            - Initial: try immediately + observe DOM mutations + interval poll
+              for 3s to catch the SDK's late re-sizes
+            - On resize: URL bar transitions resize the container, SDK doesn't
+              auto-resize the canvas
+            - On orientationchange: layout flips, SDK may recreate canvas
+          Without this, the WebGL gradient stops short of the container edges
+          and body bg leaks through the gap. -->
+  <script>
+    (function forceCanvasFill() {
+      const scene = document.querySelector('.hero-scene');
+      if (!scene) return;
+
+      function applyFill() {
+        const canvas = scene.querySelector('canvas');
+        if (!canvas) return;
+        canvas.style.setProperty('position', 'absolute', 'important');
+        canvas.style.setProperty('inset',    '0',        'important');
+        canvas.style.setProperty('width',    '100%',     'important');
+        canvas.style.setProperty('height',   '100%',     'important');
+      }
+
+      // Watch for SDK to inject/modify canvas (don't disconnect — SDK may
+      // re-style canvas inline at any time; keep enforcing).
+      new MutationObserver(applyFill).observe(scene, {
+        childList:      true,
+        subtree:        true,
+        attributes:     true,
+        attributeFilter: ['style', 'width', 'height'],
+      });
+
+      // Belt-and-braces: poll every 200ms for 3s in case the SDK sets sizes
+      // after the MutationObserver fires (race conditions on slow loads).
+      applyFill();
+      let attempts = 0;
+      const interval = setInterval(() => {
+        applyFill();
+        if (++attempts >= 15) clearInterval(interval);    // 15 × 200ms = 3s
+      }, 200);
+
+      // URL bar collapse/expand resizes the container — SDK may not re-size
+      // canvas. Re-apply every time.
+      window.addEventListener('resize', applyFill, { passive: true });
+
+      // Orientation change: re-apply immediately + after settle delays.
+      window.addEventListener('orientationchange', () => {
+        applyFill();
+        setTimeout(applyFill, 100);
+        setTimeout(applyFill, 500);
+      }, { passive: true });
     })();
   </script>
 
