@@ -11,7 +11,6 @@
        of system light/dark setting. Trade-off: status bar is opaque black
        chrome (page bg won't show through at top edge). Hero still reaches
        the BOTTOM edge via the calc(100lvh + safe-area-inset-bottom) rule. -->
-  <meta name="color-scheme" content="dark">
   <title>BERLLA — תצוגה מקדימה למבנה הדף הראשי</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1169,6 +1168,26 @@
         justify-self: stretch;
       }
       .process-dots, .process-hint { display: none; }
+
+      /* Scroll-driven fade: each card fades in as it enters the viewport
+         and fades out as it leaves. Native CSS timeline runs on the
+         compositor thread — no RAF desync on iOS scroll. */
+      @supports (animation-timeline: view()) {
+        @media (prefers-reduced-motion: no-preference) {
+          .process-panel {
+            animation: process-card-fade linear both;
+            animation-timeline: view();
+            animation-range: cover 0% cover 100%;
+            will-change: opacity, transform;
+          }
+        }
+      }
+    }
+    @keyframes process-card-fade {
+      0%   { opacity: 0; transform: translateY(24px); }
+      30%  { opacity: 1; transform: translateY(0); }
+      70%  { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-24px); }
     }
 
     /* ===== FAQ ===== */
@@ -1428,7 +1447,8 @@
     /* Mobile contact */
     @media (max-width: 768px) {
       .contact-hero {
-        min-height: auto;
+        /* svh = small viewport height: stable across iOS toolbar show/hide */
+        min-height: 100svh;
         padding: 8rem 1.5rem 7rem;
       }
       .contact-brand {
@@ -1776,9 +1796,20 @@
       /* Hide the original right column on mobile — parallax replaces it. */
       .about-right.about-what { display: none; }
 
+      /* Sticky-pin handoff: about pins while the parallax section
+         scrolls up over it. Parallax stacks above (z-index:2) so the
+         pinned about (z-index:1) gets visually covered as parallax rises. */
+      .about-parallax-stack { position: relative; }
+      .about-parallax-stack .about {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+
       .what-we-do-parallax {
         display: block;
         position: relative;
+        z-index: 2;
         height: 200vh;
         background: #0E1629;
         color: #fff;
@@ -1880,6 +1911,7 @@
         to   { transform: translate3d(-50%,   0, 0); }
       }
     }
+
   </style>
 </head>
 <body>
@@ -1919,6 +1951,13 @@
       <h1 class="hero-brand"><img src="img/berlla-wordmark.png" alt="BERLLA"></h1>
     </section>
 
+    <!-- ===== ABOUT + WHAT-WE-DO sticky-pin handoff (mobile-only) =====
+         Wrapping these two sections in a single parent so .about can be
+         position:sticky within bounds. As the user scrolls past about,
+         the parallax section (z-index:2) rises from below and covers the
+         pinned about (z-index:1). When parallax's top hits viewport top,
+         its internal sticky pin takes over the existing 200vh choreography. -->
+    <div class="about-parallax-stack">
     <!-- ===== ABOUT ===== -->
     <section class="about" id="about" aria-labelledby="about-title">
       <div class="about-grid">
@@ -1991,6 +2030,7 @@
         </article>
       </div>
     </section>
+    </div><!-- /.about-parallax-stack -->
 
     <!-- ===== PORTFOLIO ===== -->
     <section class="portfolio" id="portfolio" aria-label="תיק העבודות">
@@ -2703,8 +2743,8 @@
       };
 
       const startTimer = () => {
-        if (reduceMotion || paused || timerId) return;
-        timerId = setInterval(() => advance(1), ROTATE_MS);
+        /* Auto-rotation disabled — cards advance only via click/nav. */
+        return;
       };
       const stopTimer = () => {
         if (timerId) clearInterval(timerId);
