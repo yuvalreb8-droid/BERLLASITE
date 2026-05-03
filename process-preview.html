@@ -1039,9 +1039,7 @@
       background: #F4F0EB;
       border-radius: 16px;
     }
-    .process-panel:nth-child(2) { background: #EFEAE3; }
-    .process-panel:nth-child(3) { background: #F4F0EB; }
-    .process-panel:nth-child(4) { background: #EFEAE3; }
+    /* All cards share the same #F4F0EB background (set on .process-panel above). */
 
     .process-panel-content {
       display: flex;
@@ -2328,6 +2326,9 @@
               <h3>האפיון</h3>
               <p>אנחנו מתחילים בהבנה עמוקה של העסק שלכם. אין תבניות מראש — רק דף חלק ושאלות מדויקות שמטרתן להבין בדיוק מי אתם ומה העמוד הזה אמור לשדר.</p>
             </div>
+            <div class="process-panel-img">
+              <img src="img/process-1.jpeg?v=2" alt="" aria-hidden="true">
+            </div>
           </article>
 
           <article class="process-panel" data-step="2">
@@ -2335,6 +2336,9 @@
               <img class="process-panel-num" src="berlla-numbers/2.png" alt="" aria-hidden="true">
               <h3>הצורה</h3>
               <p>אנחנו אוספים את כל התובנות ומתרגמים אותן למסך. בונים את השלד, כותבים קופירייטינג ראשוני, ומעצבים סקיצה שנותנת כיוון ויזואלי ברור.</p>
+            </div>
+            <div class="process-panel-img">
+              <img src="img/process-2.jpeg" alt="" aria-hidden="true">
             </div>
           </article>
 
@@ -2344,6 +2348,9 @@
               <h3>הדיוק</h3>
               <p>אנחנו מציגים לכם את הסקיצה, עוברים עליה יחד, ומבצעים את כל ההתאמות הנדרשות לפי הפידבק שלכם — עד שהכול מדויק ומאושר.</p>
             </div>
+            <div class="process-panel-img">
+              <img src="img/process-3.jpeg" alt="" aria-hidden="true">
+            </div>
           </article>
 
           <article class="process-panel" data-step="4">
@@ -2351,6 +2358,9 @@
               <img class="process-panel-num" src="berlla-numbers/4.png" alt="" aria-hidden="true">
               <h3>ההשקה</h3>
               <p>אחרי האישור, הסקיצה הופכת לעמוד חי. אנחנו כותבים קוד נקי, דואגים לזמני טעינה מהירים, ומעלים לאוויר דף שמוכן לעבוד בשבילכם.</p>
+            </div>
+            <div class="process-panel-img">
+              <img src="img/process-4.jpeg" alt="" aria-hidden="true">
             </div>
           </article>
         </div>
@@ -3057,7 +3067,9 @@
         pin: true,
         start: 'top top',
         end: () => `+=${track.scrollWidth - window.innerWidth}`,
-        scrub: 0.5,
+        /* scrub:true = instant 1:1 with scroll, no smoothing lag. Prevents
+           right-to-left drift on iOS URL-bar adjustments / sub-pixel scroll. */
+        scrub: true,
         invalidateOnRefresh: true,
         animation: gsap.to(track, {
           x: () => -(track.scrollWidth - window.innerWidth),
