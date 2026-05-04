@@ -17,7 +17,7 @@
   <!-- Preconnect to jsdelivr so the Unicorn Studio SDK starts downloading
        as soon as possible — shaves ~100–300ms off the first-paint delay. -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@500;700&family=Bowlby+One&family=Frank+Ruhl+Libre:wght@400;500;700&family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400&family=Heebo:wght@300;400;500;600;700;800;900&family=Miriam+Libre:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@500;700&family=Bowlby+One&family=Frank+Ruhl+Libre:wght@400;500;700&family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400&family=Heebo:wght@300;400;500;600;700;800;900&family=Miriam+Libre:wght@400;700&family=Secular+One&display=swap" rel="stylesheet">
   <style>
     /* ===== Design tokens =====
        Fluid scale used by the rest of the stylesheet so the whole site
@@ -37,17 +37,18 @@
 
     /* ===== Reset + base ===== */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    /* html bg = footer navy. iOS Safari rubber-band overscroll past the
-       bottom of the page now paints navy instead of leaking the body's
-       burgundy gradient below the footer. */
-    html { scroll-behavior: smooth; background-color: #0E1629; }
+    /* html bg = contact-hero's darkest gradient stop. Footer was removed,
+       so the body now ends at the contact section. iOS Safari rubber-band
+       overscroll past the bottom paints this dark wine, blending invisibly
+       with the contact section's bottom-edge color. */
+    html { scroll-behavior: smooth; background-color: #120408; }
     body {
       font-family: 'Heebo', system-ui, -apple-system, sans-serif;
       color: #0E1629;
-      /* Layered burgundy gradient: top 25% solid #7a2440, fading through
-         #3a0f1d to navy #0E1629 — ends at the footer color so any
-         sub-pixel section gap near the footer reads navy, not burgundy. */
-      background: linear-gradient(to bottom, #7a2440 0%, #7a2440 25%, #3a0f1d 60%, #0E1629 100%);
+      /* Layered burgundy gradient ending at #120408 to match the contact
+         section's darkest gradient stop — kills the visual seam between
+         body bg and contact-hero now that no footer covers the gap. */
+      background: linear-gradient(to bottom, #7a2440 0%, #7a2440 25%, #3a0f1d 60%, #120408 100%);
       line-height: 1.6;
       font-weight: 400;
       -webkit-font-smoothing: antialiased;
@@ -542,6 +543,81 @@
       color: #1A1A1A;
       --bezel: #1A0F0A;
     }
+
+    /* ===== Portfolio editorial cover (welcome) =====
+       Full viewport "chapter break" sitting above the 3 cards: Secular One
+       headline + Assistant lede. IntersectionObserver toggles .is-inview
+       (added below) when section crosses 40% — animations replay on every
+       re-entry. overflow:hidden contains the slide-in start positions. */
+    .portfolio-intro {
+      min-height: 100vh;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: clamp(4rem, 10vh, 7rem) clamp(1rem, 5vw, 1.5rem);
+      gap: clamp(1.25rem, 3vh, 2rem);
+      overflow: hidden;
+    }
+    @media (max-width: 767px) {
+      .portfolio-intro {
+        min-height: 50vh;
+        min-height: 50svh;
+      }
+    }
+    .portfolio-intro__title {
+      font-family: 'Secular One', sans-serif;
+      font-size: clamp(2.4rem, 9vw, 4rem);
+      font-weight: 400;
+      line-height: 1.2;
+      letter-spacing: 0;
+      color: #0A0A0A;
+      text-wrap: balance;
+      max-width: 22ch;
+      margin: 0;
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+    .portfolio-intro__lede {
+      font-family: 'Assistant', sans-serif;
+      font-weight: 500;
+      font-size: clamp(1.05rem, 4vw, 1.2rem);
+      line-height: 1.65;
+      color: #2A2A2A;
+      text-wrap: pretty;
+      max-width: 32rem;
+      margin: 0;
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+    .portfolio-intro.is-inview .portfolio-intro__title {
+      animation: portfolioBounceInDown 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+    }
+    .portfolio-intro.is-inview .portfolio-intro__lede {
+      animation: portfolioFadeInLeft 1.3s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+    }
+    @keyframes portfolioBounceInDown {
+      0%   { opacity: 0; transform: translate3d(0, -400px, 0); }
+      60%  { opacity: 1; transform: translate3d(0, 25px, 0); }
+      75%  { transform: translate3d(0, -10px, 0); }
+      90%  { transform: translate3d(0, 5px, 0); }
+      100% { opacity: 1; transform: translate3d(0, 0, 0); }
+    }
+    @keyframes portfolioFadeInLeft {
+      0%   { opacity: 0; transform: translate3d(-100%, 0, 0); }
+      100% { opacity: 1; transform: translate3d(0, 0, 0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .portfolio-intro.is-inview .portfolio-intro__title,
+      .portfolio-intro.is-inview .portfolio-intro__lede {
+        animation: none;
+        opacity: 1;
+        transform: none;
+      }
+    }
+
     .portfolio .work-row {
       display: flex;
       flex-direction: column;
@@ -569,6 +645,7 @@
       padding: 1rem 2.75rem;
       background: transparent;
       color: #0A0A0A;
+      font-family: 'Assistant', sans-serif;
       font-weight: 500;
       font-size: 1.05rem;
       border: 1.5px solid #0A0A0A;
@@ -632,9 +709,9 @@
         transform 0.8s cubic-bezier(.22, .61, .36, 1) 0.15s;
     }
     .portfolio .project-meta h2 {
-      font-family: 'Frank Ruhl Libre', 'Frank Ruehl', serif;
+      font-family: 'Secular One', sans-serif;
       font-size: clamp(1.9rem, 7.5vw, 2.6rem);
-      font-weight: 500;
+      font-weight: 400;
       line-height: 1.2;
       letter-spacing: 0;
       color: #0A0A0A;
@@ -1458,6 +1535,65 @@
         max-width: 100%;
         margin: 0 auto;
       }
+
+      /* Extra breathing room between top-right headline and subtitle.
+         Two-class selector required to beat the `margin: 0 auto` shorthand
+         above which would otherwise zero margin-top. */
+      .contact-hero .contact-content { margin-top: 2.5rem; }
+
+      /* Extra breathing room between subtitle and pill buttons. */
+      .contact-hero .contact-sub { margin-bottom: 3.5rem; }
+
+      /* ===== LEGAL STRIP (mobile only) =====
+         Two rows pinned bottom of contact-hero. min-height fixes total
+         strip height; flex column + space-evenly distributes the two
+         text rows with equal gaps above row 1, between rows, and below
+         row 2. Border-top is the divider line. */
+      .contact-legal {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 4;
+        min-height: 5rem;
+        padding: 0.5rem 0.75rem;
+        border-top: 1px solid rgba(245, 236, 231, 0.18);
+        direction: rtl;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+      }
+      .contact-legal-identity,
+      .contact-legal-links {
+        margin: 0;
+        padding: 0;
+        font-family: 'Miriam Libre', 'Heebo', sans-serif;
+        font-size: 0.625rem;
+        color: rgba(245, 236, 231, 0.7);
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.4rem;
+        line-height: 1.4;
+      }
+      .contact-legal-identity a,
+      .contact-legal-links a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .contact-legal-identity a:hover,
+      .contact-legal-links a:hover { color: #F5ECE7; }
+
+      /* Push BERLLA wordmark up so the strip sits below it (no overlap).
+         5.5rem clears the strip's 5rem min-height with a small gap. */
+      .contact-brand { bottom: 5.5rem; }
+    }
+
+    /* Desktop hides the mobile legal strip — original <footer> below
+       handles desktop info architecture. */
+    @media (min-width: 769px) {
+      .contact-legal { display: none; }
     }
 
     /* ===== Footer =====
@@ -1866,7 +2002,10 @@
         width: calc(100% - 8vmin);
         max-width: 55ch;
         padding: 8vmin;
-        background: #0E1629;
+        /* 80% navy. Card is GPU-promoted (will-change + translate3d) so the
+           blend happens on the compositor, not the main thread. Image below
+           is also promoted. If iOS stutters, fall back to solid #0E1629. */
+        background: rgba(14, 22, 41, 0.8);
         text-align: center;
         transform: translate3d(-50%, 100%, 0);
         will-change: transform;
@@ -2034,6 +2173,11 @@
 
     <!-- ===== PORTFOLIO ===== -->
     <section class="portfolio" id="portfolio" aria-label="תיק העבודות">
+      <header class="portfolio-intro">
+        <h2 class="portfolio-intro__title">ככה זה נראה בפועל</h2>
+        <p class="portfolio-intro__lede">שלושה אתרים מהזמן האחרון, כל אחד מהם נבנה בהתאמה אישית ומדויקת לכל עסק ולבעלים שלו.</p>
+      </header>
+
       <article class="work-row" data-theme="irit">
         <div class="work-row__inner">
           <div class="project-meta">
@@ -2339,7 +2483,7 @@
               <span>שלחו ב-WhatsApp</span>
             </a>
 
-            <a href="mailto:hello@berlla.com" class="contact-whatsapp" aria-label="שלחו אימייל ל-BERLLA">
+            <a href="mailto:berlla.business.contact@gmail.com" class="contact-whatsapp" aria-label="שלחו אימייל ל-BERLLA">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <rect x="3" y="5" width="18" height="14"/>
                 <path d="m3 7 9 6 9-6"/>
@@ -2356,45 +2500,30 @@
           </div>
         </div>
       </div>
+
+      <!-- ===== LEGAL STRIP — mobile-only TIWIS-style mini-footer.
+           Two rows pinned to the bottom of the contact section: identity
+           + legal links. Replaces the role of a separate footer on mobile.
+           Placeholders (XXXXXXXXX, [כתובת]) — Yuval to supply.
+           Desktop hides this and uses the existing <footer> below. -->
+      <div class="contact-legal" role="contentinfo">
+        <p class="contact-legal-identity">
+          <span>BERLLA</span>
+          <span aria-hidden="true">·</span>
+          <span>ע.מ. XXXXXXXXX</span>
+          <span aria-hidden="true">·</span>
+          <span>[כתובת]</span>
+          <span aria-hidden="true">·</span>
+          <a href="mailto:berlla.business.contact@gmail.com">berlla.business.contact@gmail.com</a>
+        </p>
+        <ul class="contact-legal-links" aria-label="קישורים משפטיים">
+          <li><a href="legal/accessibility.html">נגישות</a></li>
+          <li><a href="legal/privacy.html">פרטיות</a></li>
+          <li><a href="legal/terms.html">תנאים</a></li>
+        </ul>
+      </div>
     </section>
   </main>
-
-  <!-- ===== FOOTER ===== -->
-  <footer class="footer" role="contentinfo">
-    <div class="footer-inner">
-      <div class="footer-top">
-        <!-- HTML order in RTL grid: first child renders rightmost. -->
-        <div class="footer-col footer-col--right">
-          <h5>ניווט</h5>
-          <ul>
-            <li><a href="#">בית</a></li>
-            <li><a href="#about">אודות</a></li>
-            <li><a href="#portfolio">עבודות</a></li>
-            <li><a href="#testimonials">ביקורות</a></li>
-            <li><a href="#process">תהליך</a></li>
-            <li><a href="#contact">יצירת קשר</a></li>
-          </ul>
-        </div>
-        <div class="footer-col footer-col--left">
-          <h5>משפטי</h5>
-          <ul>
-            <li><a href="legal/terms.html">תנאי שימוש</a></li>
-            <li><a href="legal/accessibility.html">הצהרת נגישות</a></li>
-            <li><a href="legal/privacy.html">מדיניות פרטיות</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Logo on its own row beneath the link columns -->
-      <div class="footer-brand">
-        <img src="img/berlla-footer-logo.png" alt="BERLLA">
-      </div>
-
-      <div class="footer-bottom">
-        <div>© 2025 BERLLA. כל הזכויות שמורות.</div>
-      </div>
-    </div>
-  </footer>
 
   <!-- Custom hero cursor element — positioned + scaled by GSAP -->
   <div class="hero-cursor" aria-hidden="true"></div>
@@ -2795,6 +2924,30 @@
 
       applyPositions();
       startTimer();
+    })();
+  </script>
+
+  <script>
+    /* Portfolio editorial cover: add .is-inview when the intro crosses 40%
+       visible, remove on exit so bounce/slide animations replay each
+       re-entry. */
+    (function () {
+      const intro = document.querySelector('.portfolio-intro');
+      if (!intro) return;
+      if (!('IntersectionObserver' in window)) {
+        intro.classList.add('is-inview');
+        return;
+      }
+      const introIO = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            intro.classList.add('is-inview');
+          } else {
+            intro.classList.remove('is-inview');
+          }
+        });
+      }, { threshold: 0.4 });
+      introIO.observe(intro);
     })();
   </script>
 
