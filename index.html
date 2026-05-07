@@ -17,6 +17,16 @@
   <!-- Preconnect to jsdelivr so the Unicorn Studio SDK starts downloading
        as soon as possible — shaves ~100–300ms off the first-paint delay. -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <!-- All web fonts are loaded from Google Fonts (Open Font License / SIL OFL).
+       Free for commercial use, no separate license file required. Fonts in use:
+         - Heebo (primary Hebrew/Latin sans, 300–900)
+         - Frank Ruhl Libre (Hebrew serif, 400/500/700)
+         - Secular One (Hebrew display)
+         - Miriam Libre (Hebrew sans display, 400/700)
+         - Assistant (Hebrew sans, 500/700)
+         - Bowlby One (Latin display, 400)
+         - Fraunces (Latin serif, 400–900 + italic)
+       Source: fonts.google.com — IS 5568 / Copyright compliance documented here. -->
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@500;700&family=Bowlby+One&family=Frank+Ruhl+Libre:wght@400;500;700&family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400&family=Heebo:wght@300;400;500;600;700;800;900&family=Miriam+Libre:wght@400;700&family=Secular+One&display=swap" rel="stylesheet">
   <style>
     /* ===== Design tokens =====
@@ -200,12 +210,12 @@
       overflow: hidden;
       padding: 6rem 2rem 2rem;
       isolation: isolate;
-      cursor: none; /* system cursor hidden; .hero-cursor takes over */
     }
 
-    /* Custom cursor — only visible while hovering the hero.
-       GSAP tweens x/y and scale; xPercent/yPercent center it on the pointer. */
+    /* Custom hero cursor — disabled. GSAP tracking still runs against the
+       hidden node so re-enabling is a one-line revert (remove display:none). */
     .hero-cursor {
+      display: none;
       position: fixed;
       top: 0;
       left: 0;
@@ -311,7 +321,7 @@
       /* Image-based wordmark. Width controls visual size; height intrinsic
          from the image's 3.65:1 aspect ratio. line-height:0 prevents the
          h1 wrapper from adding line-box padding around the inline image. */
-      width: clamp(15rem, 55vw, 64rem);
+      width: clamp(10.5rem, 38.5vw, 44.8rem);
       line-height: 0;
     }
     .hero-brand img {
@@ -513,6 +523,40 @@
       display: block;
       width: 100%;
       height: auto;
+    }
+
+    /* ===== Member-reveal animation (added 2026-05-06) =====
+       Scale + translateY + blur entrance, with `.in-view` class added by
+       a scoped IntersectionObserver. Staggered by 0.12s per element
+       within the same group (closest section).
+
+       INDEPENDENT of the global `.reveal` class (line ~1979) — different
+       class name (`member-reveal` vs `reveal`), different toggle class
+       (`in-view` vs `in`), different easing/properties. The two systems
+       coexist; testimonials and other `.reveal` users are unaffected. */
+    .member-reveal {
+      opacity: 0;
+      transform: scale(0.88) translateY(18px);
+      filter: blur(8px);
+      transition:
+        opacity .7s ease-out,
+        transform .7s cubic-bezier(.22, 1, .36, 1),
+        filter .7s ease-out;
+      will-change: transform, opacity, filter;
+    }
+    .member-reveal.in-view {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      filter: blur(0);
+      will-change: auto;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .member-reveal {
+        transition: none;
+        opacity: 1;
+        transform: none;
+        filter: none;
+      }
     }
 
     /* Scroll-driven entrance animations for the navy "what we do" column.
@@ -877,6 +921,327 @@
       height: auto;
     }
 
+    /* ===== Portfolio — desktop deveb-style spread (≥768px) ============
+       Hidden on mobile by default; the existing .work-row articles above
+       handle mobile (locked design, pastel frames). On desktop, this block
+       takes over: 2-col grid with a sticky stage-col holding curtain bg
+       layers + cards, and a scrolling text-col on the other side.
+
+       Mechanism — JS-rAF clip-path wipe:
+       - For each text-block, JS reads its getBoundingClientRect each frame
+         and writes inline clip-path on the matching curtain + card via
+         data-theme. Both natural left scroll and right wipe come from the
+         same scrollY value at the same instant — no possible drift.
+       - Curtains span both columns via right: -100% so the bg layer covers
+         the full viewport, eliminating any column-divide seam.
+       - overflow: clip (not hidden) on .projects-spread so the rightward-
+         extended curtain doesn't horizontal-scroll the page, while still
+         allowing the stage-col's position:sticky to track the document
+         scroll (overflow:hidden would create a scroll container that
+         breaks sticky tracking).
+
+       Brand colors (different from mobile work-row's pastel frames —
+       intentional, per design direction): irit chocolate, tali blue-gray,
+       lebi sand. White text on all three (accepted accessibility tradeoff
+       on tali/lebi). =============================================== */
+    .portfolio .projects-spread { display: none; }
+
+    @media (min-width: 768px) {
+      /* Hide mobile work-rows on desktop. */
+      .portfolio .work-row { display: none; }
+
+      /* Show + lay out the desktop spread. */
+      .portfolio .projects-spread {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        position: relative;
+        overflow: clip;
+      }
+
+      /* Right-side text column (visual right in RTL) — scrolls naturally. */
+      .portfolio .text-col {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .portfolio .text-block {
+        min-height: 100vh;
+        min-height: 100svh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: clamp(2.5rem, 5vw, 5rem);
+      }
+
+      /* Project meta inside text-block — re-styled for the desktop spread.
+         Overrides the mobile .project-meta center-align, max-widths, etc. */
+      .portfolio .text-block .project-meta {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: clamp(1.5rem, 4vh, 2.25rem);
+        max-width: 32rem;
+        width: 100%;
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+      .portfolio .text-block .project-meta h2 {
+        font-family: 'Secular One', sans-serif;
+        font-size: clamp(1.9rem, 4.5vw, 2.6rem);
+        font-weight: 400;
+        line-height: 1.2;
+        color: var(--row-text, #FFFFFF);
+        text-align: right;
+        text-wrap: balance;
+        max-width: none;
+        margin: 0;
+      }
+      .portfolio .text-block .project-desc {
+        font-family: 'Assistant', sans-serif;
+        font-weight: 500;
+        font-size: clamp(1rem, 1.3vw, 1.15rem);
+        line-height: 1.65;
+        color: var(--row-text-soft, rgba(255, 255, 255, 0.86));
+        text-align: right;
+        text-wrap: pretty;
+        margin: 0;
+      }
+      /* Override the global outline-pill .btn-view to use white tokens
+         that flip to project-bg on hover/focus. Independent of mobile
+         work-row btn-view styling because that's at .portfolio .btn-view
+         specificity which doesn't include .text-block. */
+      .portfolio .text-block .btn-view {
+        color: var(--row-button, #FFFFFF);
+        border-color: var(--row-button, #FFFFFF);
+      }
+      .portfolio .text-block .btn-view:focus-visible {
+        background: var(--row-button-hover-bg, #FFFFFF);
+        color: var(--row-button-hover-text, #0A0A0A);
+        /* Double-ring focus indicator: white outline + dark halo. Single-
+           color outlines don't survive across all 3 brand bgs. The pair
+           guarantees at least one ring is always visible. */
+        outline: 3px solid #FFFFFF;
+        outline-offset: 2px;
+        box-shadow: 0 0 0 7px #0A0A0A;
+      }
+      @media (hover: hover) {
+        .portfolio .text-block .btn-view:hover {
+          background: var(--row-button-hover-bg, #FFFFFF);
+          color: var(--row-button-hover-text, #0A0A0A);
+        }
+      }
+
+      /* Per-project tokens — text-col reads these for text/button colors,
+         curtain/card paint bg directly. Mixed contrast accepted: irit
+         9.5:1 ✓, tali ~4.27:1 (large text passes), lebi ~2.74:1 (design
+         tradeoff per user). */
+      .portfolio .text-block[data-theme="irit"] {
+        --row-text: #FFFFFF;
+        --row-text-soft: rgba(255, 255, 255, 0.86);
+        --row-button: #FFFFFF;
+        --row-button-hover-bg: #FFFFFF;
+        --row-button-hover-text: #7C3913;
+      }
+      .portfolio .text-block[data-theme="tali"] {
+        --row-text: #FFFFFF;
+        --row-text-soft: rgba(255, 255, 255, 0.86);
+        --row-button: #FFFFFF;
+        --row-button-hover-bg: #FFFFFF;
+        --row-button-hover-text: #5E7DA0;
+      }
+      .portfolio .text-block[data-theme="lebi"] {
+        --row-text: #FFFFFF;
+        --row-text-soft: rgba(255, 255, 255, 0.86);
+        --row-button: #FFFFFF;
+        --row-button-hover-bg: #FFFFFF;
+        --row-button-hover-text: #B8976A;
+      }
+
+      /* Left-side stage column (visual left in RTL) — sticky, holds
+         only the card mockup stack now (curtains moved to .curtain-stack
+         below to avoid sub-pixel line at the grid column boundary). */
+      .portfolio .stage-col {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        height: 100svh;
+        z-index: 0;
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+      }
+      /* Right-side text column also explicit so curtain-stack overlays correctly */
+      .portfolio .text-col {
+        grid-column: 1 / 2;
+        grid-row: 1 / 2;
+      }
+      /* Curtain stack — spans both grid cols, sticks to viewport top
+         while in projects-spread bounds. Moving curtains here (instead
+         of nesting them inside stage-col with right:-100%) eliminates
+         the 1px sub-pixel line at the column boundary x=712.87 — the
+         curtains no longer cross stage-col's compositing layer edge. */
+      .portfolio .curtain-stack {
+        grid-column: 1 / -1;
+        grid-row: 1 / 2;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        height: 100svh;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      /* Curtain = one full-bleed bg per project. inset: 0 spans the
+         full .curtain-stack which itself spans both grid columns. No
+         more right:-100% extension that crossed stage-col's compositing
+         layer boundary (which was creating a 1px sub-pixel line). */
+      .portfolio .curtain {
+        position: absolute;
+        inset: 0;
+        clip-path: inset(0 0 0% 0);
+        will-change: clip-path;
+      }
+      .portfolio .curtain[data-theme="irit"] { background: #7C3913; z-index: 3; }
+      .portfolio .curtain[data-theme="tali"] { background: #5E7DA0; z-index: 2; }
+      .portfolio .curtain[data-theme="lebi"] { background: #B8976A; z-index: 1; }
+
+      /* Card = project-frame containing device mockups. Lives inside
+         stage-col (left half of viewport), centered. Wipes via the SAME
+         clip-path value as its curtain — they wipe as a single unit. */
+      .portfolio .card {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: clamp(2rem, 4vw, 4rem);
+        pointer-events: none;
+        clip-path: inset(0 0 0% 0);
+        will-change: clip-path;
+        /* Force own compositing layer for pixel-aligned rasterization at
+           the stage-col boundary (x=712.87). Otherwise cards inherit
+           stage-col's sub-pixel layer edge, exposing the cards stacked
+           below as a 1px line at integer x=712. */
+        transform: translate3d(0, 0, 0);
+      }
+      /* Solid card bg matching each project's curtain color. Without this,
+         the cards' padding area is transparent — and at the project-frame's
+         rounded-corner anti-alias pixels (alpha<1), you see THROUGH irit's
+         frame to tali's frame (z=12, same border-radius, also alpha-edged)
+         and lebi's frame (z=11) underneath. Tali frame B=189 and lebi
+         frame B=146 contribute high blue/cool channel values to the
+         corner alpha-blend, producing a visible cool-tinted rim along
+         the curve. Pixel-confirmed: measured rgb(168,115,83) on the
+         curve = exact match of the 3-frame alpha stack math.
+
+         Solid bg on each card fully hides the cards below. At the corner
+         alpha-edge, only irit-frame + irit-card-bg contribute → pure
+         warm brown blend, no cool bleed-through. */
+      .portfolio .card[data-theme="irit"] {
+        z-index: 13;
+        background-color: #7C3913;
+      }
+      .portfolio .card[data-theme="tali"] {
+        z-index: 12;
+        background-color: #5E7DA0;
+      }
+      .portfolio .card[data-theme="lebi"] {
+        z-index: 11;
+        background-color: #B8976A;
+      }
+
+      /* Override the mobile .project-frame's negative-spread shadow and
+         pastel bg. Desktop frame uses brand-coordinated lighter shade
+         + no shadow (negative-spread shadow created a Mach-band lighter-
+         halo at the rounded corners against the dark curtain bg). */
+      .portfolio .card .project-frame {
+        position: relative;
+        width: 100%;
+        max-width: 32rem;
+        background: var(--frame-bg, #F0F0F0);
+        border-radius: clamp(1.5rem, 2vw, 2.25rem);
+        padding: clamp(2.5rem, 4vw, 4rem) clamp(1.5rem, 3vw, 2.5rem) clamp(3.5rem, 6vw, 5rem);
+        box-shadow: none;
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+      .portfolio .card[data-theme="irit"] .project-frame { --frame-bg: #B85B23; }
+      .portfolio .card[data-theme="tali"] .project-frame { --frame-bg: #8EA4BD; }
+      .portfolio .card[data-theme="lebi"] .project-frame { --frame-bg: #CDB492; }
+
+      /* Override mobile device--desktop shadow to remove inset highlight
+         that read as a teal/blue line at the bezel-to-screen boundary
+         (white@8% inset on warm dark bezel + warm screen content =
+         cool-tinted edge from LCD subpixel rendering). */
+      .portfolio .card .device--desktop {
+        box-shadow: 0 18px 40px -14px rgba(0, 0, 0, 0.45);
+      }
+      .portfolio .card .device--phone {
+        box-shadow: 0 14px 28px -10px rgba(0, 0, 0, 0.32);
+      }
+
+      /* Transparent device-screen bg + clip top of screen-img to hide
+         Chrome's rounded-corner anti-alias artifact at the top edge. */
+      .portfolio .card .device--desktop .device-screen,
+      .portfolio .card .device--phone .device-screen {
+        background: transparent;
+      }
+
+      /* Lock device-screen to a fixed aspect ratio + use object-fit: cover
+         on the screen-img. Without this, the frame heights are content-
+         driven from each PNG's natural aspect — and even ~0.5% mismatches
+         between the 3 source captures (e.g. irit 2880×1800 → 1.600 vs
+         tali 975×612 → 1.594) cascade into a 1px height difference on
+         the project-frame. Since cards stack at the same center point,
+         the taller frame's blue/sand edge peeks ~0.5px above + below
+         the active frame as a thin colored rim. Locking the aspect ratio
+         forces all 3 frames to render identical heights regardless of
+         source asset dimensions. */
+      .portfolio .card .device--desktop .device-screen {
+        aspect-ratio: 16 / 10;
+      }
+      .portfolio .card .device--desktop .screen-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        clip-path: inset(2px 0 0 0);
+      }
+      .portfolio .card .device--phone .device-screen {
+        aspect-ratio: 9 / 19.5;
+      }
+      .portfolio .card .device--phone .screen-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        clip-path: inset(1.5px 0 0 0);
+      }
+    }
+
+    /* ===== Reduced-motion fallback for the desktop spread =====
+       For desktop users who prefer reduced motion, drop the scroll-driven
+       wipe entirely and present each project as a self-contained full-
+       height section with its brand bg painted directly. JS bails out
+       (see script below). The mobile work-rows stay hidden on desktop;
+       reduced-motion users see brand-color panels instead of pastel
+       cards — proper visual context for each project. */
+    @media (prefers-reduced-motion: reduce) and (min-width: 768px) {
+      .portfolio .projects-spread {
+        display: block;
+        overflow: visible;
+      }
+      .portfolio .stage-col { display: none; }
+      .portfolio .text-block {
+        min-height: 100vh;
+        padding: clamp(2.5rem, 5vw, 5rem);
+      }
+      .portfolio .text-block[data-theme="irit"] { background: #7C3913; }
+      .portfolio .text-block[data-theme="tali"] { background: #5E7DA0; }
+      .portfolio .text-block[data-theme="lebi"] { background: #B8976A; }
+    }
+
     /* ===== Testimonials ===== */
     /* ===== TESTIMONIALS — stacked-card rebuild =====
        Navy bg, ghost-outline cards. JS rotates which card is "front" every
@@ -1034,6 +1399,67 @@
         box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
       }
       .stack-nav svg { width: 30px; height: 30px; }
+    }
+
+    /* ===== Testimonials cursor pill (nographism.com-style) =====
+       Pill-shaped hint that follows the cursor only while hovering a
+       peeking ("next") testimonial card. Hides when over the front card
+       or off the stack. Caption: "תלחץ לעוד ביקורות" + a down-arrow icon.
+
+       Position: fixed; top:0; left:0 per RTL-safe rule for follow-the-
+       mouse overlays. JS-rAF with lerp for smooth tracking. CSS handles
+       opacity + scale transition; translate is per-frame.
+
+       Bails on touch (hover:none) and respects reduced-motion. */
+    .testimonial-cursor-pill {
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.7rem 1.15rem;
+      background: #0E1629;
+      color: #F4ECDC;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      font-family: 'Heebo', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 50;
+      --tx: 0px;
+      --ty: 0px;
+      /* Cursor anchored at the pill's top-left corner with a small gap.
+         translate(1.25rem, 1rem) offsets pill ~20px down + ~20px right
+         from cursor so it doesn't overlap the pointer. Scale(0.85) is
+         the resting state (when not hovering); .cursor-active scales to 1. */
+      transform: translate3d(var(--tx), var(--ty), 0) translate(1.25rem, 1rem) scale(0.85);
+      transform-origin: top left;
+      transition: opacity 0.22s ease, transform 0.35s cubic-bezier(.22, 1, .36, 1);
+      will-change: transform, opacity;
+      box-shadow: 0 12px 28px -12px rgba(0, 0, 0, 0.5);
+    }
+    .testimonial-cursor-pill .cursor-pill-arrow {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+    .testimonials.cursor-active .testimonial-cursor-pill {
+      opacity: 1;
+      transform: translate3d(var(--tx), var(--ty), 0) translate(1.25rem, 1rem) scale(1);
+    }
+    @media (hover: none) {
+      .testimonial-cursor-pill { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .testimonial-cursor-pill {
+        transition: opacity 0.2s ease;
+        transform: translate3d(var(--tx), var(--ty), 0) translate(1.25rem, 1rem);
+      }
     }
 
     /* ===== Process — rauno-style horizontal panel scroller =====
@@ -1439,6 +1865,68 @@
       height: auto;
     }
 
+    /* ===== LEGAL STRIP =====
+       Single horizontal row pinned to the bottom of contact-hero (identity
+       on the right via RTL, legal links on the left). Used on both mobile
+       and desktop. Replaces the missing site-wide footer. */
+    .contact-legal {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 4;
+      min-height: 2.75rem;
+      padding: 0.5rem clamp(1rem, 2.5vw, 2.5rem);
+      border-top: 1px solid rgba(245, 236, 231, 0.18);
+      direction: rtl;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem 1.5rem;
+    }
+    .contact-legal-identity,
+    .contact-legal-links {
+      margin: 0;
+      padding: 0;
+      font-family: 'Miriam Libre', 'Heebo', sans-serif;
+      /* Floor raised from 10px → 12px (0.625 → 0.75rem) for IS 5568 / WCAG 2.0 AA
+         readability; legal info must be reasonably readable on the smallest device. */
+      font-size: clamp(0.75rem, 0.7rem + 0.18vw, 0.875rem);
+      color: rgba(245, 236, 231, 0.7);
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.4rem;
+      line-height: 1.4;
+    }
+    .contact-legal-identity a,
+    .contact-legal-links a {
+      color: inherit;
+      text-decoration: none;
+      border-radius: 2px;
+    }
+    .contact-legal-identity a:hover,
+    .contact-legal-links a:hover {
+      color: #F5ECE7;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    /* WCAG 2.4.7 — keyboard users need a visible focus ring. Inverse of the
+       link color so it stays legible on the dark contact background. */
+    .contact-legal-identity a:focus-visible,
+    .contact-legal-links a:focus-visible {
+      outline: 2px solid #F5ECE7;
+      outline-offset: 3px;
+      color: #F5ECE7;
+    }
+
+    /* BERLLA wordmark pushed up to clear the (now slimmer, single-row)
+       strip on every viewport. */
+    .contact-brand { bottom: 3.25rem; }
+
     /* Right-anchored content stack — section padding-top pushes it below the
        absolute headline at top-right. */
     .contact-content {
@@ -1544,57 +2032,33 @@
       /* Extra breathing room between subtitle and pill buttons. */
       .contact-hero .contact-sub { margin-bottom: 3.5rem; }
 
-      /* ===== LEGAL STRIP (mobile only) =====
-         Two rows pinned bottom of contact-hero. min-height fixes total
-         strip height; flex column + space-evenly distributes the two
-         text rows with equal gaps above row 1, between rows, and below
-         row 2. Border-top is the divider line. */
+      /* Mobile-specific legal strip overrides — single-row from global,
+         flex-wrap for narrow widths. min-height: 6rem locks the strip's
+         total height even when content wraps. padding 1rem top/bottom
+         = 1rem gap below the divider line. Wordmark bottom: 7rem =
+         1rem gap above the line. Result: equal, visibly clear 1rem
+         padding on both sides of the line (was 0.5rem which the user
+         reported as not visibly different on their device). */
       .contact-legal {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 4;
-        min-height: 5rem;
-        padding: 0.5rem 0.75rem;
-        border-top: 1px solid rgba(245, 236, 231, 0.18);
-        direction: rtl;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
+        min-height: 6rem;
+        padding: 1rem 0.75rem;
+        gap: 0.4rem 1rem;
+        justify-content: center;
       }
       .contact-legal-identity,
       .contact-legal-links {
-        margin: 0;
-        padding: 0;
-        font-family: 'Miriam Libre', 'Heebo', sans-serif;
-        font-size: 0.625rem;
-        color: rgba(245, 236, 231, 0.7);
-        list-style: none;
-        display: flex;
-        flex-wrap: wrap;
+        font-size: 0.75rem;
         justify-content: center;
-        gap: 0.4rem;
-        line-height: 1.4;
       }
-      .contact-legal-identity a,
-      .contact-legal-links a {
-        color: inherit;
-        text-decoration: none;
-      }
-      .contact-legal-identity a:hover,
-      .contact-legal-links a:hover { color: #F5ECE7; }
-
-      /* Push BERLLA wordmark up so the strip sits below it (no overlap).
-         5.5rem clears the strip's 5rem min-height with a small gap. */
-      .contact-brand { bottom: 5.5rem; }
+      .contact-brand { bottom: 7rem; }
     }
 
-    /* Desktop hides the mobile legal strip — original <footer> below
-       handles desktop info architecture. */
-    @media (min-width: 769px) {
-      .contact-legal { display: none; }
-    }
+    /* Legal strip is now shown on desktop too (was mobile-only previously).
+       Replaces the missing site-wide footer that was deleted in the
+       2026-05-04 commit. Styling lives at line ~1860 (global) so it
+       applies to all viewports; the mobile @media block above just
+       overrides the BERLLA wordmark + strip font size for the small-
+       screen tightening. */
 
     /* ===== Footer =====
        Slim footer — only nav + copyright. Padding/gaps shrunk to ~35% of
@@ -1946,7 +2410,8 @@
         display: block;
         position: relative;
         z-index: 2;
-        height: 200vh;
+        /* Extended from 200vh → 350vh for the longer text card content. */
+        height: 350vh;
         background: #0E1629;
         color: #fff;
         view-timeline-name: --what-we-do;
@@ -2029,15 +2494,51 @@
         color: #fff;
       }
       .what-we-do-parallax__lead {
-        font-size: clamp(1.125rem, 4vw, 1.4rem);
+        /* Smaller min so the longer sentence fits on one row at narrow
+           viewports without overflowing. nowrap keeps the user-intended
+           line breaks (driven by <br>) — each sentence stays on its own
+           visual row instead of soft-wrapping mid-sentence. */
+        font-size: clamp(0.9rem, 3.4vw, 1.4rem);
         font-weight: 600;
         color: #fff;
+        white-space: nowrap;
       }
       .what-we-do-parallax__text p { color: rgba(255, 255, 255, 0.86); }
 
-      /* Compositor-threaded animation. animation-range "contain" on a 200vh
-         section corresponds exactly to the sticky-pin phase — viewport is
-         fully inside section while the pin is engaged. */
+      /* ===== Pillars (added 2026-05-06) — 4 conceptual pillars below the
+         lead. Single column on narrow screens; 2-col grid at ≥600px. */
+      .what-we-do-parallax__pillars {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: clamp(1.25rem, 3vh, 2rem);
+        text-align: right;
+        margin-top: clamp(1.5rem, 3vh, 2rem);
+      }
+      @media (min-width: 600px) {
+        .what-we-do-parallax__pillars {
+          grid-template-columns: 1fr 1fr;
+          gap: clamp(1.5rem, 3vh, 2rem) clamp(2rem, 4vw, 3rem);
+        }
+      }
+      .what-we-do-parallax__pillar-title {
+        font-family: 'Frank Ruhl Libre', 'Heebo', serif;
+        font-size: clamp(1.1rem, 3vw, 1.35rem);
+        font-weight: 700;
+        line-height: 1.2;
+        margin: 0 0 0.4rem;
+        color: #fff;
+      }
+      .what-we-do-parallax__pillar-desc {
+        font-size: clamp(0.95rem, 3vw, 1.05rem);
+        line-height: 1.6;
+        margin: 0;
+        color: rgba(255, 255, 255, 0.86);
+      }
+
+      /* Compositor-threaded animation. With 350vh section, contain phase
+         covers ~250vh of scroll. Keyframes extended to translate from
+         100% → -30% so the card keeps rising past its natural position
+         (revealing the pillar content as scroll continues). */
       @supports (animation-timeline: view()) {
         .what-we-do-parallax__text {
           animation: what-we-do-parallax-rise linear both;
@@ -2047,8 +2548,190 @@
       }
       @keyframes what-we-do-parallax-rise {
         from { transform: translate3d(-50%, 100%, 0); }
-        to   { transform: translate3d(-50%,   0, 0); }
+        to   { transform: translate3d(-50%, -30%, 0); }
       }
+    }
+
+    /* ===== Desktop parallax (≥961px) — about + what-we-do handoff =====
+       Approved 2026-05-04 in about-preview.html, ported to live now.
+       Replaces the duplicate `.about-right.about-what` column on desktop
+       with the same 200vh sticky-pin parallax that runs on mobile.
+
+       Why duplicate column existed: the original desktop about had two
+       columns — left=people, right=what-we-do content. On mobile this
+       was already replaced by a separate `.what-we-do-parallax` sticky-
+       pin section that rises over the about. Desktop now follows the
+       same pattern: about (people-only, ~70vh) → parallax (200vh).
+
+       Renamed keyframes `-rise-desktop` because the mobile keyframes
+       above are gated inside `@media (max-width: 960px)` and don't
+       exist on desktop — needed a separately-defined version. =========
+    */
+    @media (min-width: 961px) {
+      /* Remove the duplicate what-we-do column inside .about so the
+         page reads as: about (people-only) → what-we-do (parallax). */
+      .about-right.about-what { display: none !important; }
+
+      /* Collapse the now-2-column-with-empty-right-col grid into a
+         single column so people content spreads across full section
+         width. Hide the now-orphan central divider line. */
+      .about-grid {
+        grid-template-columns: 1fr;
+      }
+      .about-grid::before { display: none; }
+
+      /* Sized to match testimonials' visual scale (~70% of viewport).
+         min-height (not strict) so taller content grows instead of
+         clipping. Flex centering distributes leftover space symmetrically. */
+      .about {
+        min-height: 70vh;
+        padding: clamp(3rem, 3vw + 1.5rem, 6rem) clamp(1.5rem, 1.5vw + 1rem, 4rem);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .about-grid { width: 100%; }
+
+      /* Enable the parallax section on desktop + mirror the mobile
+         layout/animation rules (originally gated behind max-width:960px). */
+      .what-we-do-parallax {
+        display: block;
+        position: relative;
+        z-index: 2;
+        /* Extended from 200vh → 350vh to give the text card more scroll
+           runway. With longer content (4 pillar blocks added below the
+           lead), the card now continues to translate up past its natural
+           position so the user keeps reading as they scroll. */
+        height: 350vh;
+        background: #0E1629;
+        color: #fff;
+        view-timeline-name: --what-we-do;
+      }
+      .what-we-do-parallax__pin {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow: hidden;
+      }
+      .what-we-do-parallax__image {
+        position: absolute;
+        inset: 0;
+        transform: translateZ(0);
+        will-change: transform;
+        -webkit-backface-visibility: hidden;
+      }
+      .what-we-do-parallax__image picture,
+      .what-we-do-parallax__image img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .what-we-do-parallax__fade {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 50%;
+        pointer-events: none;
+        background: linear-gradient(
+          to bottom,
+          hsla(225, 50%, 11%, 0)     0%,
+          hsla(225, 50%, 11%, 0.05)  15%,
+          hsla(225, 50%, 11%, 0.18)  30%,
+          hsla(225, 50%, 11%, 0.4)   45%,
+          hsla(225, 50%, 11%, 0.6)   55%,
+          hsla(225, 50%, 11%, 0.82)  70%,
+          hsla(225, 50%, 11%, 0.95)  85%,
+          hsl(225, 50%, 11%)         100%
+        );
+        transform: translateZ(0);
+        will-change: transform;
+        -webkit-backface-visibility: hidden;
+      }
+      .what-we-do-parallax__text {
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        width: calc(100% - 8vmin);
+        /* Widened from 55ch → 70ch so the lead's two `<br>`-separated
+           sentences fit on a single row each without wrapping at desktop
+           sizes. The `calc(100% - 8vmin)` still caps width at the pin's
+           edge, so on narrow pins the card just gets a bit wider but
+           never overflows the viewport. */
+        max-width: 70ch;
+        padding: 8vmin;
+        background: rgba(14, 22, 41, 0.8);
+        text-align: center;
+        transform: translate3d(-50%, 100%, 0);
+        will-change: transform;
+      }
+      .what-we-do-parallax__text > * + * { margin-top: 1.25rem; }
+      .what-we-do-parallax__eyebrow {
+        display: block;
+        font-family: 'Heebo', sans-serif;
+        font-weight: 600;
+        font-size: 0.8125rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: hsla(0, 0%, 100%, 0.65);
+      }
+      .what-we-do-parallax__title {
+        font-family: 'Frank Ruhl Libre', 'Heebo', serif;
+        font-size: clamp(2rem, 6vw, 3.25rem);
+        font-weight: 700;
+        line-height: 1.15;
+        margin: 0;
+        color: #fff;
+      }
+      .what-we-do-parallax__lead {
+        font-size: clamp(1.125rem, 4vw, 1.4rem);
+        font-weight: 600;
+        color: #fff;
+        /* Each `<br>`-separated sentence stays on its own row. Container
+           was widened above to fit the longer line at this font size. */
+        white-space: nowrap;
+      }
+      .what-we-do-parallax__text p { color: rgba(255, 255, 255, 0.86); }
+
+      /* Pillars on desktop — 2-col grid (forced ≥600px is below this
+         breakpoint so we always show 2 columns at desktop sizes). */
+      .what-we-do-parallax__pillars {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: clamp(1.5rem, 3vh, 2rem) clamp(2rem, 4vw, 3rem);
+        text-align: right;
+        margin-top: clamp(1.5rem, 3vh, 2rem);
+      }
+      .what-we-do-parallax__pillar-title {
+        font-family: 'Frank Ruhl Libre', 'Heebo', serif;
+        font-size: clamp(1.1rem, 2vw, 1.35rem);
+        font-weight: 700;
+        line-height: 1.2;
+        margin: 0 0 0.4rem;
+        color: #fff;
+      }
+      .what-we-do-parallax__pillar-desc {
+        font-size: clamp(0.95rem, 1.5vw, 1.05rem);
+        line-height: 1.6;
+        margin: 0;
+        color: rgba(255, 255, 255, 0.86);
+      }
+
+      @supports (animation-timeline: view()) {
+        .what-we-do-parallax__text {
+          animation: what-we-do-parallax-rise-desktop linear both;
+          animation-timeline: --what-we-do;
+          animation-range: contain;
+        }
+      }
+    }
+    /* Keyframes outside the @media so they're always defined.
+       Renamed from `-rise` → `-rise-desktop` because the mobile version
+       lives inside @media (max-width:960px) and won't exist on desktop. */
+    @keyframes what-we-do-parallax-rise-desktop {
+      from { transform: translate3d(-50%, 100%, 0); }
+      to   { transform: translate3d(-50%, -30%, 0); }
     }
 
   </style>
@@ -2101,11 +2784,11 @@
     <section class="about" id="about" aria-labelledby="about-title">
       <div class="about-grid">
         <!-- LEFT: the people -->
-        <div class="about-left reveal">
-          <h2 id="about-title" class="about-heading">מי אנחנו</h2>
+        <div class="about-left">
+          <h2 id="about-title" class="about-heading member-reveal">מי אנחנו</h2>
 
           <div class="about-people">
-            <div class="about-person">
+            <div class="about-person member-reveal">
               <h3>אלה</h3>
               <div class="about-blob">
                 <img src="img/ella.jpeg" alt="תמונה של אלה" loading="lazy" decoding="async">
@@ -2117,7 +2800,7 @@
               </div>
             </div>
 
-            <div class="about-person">
+            <div class="about-person member-reveal">
               <h3>יובל</h3>
               <div class="about-blob">
                 <img src="img/yuval.jpeg" alt="תמונה של יובל" loading="lazy" decoding="async">
@@ -2131,7 +2814,7 @@
           </div>
         </div>
 
-        <!-- RIGHT: what we do -->
+        <!-- RIGHT: what we do (hidden on mobile + desktop now — replaced by .what-we-do-parallax) -->
         <div class="about-right about-what reveal">
           <div class="about-eyebrow">מה אנחנו עושים</div>
 
@@ -2166,6 +2849,25 @@
           <p class="what-we-do-parallax__lead">אנחנו לא עושים סושיאל ולא מנהלים קמפיינים.<br>בחרנו להתמחות בדבר אחד, ולעשות אותו נכון.</p>
           <p>התפקיד של דף נחיתה הוא להיות איש המכירות החזק ביותר שלכם.</p>
           <p>אנחנו בונים אתרים שמשרתים את העסק — נטענים מהר, מובילים את העין של הגולש, ומובילים לפעולה ברורה.</p>
+
+          <div class="what-we-do-parallax__pillars">
+            <div class="what-we-do-parallax__pillar">
+              <h3 class="what-we-do-parallax__pillar-title">מבנה</h3>
+              <p class="what-we-do-parallax__pillar-desc">אנחנו מאפיינים את המבנה של העמוד כדי להוביל את העין נכון ולשמור על זרימה ברורה.</p>
+            </div>
+            <div class="what-we-do-parallax__pillar">
+              <h3 class="what-we-do-parallax__pillar-title">מסר</h3>
+              <p class="what-we-do-parallax__pillar-desc">אנחנו מחדדים את המסר, כדי שהאנשים הנכונים יבינו מהר למה דווקא אתם.</p>
+            </div>
+            <div class="what-we-do-parallax__pillar">
+              <h3 class="what-we-do-parallax__pillar-title">חוויה</h3>
+              <p class="what-we-do-parallax__pillar-desc">אנחנו מעצבים את החוויה כך שהעמוד ירגיש ברור, מדויק, ונעים מהרגע הראשון.</p>
+            </div>
+            <div class="what-we-do-parallax__pillar">
+              <h3 class="what-we-do-parallax__pillar-title">ביצוע</h3>
+              <p class="what-we-do-parallax__pillar-desc">אנחנו מטפלים בכל מה שקורה מאחורי הקלעים, כדי שהעמוד יהיה מהיר, יציב, חלק ואמין.</p>
+            </div>
+          </div>
         </article>
       </div>
     </section>
@@ -2178,10 +2880,117 @@
         <p class="portfolio-intro__lede">שלושה אתרים מהזמן האחרון, כל אחד מהם נבנה בהתאמה אישית ומדויקת לכל עסק ולבעלים שלו.</p>
       </header>
 
-      <article class="work-row" data-theme="irit">
+      <!-- ===== Desktop deveb-style spread (≥768px only) =====
+           Hidden on mobile via CSS; the .work-row articles below render
+           the locked mobile design instead. On desktop, this 2-col
+           spread takes over: text-col scrolls naturally on the right
+           (RTL), stage-col is sticky on the left holding curtain bg
+           layers + card mockups. JS-rAF clip-path wipe (see script
+           further down) animates the transition between projects. -->
+      <div class="projects-spread" data-projects-spread>
+        <div class="text-col">
+          <div class="text-block" data-theme="irit" data-block>
+            <div class="project-meta">
+              <h2>שוקולדות | אירית שמעוני</h2>
+              <p class="project-desc">אתר שנבנה סביב חוויה של טעם, אירוח ויצירה משותפת. יצרנו שפה חמה, עשירה ומזמינה, שמעבירה גם את האווירה והמתיקות של הסדנה וגם את הערך שלה — בצורה ברורה ונגישה שמובילה לפניות.</p>
+              <a class="btn-view" href="https://iritshokoladot.shop" target="_blank" rel="noopener" aria-label="צפייה באתר אירית שמעוני בחלון חדש">
+                <span>צפייה בפרויקט</span>
+                <span class="arrow" aria-hidden="true">←</span>
+              </a>
+            </div>
+          </div>
+          <div class="text-block" data-theme="tali" data-block>
+            <div class="project-meta">
+              <h2>אחד פריטים | טלי אוליאל</h2>
+              <p class="project-desc">אתר שנבנה סביב עולם של חומר, יצירה וידיים עובדות. יצרנו שפה חמה, אדמתית ואישית, שנותנת מקום גם לעבודות עצמן וגם לאופי הייחודי של העסק. כל הבחירות באתר נועדו לשמור על תחושה טבעית ולא מתאמצת, כזו שמחברת בין היצירה, הידיים שמאחוריה, והאדם שפוגש את האתר.</p>
+              <a class="btn-view" href="https://tali-oliel.pages.dev" target="_blank" rel="noopener" aria-label="צפייה באתר טלי אוליאל בחלון חדש">
+                <span>צפייה בפרויקט</span>
+                <span class="arrow" aria-hidden="true">←</span>
+              </a>
+            </div>
+          </div>
+          <div class="text-block" data-theme="lebi" data-block>
+            <div class="project-meta">
+              <h2>LEBI | אלה בר</h2>
+              <p class="project-desc">עמוד שנבנה כדי לתרגם אמנות חומרית לשפה דיגיטלית מדויקת — שימרנו את השקט, העומק והמגע האנושי. יצרנו חוויה ששמה את היצירה במרכז, עם שפה טבעית, נקייה ומדויקת שנותנת מקום לחומר, למרקם ולסיפור שמאחורי כל יצירה.</p>
+              <a class="btn-view" href="https://lebiart.site" target="_blank" rel="noopener" aria-label="צפייה באתר LEBI בחלון חדש">
+                <span>צפייה בפרויקט</span>
+                <span class="arrow" aria-hidden="true">←</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Curtain stack — sticky, spans both grid cols. Moved out of
+             stage-col to avoid the 1px sub-pixel line at the column
+             boundary that occurred when curtains crossed stage-col's
+             compositing layer edge via right:-100%. -->
+        <div class="curtain-stack" aria-hidden="true">
+          <div class="curtain" data-theme="irit"></div>
+          <div class="curtain" data-theme="tali"></div>
+          <div class="curtain" data-theme="lebi"></div>
+        </div>
+
+        <div class="stage-col">
+          <!-- Cards = project-frame + device mockups -->
+          <div class="card" data-theme="irit">
+            <div class="project-frame">
+              <div class="device-row">
+                <div class="device device--desktop">
+                  <div class="device-screen">
+                    <img class="screen-img" src="berlla-portfolio-assets/irit-desktop.png" alt="צילום מסך של אתר אירית שמעוני - סדנאות שוקולד">
+                  </div>
+                </div>
+                <div class="device device--phone">
+                  <div class="device-notch"></div>
+                  <div class="device-screen">
+                    <img class="screen-img" src="berlla-portfolio-assets/irit-mobile.png" alt="">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card" data-theme="tali">
+            <div class="project-frame">
+              <div class="device-row">
+                <div class="device device--desktop">
+                  <div class="device-screen">
+                    <img class="screen-img" src="berlla-portfolio-assets/tali-desktop.png" alt="צילום מסך של אתר טלי אוליאל - אמנות רב-תחומית">
+                  </div>
+                </div>
+                <div class="device device--phone">
+                  <div class="device-notch"></div>
+                  <div class="device-screen">
+                    <img class="screen-img" src="berlla-portfolio-assets/tali-mobile.png" alt="">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card" data-theme="lebi">
+            <div class="project-frame">
+              <div class="device-row">
+                <div class="device device--desktop">
+                  <div class="device-screen">
+                    <img class="screen-img" src="berlla-portfolio-assets/lebi-desktop.png" alt="צילום מסך של אתר לבי - תבליטי גבס בוטניים">
+                  </div>
+                </div>
+                <div class="device device--phone">
+                  <div class="device-notch"></div>
+                  <div class="device-screen">
+                    <img class="screen-img" src="berlla-portfolio-assets/lebi-mobile.png" alt="">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <article class="work-row" data-theme="irit" aria-labelledby="row-irit-title">
         <div class="work-row__inner">
           <div class="project-meta">
-            <h2>שוקולדות | אירית שמעוני</h2>
+            <h2 id="row-irit-title">שוקולדות | אירית שמעוני</h2>
             <div class="project-desc-group">
               <p class="project-desc" id="desc-irit">אתר שנבנה סביב חוויה של טעם, אירוח ויצירה משותפת. יצרנו שפה חמה, עשירה ומזמינה, שמעבירה גם את האווירה והמתיקות של הסדנה וגם את הערך שלה — בצורה ברורה ונגישה שמובילה לפניות.</p>
               <button class="btn-read-more" type="button" aria-expanded="false" aria-controls="desc-irit" aria-label="קרא עוד">
@@ -2194,10 +3003,10 @@
             </a>
           </div>
           <div class="project-frame">
-            <div class="device-row" aria-hidden="true">
+            <div class="device-row">
               <div class="device device--desktop">
                 <div class="device-screen">
-                  <img class="screen-img" src="berlla-portfolio-assets/irit-desktop.png" alt="">
+                  <img class="screen-img" src="berlla-portfolio-assets/irit-desktop.png" alt="צילום מסך של אתר אירית שמעוני - סדנאות שוקולד">
                 </div>
               </div>
               <div class="device device--phone">
@@ -2211,10 +3020,10 @@
         </div>
       </article>
 
-      <article class="work-row" data-theme="tali">
+      <article class="work-row" data-theme="tali" aria-labelledby="row-tali-title">
         <div class="work-row__inner">
           <div class="project-meta">
-            <h2>אחד פריטים | טלי אוליאל</h2>
+            <h2 id="row-tali-title">אחד פריטים | טלי אוליאל</h2>
             <div class="project-desc-group">
               <p class="project-desc" id="desc-tali">אתר שנבנה סביב עולם של חומר, יצירה וידיים עובדות. יצרנו שפה חמה, אדמתית ואישית, שנותנת מקום גם לעבודות עצמן וגם לאופי הייחודי של העסק. כל הבחירות באתר נועדו לשמור על תחושה טבעית ולא מתאמצת, כזו שמחברת בין היצירה, הידיים שמאחוריה, והאדם שפוגש את האתר.</p>
               <button class="btn-read-more" type="button" aria-expanded="false" aria-controls="desc-tali" aria-label="קרא עוד">
@@ -2227,10 +3036,10 @@
             </a>
           </div>
           <div class="project-frame">
-            <div class="device-row" aria-hidden="true">
+            <div class="device-row">
               <div class="device device--desktop">
                 <div class="device-screen">
-                  <img class="screen-img" src="berlla-portfolio-assets/tali-desktop.png" alt="">
+                  <img class="screen-img" src="berlla-portfolio-assets/tali-desktop.png" alt="צילום מסך של אתר טלי אוליאל - אמנות רב-תחומית">
                 </div>
               </div>
               <div class="device device--phone">
@@ -2244,10 +3053,10 @@
         </div>
       </article>
 
-      <article class="work-row" data-theme="lebi">
+      <article class="work-row" data-theme="lebi" aria-labelledby="row-lebi-title">
         <div class="work-row__inner">
           <div class="project-meta">
-            <h2>LEBI | אלה בר</h2>
+            <h2 id="row-lebi-title">LEBI | אלה בר</h2>
             <div class="project-desc-group">
               <p class="project-desc" id="desc-lebi">עמוד שנבנה כדי לתרגם אמנות חומרית לשפה דיגיטלית מדויקת — שימרנו את השקט, העומק והמגע האנושי. יצרנו חוויה ששמה את היצירה במרכז, עם שפה טבעית, נקייה ומדויקת שנותנת מקום לחומר, למרקם ולסיפור שמאחורי כל יצירה.</p>
               <button class="btn-read-more" type="button" aria-expanded="false" aria-controls="desc-lebi" aria-label="קרא עוד">
@@ -2260,10 +3069,10 @@
             </a>
           </div>
           <div class="project-frame">
-            <div class="device-row" aria-hidden="true">
+            <div class="device-row">
               <div class="device device--desktop">
                 <div class="device-screen">
-                  <img class="screen-img" src="berlla-portfolio-assets/lebi-desktop.png" alt="">
+                  <img class="screen-img" src="berlla-portfolio-assets/lebi-desktop.png" alt="צילום מסך של אתר לבי - תבליטי גבס בוטניים">
                 </div>
               </div>
               <div class="device device--phone">
@@ -2280,6 +3089,16 @@
 
     <!-- ===== TESTIMONIALS — stacked-card rotation ===== -->
     <section class="testimonials" id="testimonials" aria-labelledby="testimonials-title">
+      <!-- Cursor-following pill tooltip, fixed position, fades in only when
+           hovering a peeking card (mid/back) — not the front (current) one. -->
+      <div class="testimonial-cursor-pill" aria-hidden="true">
+        <span>תלחץ לעוד ביקורות</span>
+        <svg class="cursor-pill-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <polyline points="5 12 12 19 19 12"/>
+        </svg>
+      </div>
+
       <div class="testimonials-header reveal">
         <h2 id="testimonials-title" class="testimonials-heading">מה אומרים אחרי שעובדים איתנו</h2>
         <p class="testimonials-eyebrow">מאחורי כל אתר יש גם דרך, תקשורת, ואנשים שעברו אותה איתנו.</p>
@@ -2501,18 +3320,17 @@
         </div>
       </div>
 
-      <!-- ===== LEGAL STRIP — mobile-only TIWIS-style mini-footer.
-           Two rows pinned to the bottom of the contact section: identity
-           + legal links. Replaces the role of a separate footer on mobile.
-           Placeholders (XXXXXXXXX, [כתובת]) — Yuval to supply.
-           Desktop hides this and uses the existing <footer> below. -->
+      <!-- ===== LEGAL STRIP — TIWIS-style mini-footer (now shown on all viewports).
+           Identity + legal links pinned to the bottom of the contact section.
+           Required by Israeli Consumer Protection Law: business name, ע.מ.
+           registration number, and registered address must be visible on the site. -->
       <div class="contact-legal" role="contentinfo">
         <p class="contact-legal-identity">
           <span>BERLLA</span>
           <span aria-hidden="true">·</span>
-          <span>ע.מ. XXXXXXXXX</span>
+          <span>ע.מ. 307479220</span>
           <span aria-hidden="true">·</span>
-          <span>[כתובת]</span>
+          <span>שבטי ישראל 37/א, קריית ביאליק</span>
           <span aria-hidden="true">·</span>
           <a href="mailto:berlla.business.contact@gmail.com">berlla.business.contact@gmail.com</a>
         </p>
@@ -2813,6 +3631,42 @@
   </script>
 
   <script>
+    /* Member-reveal observer — independent of the global `.reveal`
+       observer above. Adds `.in-view` class with a 0.12s stagger per
+       element grouped by closest section (so the heading + 2 about-
+       persons inside `<section class="about">` cascade in sequence). */
+    (function () {
+      const reveals = document.querySelectorAll('.member-reveal');
+      if (!reveals.length) return;
+
+      if (!('IntersectionObserver' in window)) {
+        reveals.forEach(el => el.classList.add('in-view'));
+        return;
+      }
+
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target;
+          const group = el.closest('section');
+          const siblings = group
+            ? Array.from(group.querySelectorAll('.member-reveal'))
+            : [el];
+          const idx = siblings.indexOf(el);
+          el.style.transitionDelay = (idx * 0.12) + 's';
+          el.classList.add('in-view');
+          obs.unobserve(el);
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -8% 0px'
+      });
+
+      reveals.forEach(el => obs.observe(el));
+    })();
+  </script>
+
+  <script>
     /* Testimonials stack rotation. Front/mid/back cards rotate every 5.5s.
        Click on a peeking back card to bring it to front. Mobile-only nav
        button advances forward. Pauses on hover and when tab is hidden.
@@ -2928,6 +3782,77 @@
   </script>
 
   <script>
+    /* Testimonials cursor pill — pill tooltip that follows the cursor only
+       when hovering a "next" testimonial card (mid/back), not the front
+       (current) card. Mimics nographism.com's "next testimonial" hint.
+
+       Active state is computed per mousemove via elementFromPoint: if the
+       cursor is over a `.stack-card` whose data-pos is mid or back, show
+       the pill. Otherwise hide.
+
+       Uses rAF + lerp (0.22) for smooth tracking. Bails on touch and
+       respects reduced-motion. */
+    (function () {
+      const section = document.querySelector('.testimonials');
+      const stack = document.querySelector('[data-stack]');
+      const pill = document.querySelector('.testimonial-cursor-pill');
+      if (!section || !stack || !pill) return;
+      if (matchMedia('(hover: none)').matches) return;
+
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let targetX = 0, targetY = 0;
+      let curX = 0, curY = 0;
+      let active = false;
+      let raf = null;
+
+      function tick() {
+        raf = null;
+        const factor = reduce ? 1 : 0.22;
+        curX += (targetX - curX) * factor;
+        curY += (targetY - curY) * factor;
+        pill.style.setProperty('--tx', curX + 'px');
+        pill.style.setProperty('--ty', curY + 'px');
+        if (active) raf = requestAnimationFrame(tick);
+      }
+
+      function setActive(on, x, y) {
+        if (on === active) return;
+        active = on;
+        section.classList.toggle('cursor-active', active);
+        if (active) {
+          // Snap on first activate
+          targetX = curX = x;
+          targetY = curY = y;
+          pill.style.setProperty('--tx', curX + 'px');
+          pill.style.setProperty('--ty', curY + 'px');
+          if (raf) cancelAnimationFrame(raf);
+          raf = requestAnimationFrame(tick);
+        } else {
+          if (raf) { cancelAnimationFrame(raf); raf = null; }
+        }
+      }
+
+      // Use mousemove on the section to track cursor + check what's under it.
+      // elementFromPoint runs each move — cheap enough at typical mouse rates.
+      section.addEventListener('mousemove', e => {
+        targetX = e.clientX;
+        targetY = e.clientY;
+        const el = document.elementFromPoint(e.clientX, e.clientY);
+        const card = el ? el.closest('.stack-card') : null;
+        const isPeekCard = !!(card && (card.dataset.pos === 'mid' || card.dataset.pos === 'back'));
+        if (isPeekCard && !active) {
+          setActive(true, e.clientX, e.clientY);
+        } else if (!isPeekCard && active) {
+          setActive(false);
+        }
+      });
+      section.addEventListener('mouseleave', () => {
+        setActive(false);
+      });
+    })();
+  </script>
+
+  <script>
     /* Portfolio editorial cover: add .is-inview when the intro crosses 40%
        visible, remove on exit so bounce/slide animations replay each
        re-entry. */
@@ -2978,6 +3903,64 @@
           btn.setAttribute('aria-label', expanded ? 'קרא פחות' : 'קרא עוד');
         });
       });
+    })();
+  </script>
+
+  <script>
+    /* Portfolio desktop deveb-style wipe (≥768px only) — JS-rAF reads
+       window.scrollY each frame, sets clip-path on each curtain + card
+       matched by data-theme to its text-block's exit progress. Both the
+       natural left scroll and the right-column wipe come from the same
+       scrollY value at the same instant — no possible drift between
+       columns. See deveb-clone.html for the reference implementation
+       and the debugging story behind the design (overflow:clip not
+       hidden for sticky, transparent device-screen + clip-path on
+       screen-img to bypass Chrome's rounded-corner aliasing artifact,
+       no inset highlight on bezels, etc.).
+
+       Bails out early on mobile (CSS hides .projects-spread there) and
+       on prefers-reduced-motion (CSS @media handles the fallback layout
+       — stacked text-blocks with brand bgs). */
+    (function () {
+      const showcase = document.querySelector('.portfolio [data-projects-spread]');
+      if (!showcase) return;
+      if (matchMedia('(max-width: 767px)').matches) return;
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const blocks = Array.from(showcase.querySelectorAll('[data-block]'));
+      const curtainsByTheme = new Map();
+      const cardsByTheme = new Map();
+      showcase.querySelectorAll('.curtain').forEach(el => curtainsByTheme.set(el.dataset.theme, el));
+      showcase.querySelectorAll('.card').forEach(el => cardsByTheme.set(el.dataset.theme, el));
+
+      let pending = false;
+      function update() {
+        pending = false;
+        // Skip last block — it's the final layer, never wipes.
+        for (let i = 0; i < blocks.length - 1; i++) {
+          const block = blocks[i];
+          const rect = block.getBoundingClientRect();
+          let p = -rect.top / rect.height;
+          if (p < 0) p = 0;
+          else if (p > 1) p = 1;
+          const inset = (p * 100).toFixed(2) + '%';
+          const clip = `inset(0 0 ${inset} 0)`;
+          const theme = block.dataset.theme;
+          const curtain = curtainsByTheme.get(theme);
+          const card = cardsByTheme.get(theme);
+          if (curtain) curtain.style.clipPath = clip;
+          if (card) card.style.clipPath = clip;
+        }
+      }
+      function schedule() {
+        if (pending) return;
+        pending = true;
+        requestAnimationFrame(update);
+      }
+
+      window.addEventListener('scroll', schedule, { passive: true });
+      window.addEventListener('resize', schedule, { passive: true });
+      update();
     })();
   </script>
 
@@ -3048,10 +4031,16 @@
         raf = null;
         const rect = section.getBoundingClientRect();
         const vh = window.innerHeight || document.documentElement.clientHeight;
-        let progress = -rect.top / vh;
+        /* Section is 350vh (extended from 200vh for the longer card
+           content). Contain phase = section.height - viewport = 250vh
+           of scroll. Map -rect.top across that range as progress 0-1. */
+        let progress = -rect.top / (vh * 2.5);
         if (progress < 0) progress = 0;
         else if (progress > 1) progress = 1;
-        const y = (1 - progress) * textHeight;
+        /* Linear interpolation matching the CSS keyframes:
+           p=0 → translate3d(0, textHeight, 0)   (card below viewport)
+           p=1 → translate3d(0, -0.3 * textHeight, 0)  (scrolled past natural by 30%) */
+        const y = textHeight * (1 - 1.3 * progress);
         text.style.transform = `translate3d(-50%, ${y}px, 0)`;
       };
 
