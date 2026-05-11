@@ -167,6 +167,21 @@
       border-radius: 2px;
     }
 
+    /* WebAIM-standard utility — keeps text visible to screen readers
+       AND search engines but invisible to sighted users. Used inside the
+       hero <h1> so the heading carries keyword-rich text without changing
+       the all-image hero design. NOT display:none / visibility:hidden —
+       both of those hide from assistive tech AND from search indexers. */
+    .visually-hidden {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     /* Skip link */
     .skip-link {
       position: absolute;
@@ -2831,7 +2846,10 @@
         <strong>מפסלים דפי נחיתה.</strong>
         <p>אל תפקירו את הרושם הראשוני שלכם בידיים של סוכנויות גנריות.<br>אנחנו משלבים אסתטיקה עם פסיכולוגיה צרכנית כדי לגרום לאנשים להפוך ללקוחות.</p>
       </div>
-      <h1 class="hero-brand"><img src="img/berlla-wordmark.png" alt="BERLLA"></h1>
+      <h1 class="hero-brand">
+        <img src="img/berlla-wordmark.png" alt="">
+        <span class="visually-hidden">BERLLA — סטודיו לעיצוב ובניית דפי נחיתה ממירים</span>
+      </h1>
     </section>
 
     <!-- ===== ABOUT + WHAT-WE-DO sticky-pin handoff (mobile-only) =====
