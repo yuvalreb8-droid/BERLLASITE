@@ -40,6 +40,35 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+  <!-- Structured data: Organization schema. Tells Google explicitly what
+       BERLLA is — brand identity, contact, address, founders. Address
+       data is the single source of truth from the legal strip in <body>. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "BERLLA",
+    "alternateName": "ברלה",
+    "url": "https://berlla.site/",
+    "logo": "https://berlla.site/img/berlla-footer-logo.png",
+    "image": "https://berlla.site/img/og-cover.jpg",
+    "description": "סטודיו לעיצוב ובניית דפי נחיתה ממירים. שילוב של עיצוב מדויק, קופי שמוכר ופסיכולוגיה צרכנית.",
+    "email": "berlla.business.contact@gmail.com",
+    "telephone": "+972-58-440-4822",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "שבטי ישראל 37/א",
+      "addressLocality": "קריית ביאליק",
+      "addressCountry": "IL"
+    },
+    "founder": [
+      { "@type": "Person", "name": "אלה בר" },
+      { "@type": "Person", "name": "יובל בר" }
+    ],
+    "sameAs": []
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Preconnect to jsdelivr so the Unicorn Studio SDK starts downloading
