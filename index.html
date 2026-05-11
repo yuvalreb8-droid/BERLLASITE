@@ -13,6 +13,9 @@
        the BOTTOM edge via the calc(100lvh + safe-area-inset-bottom) rule. -->
   <title>עיצוב ובניית דפי נחיתה | BERLLA</title>
   <meta name="description" content="עיצוב ובניית דפי נחיתה ממירים לעסקים שלא מסתפקים בגנרי. BERLLA משלבת עיצוב מדויק, קופי שמוכר ופסיכולוגיה צרכנית — שהופכים מבקרים ללקוחות. בואו נדבר.">
+  <link rel="canonical" href="https://berlla.site/">
+  <meta name="theme-color" content="#7a2440" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#7a2440" media="(prefers-color-scheme: dark)">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Preconnect to jsdelivr so the Unicorn Studio SDK starts downloading
@@ -59,7 +62,11 @@
       /* Layered burgundy gradient ending at #120408 to match the contact
          section's darkest gradient stop — kills the visual seam between
          body bg and contact-hero now that no footer covers the gap. */
-      background: linear-gradient(to bottom, #7a2440 0%, #7a2440 25%, #3a0f1d 60%, #120408 100%);
+      /* Solid background-color set EXPLICITLY (not via shorthand) so iOS 26
+         Safari samples it for the URL-bar tint — it does not sample gradients.
+         See feedback_ios_safari_webgl_safe_area memory note. */
+      background-color: #7a2440;
+      background-image: linear-gradient(to bottom, #7a2440 0%, #7a2440 25%, #3a0f1d 60%, #120408 100%);
       line-height: 1.6;
       font-weight: 400;
       -webkit-font-smoothing: antialiased;
