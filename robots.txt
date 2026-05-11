@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Block crawlers from internal/preview files that may be present in deploys
+Disallow: /_*
+Disallow: /preview-*
+
+# Sitemap location
+Sitemap: https://berlla.site/sitemap.xml
