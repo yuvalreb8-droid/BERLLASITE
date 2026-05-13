@@ -85,11 +85,19 @@ def make_og_cover(out_path: Path) -> None:
 
 
 def make_favicons(out_dir: Path) -> None:
-    """Crop the source logo to a centered square, then resize to favicon sizes."""
+    """Crop the source logo TIGHTLY around the visible pill, then resize.
+
+    Strategy: discard the transparent padding (getbbox), then stretch-fit
+    the result into a square. The full BERLLA wordmark remains visible
+    (no letters cropped off) — the pill loses its 2.4:1 aspect and becomes
+    slightly more circular, but the text fills the square at favicon
+    resolution, which is the readability priority at 16x16.
+    """
     src = Image.open(SRC_LOGO).convert("RGBA")
-    sq = src.height
-    left = (src.width - sq) // 2
-    favicon_src = src.crop((left, 0, left + sq, sq))
+    bbox = src.getbbox()
+    if bbox:
+        src = src.crop(bbox)
+    favicon_src = src  # downstream code resizes to target square sizes
 
     fav96 = favicon_src.resize((96, 96), Image.LANCZOS)
     fav96_path = out_dir / "favicon-96.png"

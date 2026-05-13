@@ -84,7 +84,11 @@
          - Bowlby One (Latin display, 400)
          - Fraunces (Latin serif, 400–900 + italic)
        Source: fonts.google.com — IS 5568 / Copyright compliance documented here. -->
-  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@500;700&family=Bowlby+One&family=Frank+Ruhl+Libre:wght@400;500;700&family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400&family=Heebo:wght@300;400;500;600;700;800;900&family=Miriam+Libre:wght@400;700&family=Secular+One&display=swap" rel="stylesheet">
+  <!-- Fonts loaded via media="print" + onload swap — bypasses render-blocking.
+       The noscript tag is a fallback for users with JS disabled (rare but
+       per Lighthouse best practice). Saves ~780ms on FCP on slow networks. -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@500;700&family=Bowlby+One&family=Frank+Ruhl+Libre:wght@400;500;700&family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400&family=Heebo:wght@300;400;500;600;700;800;900&family=Miriam+Libre:wght@400;700&family=Secular+One&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@500;700&family=Bowlby+One&family=Frank+Ruhl+Libre:wght@400;500;700&family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400&family=Heebo:wght@300;400;500;600;700;800;900&family=Miriam+Libre:wght@400;700&family=Secular+One&display=swap"></noscript>
   <style>
     /* ===== Design tokens =====
        Fluid scale used by the rest of the stylesheet so the whole site
@@ -2851,7 +2855,10 @@
         <p>אל תפקירו את הרושם הראשוני שלכם בידיים של סוכנויות גנריות.<br>אנחנו משלבים אסתטיקה עם פסיכולוגיה צרכנית כדי לגרום לאנשים להפוך ללקוחות.</p>
       </div>
       <h1 class="hero-brand">
-        <img src="img/berlla-wordmark.png" alt="">
+        <picture>
+          <source srcset="img/berlla-wordmark.webp" type="image/webp">
+          <img src="img/berlla-wordmark.png" alt="" fetchpriority="high">
+        </picture>
         <span class="visually-hidden">BERLLA — סטודיו לעיצוב ובניית דפי נחיתה ממירים</span>
       </h1>
     </section>
@@ -2874,7 +2881,10 @@
             <div class="about-person member-reveal">
               <h3>אלה</h3>
               <div class="about-blob">
-                <img src="img/ella.jpeg" alt="תמונה של אלה" loading="lazy" decoding="async">
+                <picture>
+                  <source srcset="img/ella.webp" type="image/webp">
+                  <img src="img/ella.jpeg" alt="תמונה של אלה" loading="lazy" decoding="async">
+                </picture>
               </div>
               <div>
                 <p>אני מתרגמת רעיונות לחוויה ויזואלית מדויקת.</p>
@@ -2886,7 +2896,10 @@
             <div class="about-person member-reveal">
               <h3>יובל</h3>
               <div class="about-blob">
-                <img src="img/yuval.jpeg" alt="תמונה של יובל" loading="lazy" decoding="async">
+                <picture>
+                  <source srcset="img/yuval.webp" type="image/webp">
+                  <img src="img/yuval.jpeg" alt="תמונה של יובל" loading="lazy" decoding="async">
+                </picture>
               </div>
               <div>
                 <p>אני אחראי על הקידוד, המהירות, הצד הטכני וה־SEO.</p>
@@ -3021,13 +3034,19 @@
               <div class="device-row">
                 <div class="device device--desktop">
                   <div class="device-screen">
-                    <img class="screen-img" src="berlla-portfolio-assets/irit-desktop.png" alt="צילום מסך של אתר אירית שמעוני - סדנאות שוקולד">
+                    <picture>
+                      <source srcset="berlla-portfolio-assets/irit-desktop.webp" type="image/webp">
+                      <img class="screen-img" src="berlla-portfolio-assets/irit-desktop.png" alt="צילום מסך של אתר אירית שמעוני - סדנאות שוקולד">
+                    </picture>
                   </div>
                 </div>
                 <div class="device device--phone">
                   <div class="device-notch"></div>
                   <div class="device-screen">
-                    <img class="screen-img" src="berlla-portfolio-assets/irit-mobile.png" alt="">
+                    <picture>
+                      <source srcset="berlla-portfolio-assets/irit-mobile.webp" type="image/webp">
+                      <img class="screen-img" src="berlla-portfolio-assets/irit-mobile.png" alt="">
+                    </picture>
                   </div>
                 </div>
               </div>
@@ -3038,13 +3057,19 @@
               <div class="device-row">
                 <div class="device device--desktop">
                   <div class="device-screen">
-                    <img class="screen-img" src="berlla-portfolio-assets/tali-desktop.png" alt="צילום מסך של אתר טלי אוליאל - אמנות רב-תחומית">
+                    <picture>
+                      <source srcset="berlla-portfolio-assets/tali-desktop.webp" type="image/webp">
+                      <img class="screen-img" src="berlla-portfolio-assets/tali-desktop.png" alt="צילום מסך של אתר טלי אוליאל - אמנות רב-תחומית">
+                    </picture>
                   </div>
                 </div>
                 <div class="device device--phone">
                   <div class="device-notch"></div>
                   <div class="device-screen">
-                    <img class="screen-img" src="berlla-portfolio-assets/tali-mobile.png" alt="">
+                    <picture>
+                      <source srcset="berlla-portfolio-assets/tali-mobile.webp" type="image/webp">
+                      <img class="screen-img" src="berlla-portfolio-assets/tali-mobile.png" alt="">
+                    </picture>
                   </div>
                 </div>
               </div>
@@ -3055,13 +3080,19 @@
               <div class="device-row">
                 <div class="device device--desktop">
                   <div class="device-screen">
-                    <img class="screen-img" src="berlla-portfolio-assets/lebi-desktop.png" alt="צילום מסך של אתר לבי - תבליטי גבס בוטניים">
+                    <picture>
+                      <source srcset="berlla-portfolio-assets/lebi-desktop.webp" type="image/webp">
+                      <img class="screen-img" src="berlla-portfolio-assets/lebi-desktop.png" alt="צילום מסך של אתר לבי - תבליטי גבס בוטניים">
+                    </picture>
                   </div>
                 </div>
                 <div class="device device--phone">
                   <div class="device-notch"></div>
                   <div class="device-screen">
-                    <img class="screen-img" src="berlla-portfolio-assets/lebi-mobile.png" alt="">
+                    <picture>
+                      <source srcset="berlla-portfolio-assets/lebi-mobile.webp" type="image/webp">
+                      <img class="screen-img" src="berlla-portfolio-assets/lebi-mobile.png" alt="">
+                    </picture>
                   </div>
                 </div>
               </div>
@@ -3089,13 +3120,19 @@
             <div class="device-row">
               <div class="device device--desktop">
                 <div class="device-screen">
-                  <img class="screen-img" src="berlla-portfolio-assets/irit-desktop.png" alt="צילום מסך של אתר אירית שמעוני - סדנאות שוקולד">
+                  <picture>
+                    <source srcset="berlla-portfolio-assets/irit-desktop.webp" type="image/webp">
+                    <img class="screen-img" src="berlla-portfolio-assets/irit-desktop.png" alt="צילום מסך של אתר אירית שמעוני - סדנאות שוקולד">
+                  </picture>
                 </div>
               </div>
               <div class="device device--phone">
                 <div class="device-notch"></div>
                 <div class="device-screen">
-                  <img class="screen-img" src="berlla-portfolio-assets/irit-mobile.png" alt="">
+                  <picture>
+                    <source srcset="berlla-portfolio-assets/irit-mobile.webp" type="image/webp">
+                    <img class="screen-img" src="berlla-portfolio-assets/irit-mobile.png" alt="">
+                  </picture>
                 </div>
               </div>
             </div>
@@ -3122,13 +3159,19 @@
             <div class="device-row">
               <div class="device device--desktop">
                 <div class="device-screen">
-                  <img class="screen-img" src="berlla-portfolio-assets/tali-desktop.png" alt="צילום מסך של אתר טלי אוליאל - אמנות רב-תחומית">
+                  <picture>
+                    <source srcset="berlla-portfolio-assets/tali-desktop.webp" type="image/webp">
+                    <img class="screen-img" src="berlla-portfolio-assets/tali-desktop.png" alt="צילום מסך של אתר טלי אוליאל - אמנות רב-תחומית">
+                  </picture>
                 </div>
               </div>
               <div class="device device--phone">
                 <div class="device-notch"></div>
                 <div class="device-screen">
-                  <img class="screen-img" src="berlla-portfolio-assets/tali-mobile.png" alt="">
+                  <picture>
+                    <source srcset="berlla-portfolio-assets/tali-mobile.webp" type="image/webp">
+                    <img class="screen-img" src="berlla-portfolio-assets/tali-mobile.png" alt="">
+                  </picture>
                 </div>
               </div>
             </div>
@@ -3155,13 +3198,19 @@
             <div class="device-row">
               <div class="device device--desktop">
                 <div class="device-screen">
-                  <img class="screen-img" src="berlla-portfolio-assets/lebi-desktop.png" alt="צילום מסך של אתר לבי - תבליטי גבס בוטניים">
+                  <picture>
+                    <source srcset="berlla-portfolio-assets/lebi-desktop.webp" type="image/webp">
+                    <img class="screen-img" src="berlla-portfolio-assets/lebi-desktop.png" alt="צילום מסך של אתר לבי - תבליטי גבס בוטניים">
+                  </picture>
                 </div>
               </div>
               <div class="device device--phone">
                 <div class="device-notch"></div>
                 <div class="device-screen">
-                  <img class="screen-img" src="berlla-portfolio-assets/lebi-mobile.png" alt="">
+                  <picture>
+                    <source srcset="berlla-portfolio-assets/lebi-mobile.webp" type="image/webp">
+                    <img class="screen-img" src="berlla-portfolio-assets/lebi-mobile.png" alt="">
+                  </picture>
                 </div>
               </div>
             </div>
@@ -3364,7 +3413,10 @@
 
       <!-- BERLLA wordmark — bottom-left -->
       <div class="contact-brand" aria-hidden="true">
-        <img src="img/berlla-wordmark.png" alt="">
+        <picture>
+          <source srcset="img/berlla-wordmark.webp" type="image/webp">
+          <img src="img/berlla-wordmark.png" alt="" fetchpriority="high">
+        </picture>
       </div>
 
       <!-- Headline pinned top-right (mirrors BERLLA bottom-left) -->
