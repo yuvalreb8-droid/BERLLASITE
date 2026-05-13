@@ -161,13 +161,19 @@
       min-height: 56px;
     }
     .legal-header__brand {
-      font-family: var(--font-display);
-      font-size: clamp(1.125rem, 0.9rem + 0.6vw, 1.5rem);
-      letter-spacing: 0.02em;
-      color: var(--color-text);
+      display: inline-flex;
+      align-items: center;
+      transition: opacity var(--dur-fast) var(--ease);
+    }
+    .legal-header__brand img {
+      display: block;
+      height: clamp(32px, 1.5vw + 1.5rem, 40px);
+      width: auto;
+      transform: scale(2.55);
+      transform-origin: right center;
     }
     .legal-header__brand:hover,
-    .legal-header__brand:focus-visible { color: var(--color-accent); }
+    .legal-header__brand:focus-visible { opacity: 0.78; }
     .legal-header__back {
       font-family: var(--font-ui);
       font-weight: 700;
@@ -271,6 +277,44 @@
     }
     .legal-doc li::marker { color: var(--color-accent); }
 
+    /* ===== Tables (cookie detail listings) ===== */
+    .legal-doc__table-wrap {
+      overflow-x: auto;
+      margin-block-end: var(--space-4);
+      border: 1px solid rgba(14, 22, 41, 0.10);
+      border-radius: var(--radius-sm);
+    }
+    .legal-doc__table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--text-sm);
+    }
+    .legal-doc__table th,
+    .legal-doc__table td {
+      padding: var(--space-3);
+      text-align: start;
+      vertical-align: top;
+      border-block-end: 1px solid rgba(14, 22, 41, 0.08);
+    }
+    .legal-doc__table thead { background: var(--color-bg-alt); }
+    .legal-doc__table th {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: var(--text-xs);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+    }
+    .legal-doc__table tbody tr:last-child td { border-block-end: 0; }
+    .legal-doc__table code {
+      font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+      font-size: 0.9em;
+      background: rgba(14, 22, 41, 0.05);
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
     /* ===== Footer ===== */
     .legal-footer {
       background: var(--color-bg-alt);
@@ -339,7 +383,7 @@
 
   <header class="legal-header" role="banner">
     <div class="container legal-header__inner">
-      <a class="legal-header__brand" href="../">BERLLA</a>
+      <a class="legal-header__brand" href="../"><img src="../img/berlla-footer-logo.png" alt="BERLLA"></a>
       <a class="legal-header__back" href="../">חזרה לעמוד הראשי</a>
     </div>
   </header>
@@ -361,44 +405,129 @@
           טכנולוגיות מעקב דומות לעוגיות כוללות web beacons, פיקסלים, אחסון מקומי (Local Storage) ועוד. בכל הנוגע למסמך זה, ההתייחסות ל״עוגיות״ כוללת את כלל הטכנולוגיות הללו.
         </p>
 
-        <h2>מצב נוכחי באתר BERLLA</h2>
+        <h2>אילו עוגיות אנו משתמשים בהן</h2>
         <p>
-          <strong>נכון למועד עדכון מסמך זה, אתר BERLLA אינו משתמש בעוגיות אנליטיקה, עוגיות שיווק, או טכנולוגיות מעקב של צד שלישי.</strong>
+          אנו מסווגים את העוגיות באתר לשלוש קטגוריות, בהתאם לדרישות תיקון 13 לחוק הגנת הפרטיות. <strong>עוגיות חיוניות פועלות תמיד. עוגיות אנליטיקה ושיווק לא ייטענו כלל בדפדפן שלך אלא אם נתת הסכמה מפורשת באמצעות באנר העוגיות.</strong>
         </p>
-        <p>
-          באופן מעשי, פירוש הדבר:
-        </p>
-        <ul>
-          <li>אנו לא משתמשים ב־Google Analytics, Meta Pixel, TikTok Pixel, או כלי אנליטיקה אחר.</li>
-          <li>אנו לא מטמיעים פיקסלים שיווקיים של רשתות פרסום.</li>
-          <li>אנו לא מטמיעים תוספים של רשתות חברתיות שמעבירים מידע על הגולש שלנו לפלטפורמות חיצוניות.</li>
-          <li>איננו מוכרים, משתפים או מעבירים מידע אנליטי לצדדים שלישיים — כי איננו אוספים מידע כזה מלכתחילה.</li>
-        </ul>
 
-        <h2>עוגיות חיוניות שעשויות להיווצר</h2>
+        <h3>א. עוגיות חיוניות</h3>
         <p>
-          ספק האירוח שלנו (Cloudflare) עשוי להגדיר באופן אוטומטי עוגיות תפעוליות בסיסיות לצורכי אבטחה ושמירה על תקינות האתר — לדוגמה, זיהוי וחסימה של תעבורת בוטים זדוניים. עוגיות אלה הן חיוניות לאבטחת האתר, אינן מזהות אותך אישית, ואינן משמשות אותנו לפילוח שיווקי או למעקב אחר התנהגותך באתרים אחרים.
+          נדרשות לאבטחת האתר ולתפעולו התקין. אינן ניתנות לכיבוי, אינן מזהות אותך אישית, ואינן משמשות למעקב צולב־אתרים.
+        </p>
+        <div class="legal-doc__table-wrap">
+          <table class="legal-doc__table">
+            <thead>
+              <tr>
+                <th scope="col">שם</th>
+                <th scope="col">מקור</th>
+                <th scope="col">מטרה</th>
+                <th scope="col">משך שמירה</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>__cf_*</code> וכד׳</td>
+                <td>Cloudflare (ספק האירוח)</td>
+                <td>זיהוי תעבורת בוטים זדוניים והגנה מפני התקפות</td>
+                <td>לפי הגדרות Cloudflare</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          למידע מלא על העוגיות של Cloudflare ראה את <a href="https://www.cloudflare.com/cookie-policy/" target="_blank" rel="noopener">מדיניות העוגיות של Cloudflare</a>.
+        </p>
+
+        <h3>ב. עוגיות אנליטיקה</h3>
+        <p>
+          משמשות אותנו להבין איך אנשים משתמשים באתר ואיפה ניתן לשפר. <strong>ייטענו רק אם הסכמת לכך בבאנר העוגיות.</strong> אם דחית, או טרם בחרת — לא תיווצרנה.
+        </p>
+        <div class="legal-doc__table-wrap">
+          <table class="legal-doc__table">
+            <thead>
+              <tr>
+                <th scope="col">שם</th>
+                <th scope="col">מקור</th>
+                <th scope="col">מטרה</th>
+                <th scope="col">משך שמירה</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>_ga</code></td>
+                <td>Google Analytics 4 (Google LLC, ארה״ב)</td>
+                <td>הבחנה בין משתמשים ייחודיים</td>
+                <td>24 חודשים</td>
+              </tr>
+              <tr>
+                <td><code>_ga_BJMEC3BMC0</code></td>
+                <td>Google Analytics 4 (Google LLC, ארה״ב)</td>
+                <td>שמירת מצב סשן ייחודי לאתר זה</td>
+                <td>24 חודשים</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          <strong>הגדרות הפרטיות שהפעלנו ב־GA4:</strong> כתובת ה־IP מעובדת במצב מקוצר (anonymize_ip) ולא נשמרת במלואה; Google Signals (מעקב צולב־מכשירים) מושבת; התאמת פרסומות אישית מושבתת; תקופת השמירה של נתוני המשתמש והאירועים אצל Google מוגדרת ל־14 חודשים — לאחר מכן המידע נמחק אוטומטית.
+        </p>
+
+        <h3>ג. עוגיות שיווק</h3>
+        <p>
+          <strong>כרגע אין באתר עוגיות שיווק או פיקסלים שיווקיים.</strong> הקטגוריה זמינה בבאנר ההסכמה למקרה שנפעיל כאלה בעתיד — במצב כזה, נעדכן מסמך זה לפני ההפעלה.
+        </p>
+
+        <h2>שימוש ב־localStorage</h2>
+        <p>
+          בנוסף לעוגיות, אנו משתמשים ב־<code>localStorage</code> של הדפדפן (אחסון מקומי שאינו נשלח אוטומטית בכל בקשה לשרת):
+        </p>
+        <div class="legal-doc__table-wrap">
+          <table class="legal-doc__table">
+            <thead>
+              <tr>
+                <th scope="col">מפתח</th>
+                <th scope="col">מטרה</th>
+                <th scope="col">קטגוריה</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>berlla_consent_v1</code></td>
+                <td>שמירת בחירת ההסכמה שלך לעוגיות</td>
+                <td>חיוני (ניהול הסכמה)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          אין באתר שימוש נוסף ב־localStorage. ראה <a href="#consent-records">שמירת רשומות הסכמה</a> בהמשך לפרטי המנגנון.
         </p>
 
         <h2>שירותי צד שלישי</h2>
         <p>
-          האתר טוען את הרכיבים הבאים מצדדים שלישיים:
+          האתר טוען רכיבים מצדדים שלישיים. חלקם אינם מציבים עוגיות; אחרים מציבים רק לאחר הסכמה.
         </p>
         <ul>
           <li>
-            <strong>Google Fonts</strong> — לטעינת גופנים אסתטיים (Fraunces, Heebo, Assistant, Bowlby One). Google מקבלים מידע סטנדרטי של בקשת HTTP בלבד (כתובת IP, סוג דפדפן). אינם מציבים עוגיות מעקב.
+            <strong>Google Fonts</strong> — לטעינת גופנים אסתטיים (Fraunces, Heebo, Assistant, Bowlby One). Google מקבלים מידע סטנדרטי של בקשת HTTP בלבד (כתובת IP, סוג דפדפן). אינם מציבים עוגיות מעקב. נטען בכל ביקור, גם ללא הסכמה לעוגיות אנליטיקה — מאחר שאין מעורבות עוגיות.
           </li>
           <li>
             <strong>Unicorn Studio</strong> — לרינדור סצנת אנימציה (WebGL) דקורטיבית בעמוד הראשי. הסצנה היא ויזואלית בלבד; אין מעקב או איסוף מידע על הגולש.
           </li>
+          <li>
+            <strong>Google Analytics 4 (Google LLC, ארה״ב)</strong> — לניתוח אנונימי של דפוסי שימוש באתר. <strong>נטען אך ורק לאחר הסכמה מפורשת באמצעות באנר העוגיות.</strong> עיין בסעיף ״עוגיות אנליטיקה״ למעלה לפירוט מלא של העוגיות והגדרות הפרטיות.
+          </li>
         </ul>
         <p>
-          איננו מקבלים מהשירותים הללו מידע אישי על המשתמשים שלנו, ואיננו ממנים אותם לבצע מעקב צולב־אתרים מטעמנו.
+          אין באתר פיקסלים שיווקיים, רשתות פרסום, או תוספים של רשתות חברתיות שמעבירים מידע על הגולש לפלטפורמות חיצוניות.
         </p>
 
         <h2>איך לשלוט בעוגיות</h2>
         <p>
-          רוב הדפדפנים מאפשרים שליטה מלאה בעוגיות באמצעות הגדרות הדפדפן. תוכל לבחור לחסום את כל העוגיות, לחסום עוגיות צד שלישי בלבד, או למחוק עוגיות קיימות. שים לב שחסימת עוגיות חיוניות עשויה להשפיע על תפקוד האתר.
+          <strong>הדרך הפשוטה ביותר לשנות את ההסכמה שלך:</strong> לחץ על הקישור ״ניהול עוגיות״ בתחתית כל עמוד באתר, או על שלט ההסכמה הצף בפינה השמאלית התחתונה במהלך הגלישה. תפתח חלון העדפות שבו תוכל להפעיל או לכבות כל קטגוריה בנפרד. הבחירה החדשה תיכנס לתוקף מיידית.
+        </p>
+        <p>
+          בנוסף, רוב הדפדפנים מאפשרים שליטה מלאה בעוגיות באמצעות הגדרות הדפדפן. תוכל לבחור לחסום את כל העוגיות, לחסום עוגיות צד שלישי בלבד, או למחוק עוגיות קיימות. שים לב שחסימת עוגיות חיוניות עשויה להשפיע על תפקוד האתר.
         </p>
         <p>
           להוראות מפורטות לפי דפדפן:
@@ -418,15 +547,45 @@
           </li>
         </ul>
 
-        <h2>שינויים עתידיים</h2>
+        <h2 id="consent-records">שמירת רשומות הסכמה</h2>
         <p>
-          אם נחליט בעתיד להוסיף לאתר עוגיות אנליטיקה, עוגיות שיווק או כל טכנולוגיית מעקב לא־חיונית, נעשה זאת בכפוף לתיקון 13 לחוק הגנת הפרטיות, התשמ״א–1981. במקרה כזה:
+          תיקון 13 לחוק הגנת הפרטיות מחייב אותנו לתעד את החלטות ההסכמה שלך. אנו מיישמים זאת באופן הבא:
         </p>
         <ul>
-          <li>נציג באתר באנר הסכמה לעוגיות שיציע לך לקבל או לדחות את העוגיות הלא־חיוניות לפני שהן מותקנות בדפדפן שלך.</li>
-          <li>נעדכן מסמך זה עם פירוט מלא של העוגיות החדשות, מטרתן, משך השמירה, וזהות הצדדים השלישיים.</li>
-          <li>נכבד כל החלטה שלך — קבלת עוגיות לא־חיוניות תהיה מבוססת על הסכמה מפורשת בלבד, ולא על תיבות סימון מסומנות־מראש.</li>
+          <li>
+            <strong>שמירה מקומית בלבד.</strong> בחירת ההסכמה שלך נשמרת ב־<code>localStorage</code> של הדפדפן, תחת המפתח <code>berlla_consent_v1</code>. איננו שולחים את הרשומה לשרתים שלנו ואיננו שומרים אותה במאגר מידע חיצוני — אתר BERLLA הוא אתר סטטי ללא backend.
+          </li>
+          <li>
+            <strong>תוכן הרשומה.</strong> כל רשומת הסכמה כוללת: מזהה ייחודי (UUID), חותמת זמן של הבחירה, מועד תפוגה (12 חודשים מהבחירה), והבחירה שלך לכל קטגוריה.
+          </li>
+          <li>
+            <strong>השלכה: ניקוי דפדפן מאפס את הרשומה.</strong> אם תנקה את נתוני הדפדפן או תפתח את האתר במצב פרטי, הרשומה תימחק ונבקש ממך שוב להגדיר העדפות בביקור הבא.
+          </li>
+          <li>
+            <strong>חידוש כל 12 חודשים.</strong> גם אם לא תנקה את נתוני הדפדפן, נבקש ממך לחדש את הבחירה אחרי 12 חודשים, בהתאם להמלצות המקובלות.
+          </li>
         </ul>
+
+        <h2>עמידה ברגולציה</h2>
+        <p>
+          מדיניות העוגיות ומנגנון ההסכמה שלנו תוכננו לעמוד בדרישות הבאות:
+        </p>
+        <ul>
+          <li>
+            <strong>חוק הגנת הפרטיות, התשמ״א–1981, כולל תיקון 13 (התשפ״ד–2024)</strong> — דרישות הסכמה מפורשת ואקטיבית לעוגיות לא־חיוניות, איסור על עוגיות מעקב לפני קבלת הסכמה, וזכות לבטל את ההסכמה באותה קלות שניתנה.
+          </li>
+          <li>
+            <strong>GDPR (תקנת הגנת המידע הכללית של האיחוד האירופי)</strong> — לפי דרישות מקבילות לגולשים מהאיחוד האירופי.
+          </li>
+          <li>
+            <strong>ePrivacy Directive (2002/58/EC)</strong> — דירקטיבת הפרטיות והתקשורת האלקטרונית של האיחוד האירופי.
+          </li>
+        </ul>
+
+        <h2>עדכונים למדיניות זו</h2>
+        <p>
+          אנו עשויים לעדכן את מדיניות העוגיות מעת לעת. בעדכונים מהותיים נאפס את גרסת ההסכמה (<code>berlla_consent_v1</code> → <code>berlla_consent_v2</code> וכן הלאה), מה שיגרום לבאנר ההסכמה להופיע מחדש כדי שתאשר את הנוסח החדש. התאריך בתחתית הדף מציין מתי המדיניות עודכנה לאחרונה.
+        </p>
 
         <h2>פנייה אלינו</h2>
         <p>
@@ -443,7 +602,7 @@
         <h2>תאריך עדכון</h2>
         <p>
           מסמך זה עודכן לאחרונה ביום
-          <time datetime="2026-05-07">7 במאי 2026</time>.
+          <time datetime="2026-05-13">13 במאי 2026</time>.
         </p>
       </article>
     </div>
@@ -458,6 +617,7 @@
           <li><a href="terms.html">תנאי שימוש</a></li>
           <li><a href="cookies.html" aria-current="page">מדיניות עוגיות (Cookies)</a></li>
           <li><a href="accessibility.html">הצהרת נגישות</a></li>
+          <li><a class="berlla-manage-cookies" href="#manage-cookies">ניהול עוגיות</a></li>
         </ul>
       </nav>
 
@@ -478,5 +638,7 @@
     </div>
   </footer>
 
+  <!-- Cookie consent banner + floating chip (PPL Amendment 13) -->
+  <script src="../assets/consent.js"></script>
 </body>
 </html>

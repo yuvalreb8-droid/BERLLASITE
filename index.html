@@ -1978,6 +1978,10 @@
       gap: 0.4rem;
       line-height: 1.4;
     }
+    /* Slight visual separation between cookie-management action and the policy links */
+    .contact-legal-links li:has(.berlla-manage-cookies) {
+      margin-inline-start: 0.5rem;
+    }
     .contact-legal-identity a,
     .contact-legal-links a {
       color: inherit;
@@ -3417,6 +3421,8 @@
           <li><a href="legal/accessibility.html">נגישות</a></li>
           <li><a href="legal/privacy.html">פרטיות</a></li>
           <li><a href="legal/terms.html">תנאים</a></li>
+          <li><a href="legal/cookies.html">עוגיות</a></li>
+          <li><a class="berlla-manage-cookies" href="#manage-cookies">ניהול עוגיות</a></li>
         </ul>
       </div>
     </section>
@@ -4260,5 +4266,8 @@
       });
     })();
   </script>
+
+  <!-- Cookie consent banner + floating chip (PPL Amendment 13) -->
+  <script src="assets/consent.js"></script>
 </body>
 </html>

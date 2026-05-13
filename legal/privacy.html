@@ -194,14 +194,20 @@
       min-height: 56px;
     }
     .legal-header__brand {
-      font-family: var(--font-display);
-      font-size: clamp(1.125rem, 0.9rem + 0.6vw, 1.5rem);
-      letter-spacing: 0.02em;
-      color: var(--color-text);
+      display: inline-flex;
+      align-items: center;
+      transition: opacity var(--dur-fast) var(--ease);
+    }
+    .legal-header__brand img {
+      display: block;
+      height: clamp(32px, 1.5vw + 1.5rem, 40px);
+      width: auto;
+      transform: scale(2.55);
+      transform-origin: right center;
     }
     .legal-header__brand:hover,
     .legal-header__brand:focus-visible {
-      color: var(--color-accent);
+      opacity: 0.78;
     }
     .legal-header__back {
       font-family: var(--font-ui);
@@ -529,7 +535,7 @@
 
   <header class="legal-header" role="banner">
     <div class="container legal-header__inner">
-      <a class="legal-header__brand" href="../">BERLLA</a>
+      <a class="legal-header__brand" href="../"><img src="../img/berlla-footer-logo.png" alt="BERLLA"></a>
       <a class="legal-header__back" href="../">חזרה לעמוד הראשי</a>
     </div>
   </header>
@@ -544,7 +550,7 @@
         </p>
         <p class="legal-doc__meta">
           עדכון אחרון:
-          <time datetime="2026-05-07">7 במאי 2026</time>
+          <time datetime="2026-05-13">13 במאי 2026</time>
         </p>
 
         <div class="legal-doc__disclaimer" role="note">
@@ -783,9 +789,32 @@
           מידע מפורט על אופן השימוש בטכנולוגיות אלה ועל אופן הסירוב לעוגיות מסוימות, מצוי ב<a href="cookies.html">מדיניות העוגיות שלנו</a>.
         </p>
 
-        <h3 id="ga">Google Analytics</h3>
+        <h3 id="ga">Google Analytics 4</h3>
         <p>
-          אנו עשויים לחלוק את המידע שלך עם Google Analytics לצורך מעקב וניתוח השימוש בשירותים. כדי לבטל מעקב על ידי Google Analytics בשירותים, ניתן לבקר ב־<a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">tools.google.com/dlpage/gaoptout</a>. למידע נוסף על נוהלי הפרטיות של Google, ניתן לבקר בעמוד <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy &amp; Terms</a>.
+          אנו משתמשים ב־Google Analytics 4 (״GA4״) — שירות אנליטיקה של Google LLC, ארה״ב — להבנת דפוסי שימוש מצטברים באתר. <strong>השירות נטען רק לאחר שנתת הסכמה מפורשת באמצעות באנר העוגיות; אם דחית את האנליטיקה, או טרם בחרת, GA4 לא נטען בדפדפן שלך כלל.</strong>
+        </p>
+        <p>
+          <strong>איזה מידע GA4 אוסף אם הסכמת:</strong> כתובות עמודים שבהם ביקרת, מקור הפניה לאתר, סוג מכשיר (מובייל / מחשב / טאבלט), מערכת הפעלה, סוג דפדפן, רזולוציית מסך, שפת ממשק, ומיקום גיאוגרפי משוער (מדינה ולעיתים אזור — מבוסס על כתובת ה־IP).
+        </p>
+        <p>
+          <strong>הגדרות הפרטיות שהפעלנו:</strong>
+        </p>
+        <ul>
+          <li><strong>קיצור IP (anonymize_ip).</strong> כתובת ה־IP שלך מעובדת על ידי Google במצב מקוצר — האוקטט האחרון נמחק לפני אחסון. כתובת ה־IP המלאה לא נשמרת.</li>
+          <li><strong>Google Signals מושבת.</strong> אין מעקב צולב־מכשירים. הפעילות שלך באתר זה לא נקשרת לחשבון Google שלך או לפעילות באתרים אחרים.</li>
+          <li><strong>התאמת פרסומות אישית מושבתת.</strong> המידע שנאסף לא משמש ליצירת קהלים לרשתות פרסום של Google או לרימרקטינג.</li>
+          <li><strong>תקופת שמירה: 14 חודשים.</strong> זוהי תקופת השמירה המקסימלית הזמינה בתוכנית החינמית של GA4. אחרי 14 חודשים המידע נמחק אוטומטית אצל Google.</li>
+        </ul>
+        <p>
+          <strong>הזכות לבטל את ההסכמה.</strong> תוכל לבטל את ההסכמה ל־GA4 בכל עת באחת מהדרכים הבאות:
+        </p>
+        <ul>
+          <li>לחץ על קישור ״ניהול עוגיות״ בתחתית כל עמוד או על שלט ההסכמה הצף, וכבה את קטגוריית האנליטיקה. הדפדפן ינוקה אוטומטית מעוגיות <code>_ga</code> והעמוד יתרענן.</li>
+          <li>השתמש בתוסף הרשמי של Google לסירוב מ־GA: <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">tools.google.com/dlpage/gaoptout</a>.</li>
+          <li>מחק ידנית את עוגיות <code>_ga</code> ו־<code>_ga_*</code> מהגדרות הדפדפן.</li>
+        </ul>
+        <p>
+          למידע מלא על אופן הטיפול של Google במידע, עיין במסמך <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">״פרטיות ותנאים״ של Google</a>. לפרטים על העוגיות הספציפיות שמותקנות בדפדפן שלך ועל אופן השליטה בהן, עיין ב<a href="cookies.html">מדיניות העוגיות</a>.
         </p>
 
         <h2 id="inforetain">5. כמה זמן אנו שומרים את המידע שלך?</h2>
@@ -920,6 +949,7 @@
           <li><a href="terms.html">תנאי שימוש</a></li>
           <li><a href="cookies.html">מדיניות עוגיות (Cookies)</a></li>
           <li><a href="accessibility.html">הצהרת נגישות</a></li>
+          <li><a class="berlla-manage-cookies" href="#manage-cookies">ניהול עוגיות</a></li>
         </ul>
       </nav>
 
@@ -935,10 +965,12 @@
 
       <div class="legal-footer__meta">
         <span>© 2026 BERLLA. כל הזכויות שמורות.</span>
-        <span>עודכן: <time datetime="2026-05-07">07.05.2026</time></span>
+        <span>עודכן: <time datetime="2026-05-13">13.05.2026</time></span>
       </div>
     </div>
   </footer>
 
+  <!-- Cookie consent banner + floating chip (PPL Amendment 13) -->
+  <script src="../assets/consent.js"></script>
 </body>
 </html>

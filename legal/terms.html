@@ -191,14 +191,20 @@
       min-height: 56px;
     }
     .legal-header__brand {
-      font-family: var(--font-display);
-      font-size: clamp(1.125rem, 0.9rem + 0.6vw, 1.5rem);
-      letter-spacing: 0.02em;
-      color: var(--color-text);
+      display: inline-flex;
+      align-items: center;
+      transition: opacity var(--dur-fast) var(--ease);
+    }
+    .legal-header__brand img {
+      display: block;
+      height: clamp(32px, 1.5vw + 1.5rem, 40px);
+      width: auto;
+      transform: scale(2.55);
+      transform-origin: right center;
     }
     .legal-header__brand:hover,
     .legal-header__brand:focus-visible {
-      color: var(--color-accent);
+      opacity: 0.78;
     }
     .legal-header__back {
       font-family: var(--font-ui);
@@ -516,7 +522,7 @@
 
   <header class="legal-header" role="banner">
     <div class="container legal-header__inner">
-      <a class="legal-header__brand" href="../">BERLLA</a>
+      <a class="legal-header__brand" href="../"><img src="../img/berlla-footer-logo.png" alt="BERLLA"></a>
       <a class="legal-header__back" href="../">חזרה לעמוד הראשי</a>
     </div>
   </header>
@@ -850,6 +856,7 @@
           <li><a href="terms.html" aria-current="page">תנאי שימוש</a></li>
           <li><a href="cookies.html">מדיניות עוגיות (Cookies)</a></li>
           <li><a href="accessibility.html">הצהרת נגישות</a></li>
+          <li><a class="berlla-manage-cookies" href="#manage-cookies">ניהול עוגיות</a></li>
         </ul>
       </nav>
 
@@ -870,5 +877,7 @@
     </div>
   </footer>
 
+  <!-- Cookie consent banner + floating chip (PPL Amendment 13) -->
+  <script src="../assets/consent.js"></script>
 </body>
 </html>
